@@ -1,0 +1,6 @@
+*cache*
+.code-workspace
+__pycache__/
+.xml
+.env
+Spotify_Playback_SDK/learning_js.js
