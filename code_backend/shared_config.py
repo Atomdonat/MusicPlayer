@@ -25,6 +25,19 @@ from dotenv import load_dotenv
 from dataclasses import dataclass
 
 
+frontend_window_size: list = [800, 400]
+json_path: str = 'Databases/JSON_Files/spotify_devices.json'
+no_image_path: str = 'Icons/Spotify_if_no_image.png'
+max_popularity = 20
+skipping_steps: dict = {
+    "20sec": -2,
+    "0.5_of_duration": -1,
+    "0.75_of_duration": -0.5,
+    "last_quarter": 0,
+    "not_skipped": 1
+}
+
+
 @dataclass
 class SpotifyID:
     spotify_id: base62

@@ -5,20 +5,7 @@ from database_access import MyAppDatabase
 
 sp = spotify_client()
 market = 'DE'
-
-
-frontend_window_size: list = [800, 400]
-json_path: str = 'Databases/JSON_Files/spotify_devices.json'
-no_image_path: str = 'Icons/Spotify_if_no_image.png'
 my_app_database: MyAppDatabase = MyAppDatabase('../Databases/main_database.db')
-max_popularity = 20
-skipping_steps: dict = {
-    "20sec": -2,
-    "0.5_of_duration": -1,
-    "0.75_of_duration": -0.5,
-    "last_quarter": 0,
-    "not_skipped": 1
-}
 
 
 class Album:
@@ -211,7 +198,6 @@ class Playlist:
 
             my_app_database.add_playlist_to_playlists(self)
             # ToDo: append playlist_id to artist.playlist_ids
-
 
         else:
             # Unpack the database result into instance variables
@@ -445,7 +431,7 @@ class User:
     def top_genre_names(self) -> list[str]:
         top_genres = []
 
-        # ToDo: implement me
+        # ToDo: implement
 
         return top_genres
 
@@ -530,136 +516,132 @@ class TrackAnalysis:
 
 
 # ToDo: Rewrite Devices, Device and Player to new functionalities
-# class Devices:
-#     def __init__(self) -> None:
-#         self.instance = sp.devices()
-#
-#         json_to_file(json_path, self.instance, True)
-#
-#     def get_specific_device(self, device_name: str) -> ValueError | Any:
-#         for current_device in self.instance['devices']:
-#
-#             # if re.search(current_device['name'],device_name, re.IGNORECASE) is not None:
-#             if current_device['name'] == device_name:
-#                 return current_device
-#
-#         valid_device_names = []
-#         for current_device in self.instance['devices']:
-#             valid_device_names.append(current_device['name'])
-#
-#         return ValueError(f'The device named {device_name} was not found \n Valid Names are: {valid_device_names}')
-#
-#
-# class Device:
-#     def __init__(self, device_name: str, devices: Devices) -> None:
-#         self.instance = devices.get_specific_device(device_name)
-#
-#         self.id = self.instance['id']
-#         self.is_active = bool(self.instance['is_active'])
-#         self.is_private_session = bool(self.instance['is_private_session'])
-#         self.is_restricted = bool(self.instance['is_restricted'])
-#         self.name = self.instance['name']
-#         self.supports_volume = bool(self.instance['supports_volume'])
-#         self.type = self.instance['type']
-#         self.volume_percent = int(self.instance['volume_percent'])
-#
-#
-# class Player:
-#
-#     def __init__(self) -> None:
-#         # self.instance: dict = None
-#         # self.current_collection: Playlist | Album = None
-#         # self.current_album: Album = None
-#         # self.current_artist: Artist = None
-#         # self.current_track: Track = None
-#         # self.device: Device = None
-#         # self.is_playing: bool = None
-#         # self.progress: int = None
-#         # self.repeat_state: str = None
-#         # self.shuffle_state: bool = None
-#
-#         self.initialize_player()
-#
-#     def get_instance(self):
-#         try:
-#             self.instance = sp.current_playback(market=market)
-#             return self.instance
-#
-#         except:
-#             print("Spotify is currently not running")
-#             return None
-#
-#     # JSON Files:
-#     def initialize_player(self):
-#         self.instance = self.get_instance()
-#         if self.instance is None:
-#             self.instance: dict = None
-#             self.current_collection: Playlist | Album = None
-#             self.current_album: Album = None
-#             self.current_artist: Artist = None
-#             self.current_track: Track = None
-#             self.device: Device = None
-#             self.is_playing: bool = None
-#             self.progress: int = None
-#             self.repeat_state: str = None
-#             self.shuffle_state: bool = None
-#
-#         else:
-#             if self.instance['context']['type'] == 'album':
-#                 self.current_collection = Album(uri_to_id(self.instance['context']['uri']))
-#             elif self.instance['context']['type'] == 'playlist':
-#                 self.current_collection = Playlist(uri_to_id(self.instance['context']['uri']))
-#
-#             self.current_album = Album(self.instance['item']['album']['id'])
-#             self.current_artist = Artist(self.instance['item']['artists'][0]['id'])
-#             self.current_track = Track(self.instance['item']['id'])
-#
-#             self.device = Device(self.instance['device']['name'], Devices())
-#             self.is_playing = bool(self.instance['is_playing'])
-#             self.progress = int(self.instance['progress_ms'])
-#             self.repeat_state = self.instance['repeat_state']  # no = 'off', on = 'context', once = 'track',
-#             self.shuffle_state = bool(self.instance['shuffle_state'])
-#
-#         self.skip_blacklisted_items()
-#
-#     def change_playing_state(self):
-#         # noinspection PyBroadException
-#         try:
-#             sp.pause_playback(self.device.id)
-#         except:
-#             # if it is not supposed to work, prohibit it xD
-#             sp.start_playback(self.device.id)
-#
-#     def set_progress(self, time_in_ms: int):
-#         sp.seek_track(time_in_ms, self.device.id)
-#
-#     def change_repeat_state(self, new_state: Literal['context', 'track', 'off']):
-#         if new_state == "context":
-#             sp.repeat('context', self.device.id)
-#         elif new_state == "track":
-#             sp.repeat('track', self.device.id)
-#         elif new_state == "off":
-#             sp.repeat('off', self.device.id)
-#
-#     def next_track(self):
-#         sp.next_track(self.device.id)
-#
-#     def prev_track(self):
-#         sp.previous_track(self.device.id)
-#
-#     def change_shuffle_state(self):
-#         self.shuffle_state = not self.shuffle_state
-#         sp.shuffle(self.shuffle_state, self.device.id)
-#
-#     def set_volume(self, new_volume: int):
-#         if not (0 <= new_volume <= 100):
-#             raise ValueError("Volume must be in the range from 0 to 100.")
-#
-#         sp.volume(new_volume, self.device.id)
-#
-#     def skip_blacklisted_items(self):
-#         if self.current_track.is_blacklisted or self.current_track.is_blacklisted or self.current_artist.is_blacklisted:
-#             self.next_track()
+class Devices:
+    def __init__(self) -> None:
+        self.instance = sp.devices()
+
+        json_to_file(json_path, self.instance, True)
+
+    def get_specific_device(self, device_name: str) -> ValueError | Any:
+        for current_device in self.instance['devices']:
+
+            # if re.search(current_device['name'],device_name, re.IGNORECASE) is not None:
+            if current_device['name'] == device_name:
+                return current_device
+
+        valid_device_names = []
+        for current_device in self.instance['devices']:
+            valid_device_names.append(current_device['name'])
+
+        return ValueError(f'The device named {device_name} was not found \n Valid Names are: {valid_device_names}')
+
+
+class Device:
+    def __init__(self, device_name: str, devices: Devices) -> None:
+        self.instance = devices.get_specific_device(device_name)
+
+        self.id = self.instance['id']
+        self.is_active = bool(self.instance['is_active'])
+        self.is_private_session = bool(self.instance['is_private_session'])
+        self.is_restricted = bool(self.instance['is_restricted'])
+        self.name = self.instance['name']
+        self.supports_volume = bool(self.instance['supports_volume'])
+        self.type = self.instance['type']
+        self.volume_percent = int(self.instance['volume_percent'])
+
+
+class Player:
+
+    def __init__(self) -> None:
+        self.instance: dict = {}
+        self.current_collection: Playlist | Album
+        self.current_album: Album
+        self.current_artist: Artist
+        self.current_track: Track
+        self.device: Device
+        self.is_playing: bool
+        self.progress: int
+        self.repeat_state: str
+        self.shuffle_state: bool
+
+        self.initialize_player()
+
+    def get_instance(self):
+        try:
+            self.instance = sp.current_playback(market=market)
+            return self.instance
+
+        except SpotifyException:
+            print("Spotify is currently not running")
+            return None
+
+    # JSON Files:
+    def initialize_player(self):
+        self.instance = self.get_instance()
+        if self.instance is not None:
+            if self.instance['context']['type'] == 'album':
+                self.current_collection = Album(uri_to_id(self.instance['context']['uri']))
+            elif self.instance['context']['type'] == 'playlist':
+                self.current_collection = Playlist(uri_to_id(self.instance['context']['uri']))
+
+            self.current_album = Album(self.instance['item']['album']['id'])
+            self.current_artist = Artist(self.instance['item']['artists'][0]['id'])
+            self.current_track = Track(self.instance['item']['id'])
+
+            self.device = Device(self.instance['device']['name'], Devices())
+            self.is_playing = bool(self.instance['is_playing'])
+            self.progress = int(self.instance['progress_ms'])
+            self.repeat_state = self.instance['repeat_state']  # no = 'off', on = 'context', once = 'track',
+            self.shuffle_state = bool(self.instance['shuffle_state'])
+
+        self.skip_blacklisted_items()
+
+    def change_playing_state(self):
+        # noinspection PyBroadException
+        try:
+            sp.pause_playback(self.device.id)
+        except:
+            # if it is not supposed to work, prohibit it xD
+            sp.start_playback(self.device.id)
+
+    def set_progress(self, time_in_ms: int):
+        sp.seek_track(time_in_ms, self.device.id)
+
+    def change_repeat_state(self, new_state: Literal['context', 'track', 'off']):
+        if new_state == "context":
+            sp.repeat('context', self.device.id)
+        elif new_state == "track":
+            sp.repeat('track', self.device.id)
+        elif new_state == "off":
+            sp.repeat('off', self.device.id)
+
+    def next_track(self):
+        sp.next_track(self.device.id)
+
+    def prev_track(self):
+        sp.previous_track(self.device.id)
+
+    def change_shuffle_state(self):
+        self.shuffle_state = not self.shuffle_state
+        sp.shuffle(self.shuffle_state, self.device.id)
+
+    def set_volume(self, new_volume: int):
+        if not (0 <= new_volume <= 100):
+            raise ValueError("Volume must be in the range from 0 to 100.")
+
+        sp.volume(new_volume, self.device.id)
+
+    def skip_blacklisted_items(self):
+        album_cursor = my_app_database.database.execute('SELECT blacklisted from albums WHERE album_id = ?', (self.current_album.album_id,))
+        artist_cursor = my_app_database.database.execute('SELECT blacklisted from artists WHERE artist_id = ?', (self.current_artist.artist_id,))
+        track_cursor = my_app_database.database.execute('SELECT blacklisted from tracks WHERE track_id = ?', (self.current_track.track_id,))
+
+        album_is_blacklisted = album_cursor.fetchone()
+        artist_is_blacklisted = artist_cursor.fetchone()
+        track_is_blacklisted = track_cursor.fetchone()
+
+        if album_is_blacklisted == 1 or artist_is_blacklisted == 1 or track_is_blacklisted == 1:
+            self.next_track()
 
 
 if __name__ == '__main__':

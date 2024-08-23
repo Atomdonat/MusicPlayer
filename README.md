@@ -1,5 +1,8 @@
 # General Information
 
+## Future of the project
+switching the main functionality from a GUI based Spotify Player to a (maybe Player independent) Music Analyzer and User specific Playlist generation using Machine Learning
+
 ## Installation
 
 * Need to have:
@@ -8,10 +11,11 @@
   * Python Packages:
     * should be installed: base64, io, json, os, re, subprocess, shlex, typing, time
     * install with pip: DateTime, dotenv, numpy, PIL, pylint, requests, spotipy, sqlite3, tkinter, urllib3
-  * DB App for SQLite (optional)
+  * DB Browser for SQLite (optional)
 1) create Spotify App ([https://developer.spotify.com/documentation/web-api/concepts/apps](https://developer.spotify.com/documentation/web-api/concepts/apps))
 2) copy 'Client ID', 'Client secret' and 'Redirect URI'
-3) create '.env'-file in project directory
+3) create '.env'-file in project directory and import correctly in spotify_access.py
+4) run SpotipyApp.py for GUI
 
 ## Lessons Learned
 
@@ -27,6 +31,7 @@ or update only half of the attributes
 * though Playlist have markets don't use them
 * catching exceptions can be a helpful but uncommon benefit
 * superclasses can be profitable, but hurt the code readability 
+
 ## Known Error messages
 
 * requests.exceptions.ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')) -> Just retry
