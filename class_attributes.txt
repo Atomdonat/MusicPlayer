@@ -1,59 +1,106 @@
-album_id,
-album_name,
-album_url,
-album_image,
-genre_names,
-total_duration,
-track_count,
-artist_ids,
-track_ids,
-popularity,
-blacklisted
+Album:
+    album_id: str
+    album_name: str
+    album_url: str
+    album_image: str
+    genre_names: list[str]
+    total_duration: int
+    track_count: int
+    artist_ids: list[SpotifyID]
+    track_ids: list[SpotifyID]
+    popularity: int
+    blacklisted: int
 
-artist_id,
-artist_name,
-artist_url,
-artist_image,
-genre_names,
-follower,
-album_ids,
-playlist_ids,
-top_tracks_ids,
-popularity,
-blacklisted
+Artist:
+    artist_id: str
+    artist_name: str
+    artist_url: str
+    artist_image: str
+    genre_names: list[str]
+    follower: int
+    album_ids: list[SpotifyID]
+    playlist_ids: list[SpotifyID]
+    top_tracks_ids: list[SpotifyID]
+    popularity: int
+    blacklisted: int
 
-playlist_id,
-playlist_name,
-playlist_url,
-playlist_image,
-genre_names,
-total_duration,
-track_count,
-owner_id,
-track_ids,
-popularity,
-blacklisted
+Genre:
+    genre_name: str
+    acousticness_lower_limit: float
+    acousticness_upper_limit: float
+    danceability_lower_limit: float
+    danceability_upper_limit: float
+    duration_ms: int
+    energy_lower_limit: float
+    energy_upper_limit: float
+    instrumentalness_lower_limit: float
+    instrumentalness_upper_limit: float
+    key_lower_limit: int
+    key_upper_limit: int
+    liveness_lower_limit: float
+    liveness_upper_limit: float
+    loudness_lower_limit: float
+    loudness_upper_limit: float
+    mode_lower_limit: int
+    mode_upper_limit: int
+    speechiness_lower_limit: float
+    speechiness_upper_limit: float
+    tempo_lower_limit: float
+    tempo_upper_limit: float
+    valence_lower_limit: float
+    valence_upper_limit: float
 
-track_id,
-track_name,
-track_url,
-track_image,
-genre_names,
-track_duration,
-artist_ids,
-album_ids,
-playlist_ids,
-popularity,
-blacklisted
+Playlist:
+    playlist_id: str
+    playlist_name: str
+    playlist_url: str
+    playlist_image: str
+    genre_names: list[str]
+    total_duration: int
+    track_count: int
+    owner_id: str
+    track_ids: list[SpotifyID]
+    popularity: int
+    blacklisted: int
 
-user_id,
-user_name,
-user_url,
-user_image,
-follower,
-playlist_ids,
-top_tracks_ids,
-top_artists_ids,
-top_genre_names,
-popularity,
-blacklisted
+Track:
+    track_id: str
+    track_name: str
+    track_url: str
+    track_image: str
+    genre_names: list[str]
+    track_duration: int
+    artist_ids: list[SpotifyID]
+    album_ids: list[SpotifyID]
+    playlist_ids: list[SpotifyID]
+    popularity: int
+    blacklisted: int
+
+TrackAnalysis:
+    track_id: str
+    track_name: str
+    track_acousticness: float
+    track_danceability: float
+    track_duration_ms: int
+    track_energy: float
+    track_instrumentalness: float
+    track_key: int
+    track_liveness: float
+    track_loudness: float
+    track_mode: int
+    track_speechiness: float
+    track_tempo: float
+    track_valence: float
+
+User:
+    user_id: str
+    user_name: str
+    user_url: str
+    user_image: str
+    follower: int
+    playlist_ids: list[SpotifyID]
+    top_tracks_ids: list[SpotifyID]
+    top_artists_ids: list[SpotifyID]
+    top_genre_names: list[str]
+    popularity: int
+    blacklisted: int
