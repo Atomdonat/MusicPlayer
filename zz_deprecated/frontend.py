@@ -2,55 +2,46 @@
 from tkinter import *
 from tkinter import ttk
 from tkinter.font import Font
-from io import BytesIO
-import requests
+from PIL.ImageTk import PhotoImage
 
 # import local files
-import backend
-from backend import Artist, Album, Playlist, Track
-
-import json
-import time
-from datetime import timedelta
-import sqlite3
-from typing import Union, Literal
-from PIL import Image, ImageTk
-from redis.commands.json import JSON
-from spotipy import SpotifyException
+from zz_deprecated import backend
+from zz_deprecated.backend import Artist, Album, Playlist, Track
 
 import os
 import re
 from typing import *
-import requests
-import numpy
-import spotipy
-from spotipy import SpotifyException
 
-import base64
-from PIL import Image, ImageTk
-import io
-from io import BytesIO
+from PIL import ImageTk
 import requests
 from tkinter import PhotoImage
-import sys
-
-import random
-import sqlite3
-
-import spotipy
-from spotipy.oauth2 import SpotifyOAuth
-import urllib3
-from dotenv import load_dotenv
-
 
 button_image_size = 20
+window_size = '800x400'
+app_icon = backend.image_from_file(file_path='../Icons/Spotipy_Logo.png')
+
+# Player Icons:
+shuffle_off_path = '../Icons/shuffle_off.png'
+shuffle_on_path = '../Icons/shuffle.png'
+
+prev_track_path = '../Icons/prev.png'
+play_path = '../Icons/play.png'
+pause_path = '../Icons/pause.png'
+next_track_path = '../Icons/next.png'
+
+repeat_context_path = '../Icons/repeat_context.png'
+repeat_track_path = '../Icons/repeat_track.png'
+repeat_off_path = '../Icons/repeat_off.png'
+
+# Track
+add_queue = 'Icons/queue.png'
 
 
 def get_tk_image_icons(image_path: str) -> ImageTk:
     if not os.path.exists(image_path):
         raise FileNotFoundError
     
-    image = backend.image_from_file(file_path=image_path)
+    image = backend.tk_image_from_file(file_path=image_path)
     if image is None:
         raise Exception("Image could not be loaded")
     
@@ -63,42 +54,23 @@ def get_tk_image_icons(image_path: str) -> ImageTk:
 class SpotifyAppWindow:
     def __init__(self) -> None:
         master = Tk()
-        master.iconbitmap('Icons/Python-logo-notext.svg.ico')
+
+        image: PhotoImage = ImageTk.PhotoImage(app_icon)
+        master.wm_iconphoto(False, image)
+
         master.title('Spotipy Client')
-        master.geometry('800x400')
-        # master.resizable(False, False)
-
-        global image_shuffle_off
-        global image_shuffle_on
-        global image_prev_track
-        global image_play
-        global image_pause
-        global image_next_track
-        global image_repeat_off
-        global image_repeat_context
-        global image_repeat_track
-        global image_add_queue
-
-        load_dotenv()
-        image_shuffle_off = get_tk_image_icons(os.getenv("SHUFFLE_OFF"))
-        image_shuffle_on = get_tk_image_icons(os.getenv("SHUFFLE_ON"))
-        image_prev_track = get_tk_image_icons(os.getenv("PREV_TRACK"))
-        image_play = get_tk_image_icons(os.getenv("PLAY"))
-        image_pause = get_tk_image_icons(os.getenv("PAUSE"))
-        image_next_track = get_tk_image_icons(os.getenv("NEXT_TRACK"))
-        image_repeat_off = get_tk_image_icons(os.getenv("REPEAT_CONTEXT"))
-        image_repeat_context = get_tk_image_icons(os.getenv("REPEAT_TRACK"))
-        image_repeat_track = get_tk_image_icons(os.getenv("REPEAT_OFF"))
-        image_add_queue = get_tk_image_icons(os.getenv("ADD_QUEUE"))
+        master.geometry(window_size)
+        master.resizable(False, False)
 
         self.sp = backend.try_spotify_connection()
         self.player = spotify_App.player
         self.repeat_state = self.player.repeat_state
 
         self.instance_option_buttons_needed = BooleanVar(value=False)
+        self.search_buttons_needed = BooleanVar(value=False)
         self.yes_button_pressed = IntVar(value=0)
         self.current_volume = IntVar(value=self.player.device.volume_percent)  # 0 <= vol:int <= 100
-        self.progress_ms = IntVar(value=self.player.progress)  # int in ms
+        self.progress_sec = IntVar(value=self.player.progress)  # int in seconds
 
         self.mainframe = Frame(master)
         self.mainframe.config(bg=backcolor)
@@ -116,31 +88,52 @@ class SpotifyAppWindow:
             bordercolor=backcolor
         )
 
+        global image_shuffle_off
+        global image_shuffle_on
+        global image_prev_track
+        global image_play
+        global image_pause
+        global image_next_track
+        global image_repeat_context
+        global image_repeat_track
+        global image_repeat_off
+        global image_add_queue
+
+        image_shuffle_off = backend.tk_image_from_file(file_path=shuffle_off_path)
+        image_shuffle_on = backend.tk_image_from_file(file_path=shuffle_on_path)
+        image_prev_track = backend.tk_image_from_file(file_path=prev_track_path)
+        image_play = backend.tk_image_from_file(file_path=play_path)
+        image_pause = backend.tk_image_from_file(file_path=pause_path)
+        image_next_track = backend.tk_image_from_file(file_path=next_track_path)
+        image_repeat_context = backend.tk_image_from_file(file_path=repeat_context_path)
+        image_repeat_track = backend.tk_image_from_file(file_path=repeat_track_path)
+        image_repeat_off = backend.tk_image_from_file(file_path=repeat_off_path)
+        image_add_queue = backend.tk_image_from_file(file_path=add_queue)
+
         # Player Interactions
         self.player_label = Label(self.mainframe, text='Player:', fg=textcolor, bg=backcolor, font=self.bold_font)
-        self.shuffle_button = Button(self.mainframe, image=image_shuffle_off, fg=textcolor, bg=backcolor,
-                                     command=lambda: self.change_shuffle_state())
+        self.shuffle_button = Button(self.mainframe, image=image_shuffle_off, fg=textcolor, bg=backcolor, command=lambda: self.change_shuffle_state())
         self.prev_button = Button(self.mainframe, image=image_prev_track, fg=textcolor, bg=backcolor, command=lambda: self.prev_track())
         self.pause_button = Button(self.mainframe, image=image_pause, fg=textcolor, bg=backcolor, command=lambda: self.pause())
         self.next_button = Button(self.mainframe, image=image_next_track, fg=textcolor, bg=backcolor, command=lambda: self.next_track())
-        self.repeat_button = Button(self.mainframe, image=image_repeat_off, fg=textcolor, bg=backcolor,
-                                    command=lambda: self.new_repeat_state())
+        self.repeat_button = Button(self.mainframe, image=image_repeat_off, fg=textcolor, bg=backcolor, command=lambda: self.new_repeat_state())
 
-        self.progress_label = Label(self.mainframe, text='Progress (ms):', fg=textcolor, bg=backcolor, font=self.bold_font)
+        self.progress_label = Label(self.mainframe, text='Progress (sec):', fg=textcolor, bg=backcolor, font=self.bold_font)
         self.progress_entry = Entry(self.mainframe, fg=textcolor, bg=backcolor, insertbackground='white', font=self.input_font)
-        self.progress_bar = ttk.Progressbar(self.mainframe, length=100, orient='horizontal', style='design.Horizontal.TProgressbar', variable=self.progress_ms)
+        self.progress_bar = ttk.Progressbar(self.mainframe, length=100, orient='horizontal', style='design.Horizontal.TProgressbar', variable=self.progress_sec)
 
         self.volume_label = Label(self.mainframe, text='Volume (%):', fg=textcolor, bg=backcolor, font=self.bold_font)
         # self.volume_entry = Entry(self.mainframe, fg=textcolor, bg=backcolor, insertbackground='white', font=self.input_font)
-        self.volume_entry = Scale(self.mainframe, variable=self.current_volume, from_=0, to=100, orient=HORIZONTAL,
-                                  command=self.update_volume, fg=textcolor, bg=backcolor, troughcolor=backcolor,
-                                  highlightthickness=0, font=self.normal_font)
+        self.volume_entry = Scale(self.mainframe, variable=self.current_volume, from_=0, to=100, orient=HORIZONTAL, command=self.update_volume, fg=textcolor, bg=backcolor, troughcolor=backcolor, highlightthickness=0, font=self.normal_font)
 
         # Search Frame
         self.search_entry = Entry(self.mainframe, fg=textcolor, bg=backcolor, insertbackground='white', font=self.input_font)
         self.current_object_name = Label(self.mainframe, anchor='w', fg=textcolor, bg=backcolor)
         self.current_object_info = Label(self.mainframe, anchor='w', fg=textcolor, bg=backcolor)
         self.current_object_image = Label(self.mainframe, fg=textcolor, bg=backcolor)
+
+        self.current_right_one_button = None
+        self.current_false_one_button = None
 
         # Track Information
         self.track_label = Label(self.mainframe, text='Track:', fg=textcolor, bg=backcolor, font=self.bold_font)
@@ -221,7 +214,7 @@ class SpotifyAppWindow:
         self.volume_entry.place(relwidth=label_width+0.0125+entry_width, relheight=label_height, relx=0.53125, rely=player_row2_height)
 
     def update_progress_bar(self):
-        current_progress = self.progress_ms.get()
+        current_progress = self.progress_sec.get()
         progress_bar_total = self.player.current_track.duration
 
         current_bar_progress = current_progress / progress_bar_total * 100
@@ -229,7 +222,7 @@ class SpotifyAppWindow:
         if current_bar_progress > 100:
             current_bar_progress = 0
 
-        self.progress_ms.set(self.player.progress)
+        self.progress_sec.set(self.player.progress)
         self.progress_bar["value"] = current_bar_progress
 
         # self.mainframe.after(ms=1000, func=self.update_progress_bar(progress_bar_total=progress_bar_total, progress_bar_current=progress_bar_current+1))
@@ -286,10 +279,12 @@ class SpotifyAppWindow:
             )
             self.current_right_one_button.place(relwidth=0.05, relheight=0.1, relx=0.75, rely=0.175)
             self.current_false_one_button.place(relwidth=0.05, relheight=0.1, relx=0.75, rely=0.325)
+            self.search_buttons_needed.set(True)
 
         def destroy_search_buttons():
-            self.current_right_one_button.destroy()
-            self.current_false_one_button.destroy()
+            if self.search_buttons_needed.get():
+                self.current_right_one_button.destroy()
+                self.current_false_one_button.destroy()
 
         def choose_if_right():
             create_search_button()
@@ -413,13 +408,13 @@ class SpotifyAppWindow:
             self.instance_option_4.config(text='hate', command=lambda: self.add_track_to_blacklist(new_instance))
             self.instance_option_5.config(text='', command=lambda: self.not_implemented())
 
-        if type(new_instance) == Album:
+        if isinstance(new_instance, Album):
             searched_album_options()
-        elif type(new_instance) == Artist:
+        elif isinstance(new_instance, Artist):
             searched_artist_options()
-        elif type(new_instance) == Playlist:
+        elif isinstance(new_instance, Playlist):
             searched_playlist_options()
-        elif type(new_instance) == Track:
+        elif isinstance(new_instance, Track):
             searched_track_options()
 
         self.instance_options_buttons(new_instance)

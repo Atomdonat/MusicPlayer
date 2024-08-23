@@ -1,0 +1,26 @@
+{
+    "display_name": "Atomdonat",
+    "external_urls": {
+        "spotify": "https://open.spotify.com/user/simonluca1"
+    },
+    "href": "https://api.spotify.com/v1/users/simonluca1",
+    "id": "simonluca1",
+    "images": [
+        {
+            "url": "https://i.scdn.co/image/ab67757000003b8225236d3e83adbe1e3d519308",
+            "height": 64,
+            "width": 64
+        },
+        {
+            "url": "https://i.scdn.co/image/ab6775700000ee8525236d3e83adbe1e3d519308",
+            "height": 300,
+            "width": 300
+        }
+    ],
+    "type": "user",
+    "uri": "spotify:user:simonluca1",
+    "followers": {
+        "href": null,
+        "total": 1
+    }
+}

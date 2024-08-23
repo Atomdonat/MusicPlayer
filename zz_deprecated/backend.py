@@ -50,6 +50,9 @@ SCOPES = [
     'playlist-modify-private'
 ]
 
+no_image_file_path = '../Icons/Spotipy_if_no_image.jpeg'
+json_path = '../Databases/JSON_Files/spotify_devices.json'
+frontend_window_size = [800,400]
 
 # Create Spotify authentication token
 def spotify_client() -> spotipy.Spotify:
@@ -63,7 +66,7 @@ def spotify_client() -> spotipy.Spotify:
                 client_secret=CLIENT_SECRET,
                 redirect_uri=REDIRECT_URI,
                 scope=' '.join(SCOPES),
-                cache_path=".spotify_cache",
+                cache_path="../.spotify_cache",
                 show_dialog=True  # Set to True to force the user to approve the app every time
             ))
 
@@ -75,6 +78,7 @@ def spotify_client() -> spotipy.Spotify:
 
         finally:
             return sp
+
 
 sp = spotify_client()
 market = 'DE'
@@ -200,7 +204,6 @@ def check_spotify_id(
     #         raise ValueError(f'\n {spotify_id} is an invalid {id_type} id')
 
 
-
 class JsonDatabase:
     def __init__(self, database_file: str) -> None:
         self.database = sqlite3.connect(database_file)
@@ -298,7 +301,7 @@ class SpotifyObject:
 
         check_spotify_id(spotify_id=spotify_id, id_type=spotify_object_type)
 
-        self.json_database = JsonDatabase('Databases/TrackTank.db')
+        self.json_database = JsonDatabase('../Databases/TrackTank.db')
 
         cursor = self.json_database.database.execute(f"""SELECT * from '{spotify_object_type}' WHERE ID = ?""",
                                                      (spotify_id,))
@@ -333,7 +336,7 @@ class SpotifyObject:
         elif self.object_type == 'track' and 'images' in self.instance['album'] and self.instance['album']['images']:
             self.image = image_from_url(self.instance['album']['images'][0]['url'])
         else:
-            self.image = image_from_file('nonPythonRelevant/Spotipy_if_no_image.jpeg')
+            self.image = image_from_file(no_image_file_path)
 
     @property
     def is_blacklisted(self) -> bool:
@@ -656,17 +659,17 @@ class MyAppDatabase:
             case 'album':
                 table_name = 'Spotify Albums'
                 sql_command = f"""INSERT INTO '{table_name}'(
-                        'ID',
-                        'Name',
-                        'URL',
-                        'Artist ID',
-                        'Artist Name',
-                        'Track Count',
-                        'Track ID',
-                        'Track Name',
-                        'Genres',
-                        'Total Duration',
-                        'Image'
+                            'ID',
+                            'Name',
+                            'URL',
+                            'Artist ID',
+                            'Artist Name',
+                            'Track Count',
+                            'Track ID',
+                            'Track Name',
+                            'Genres',
+                            'Total Duration',
+                            'Image'
                     ) VALUES(?,?,?,?,?,?,?,?,?,?,?) """
 
                 sql_values = (
@@ -825,8 +828,6 @@ class MyAppDatabase:
 
 class Devices:
     def __init__(self) -> None:
-        json_path = 'Databases/JSON_Files/spotify_devices.json'
-
         self.instance = sp.devices()
 
         json_to_file(json_path, self.instance, True)
@@ -888,27 +889,44 @@ class Player:
         self.initialize_player()
 
     def get_instance(self):
-        self.instance = sp.current_playback(market=market)
-        return self.instance
+        try:
+            self.instance = sp.current_playback(market=market)
+            return self.instance
+
+        except:
+            print("Spotify is currently not running")
+            return None
 
     # JSON Files:
     def initialize_player(self):
         self.instance = self.get_instance()
+        if self.instance is None:
+            self.instance: dict = None
+            self.current_collection: Playlist | Album = None
+            self.current_album: Album = None
+            self.current_artist: Artist = None
+            self.current_track: Track = None
+            self.device: Device = None
+            self.is_playing: bool = None
+            self.progress: int = None
+            self.repeat_state: str = None
+            self.shuffle_state: bool = None
 
-        if self.instance['context']['type'] == 'album':
-            self.current_collection = Album(uri_to_id(self.instance['context']['uri']))
-        elif self.instance['context']['type'] == 'playlist':
-            self.current_collection = Playlist(uri_to_id(self.instance['context']['uri']))
+        else:
+            if self.instance['context']['type'] == 'album':
+                self.current_collection = Album(uri_to_id(self.instance['context']['uri']))
+            elif self.instance['context']['type'] == 'playlist':
+                self.current_collection = Playlist(uri_to_id(self.instance['context']['uri']))
 
-        self.current_album = Album(self.instance['item']['album']['id'])
-        self.current_artist = Artist(self.instance['item']['artists'][0]['id'])
-        self.current_track = Track(self.instance['item']['id'])
+            self.current_album = Album(self.instance['item']['album']['id'])
+            self.current_artist = Artist(self.instance['item']['artists'][0]['id'])
+            self.current_track = Track(self.instance['item']['id'])
 
-        self.device = Device(self.instance['device']['name'], Devices())
-        self.is_playing = bool(self.instance['is_playing'])
-        self.progress = int(self.instance['progress_ms'])
-        self.repeat_state = self.instance['repeat_state']  # no = 'off', on = 'context', once = 'track',
-        self.shuffle_state = bool(self.instance['shuffle_state'])
+            self.device = Device(self.instance['device']['name'], Devices())
+            self.is_playing = bool(self.instance['is_playing'])
+            self.progress = int(self.instance['progress_ms'])
+            self.repeat_state = self.instance['repeat_state']  # no = 'off', on = 'context', once = 'track',
+            self.shuffle_state = bool(self.instance['shuffle_state'])
 
         self.skip_blacklisted_items()
 
@@ -920,8 +938,8 @@ class Player:
             # if it is not supposed to work, prohibit it xD
             sp.start_playback(self.device.id)
 
-    def set_progress(self, time_in_ms: int):
-        sp.seek_track(time_in_ms, self.device.id)
+    def set_progress(self, time_in_s: int):
+        sp.seek_track(time_in_s*1000, self.device.id)
 
     def change_repeat_state(self, new_state: Literal['context', 'track', 'off']):
         if new_state == "context":
@@ -1124,9 +1142,6 @@ class SpotifyApp:
 # test_player = Player(standard_player=init_player)
 
 
-
-
-
 def image_from_url(image_url: str) -> Image:
     # Example: Load an image from an URL
     response = requests.get(image_url)
@@ -1135,6 +1150,15 @@ def image_from_url(image_url: str) -> Image:
 
 def image_from_file(file_path: str) -> Image:
     return Image.open(file_path)
+
+
+def tk_image_from_file(file_path: str) -> Image:
+    new_image_width = int(0.05*frontend_window_size[0])
+    new_image_height = int(0.07*frontend_window_size[1])
+    image = Image.open(file_path)
+    image = image.resize((new_image_width, new_image_height), Image.Resampling.LANCZOS)
+    image = ImageTk.PhotoImage(image)
+    return image
 
 
 def show_image(image: Image) -> None:

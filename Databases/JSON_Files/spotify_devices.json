@@ -1,0 +1,14 @@
+{
+    "devices": [
+        {
+            "id": "1f3fc72b95646d1f2a025480675feb1293eefce9",
+            "is_active": true,
+            "is_private_session": false,
+            "is_restricted": false,
+            "name": "arch",
+            "supports_volume": true,
+            "type": "Computer",
+            "volume_percent": 100
+        }
+    ]
+}

@@ -1,6 +1,16 @@
+# Directories
 *cache*
-.code-workspace
 __pycache__/
+zz_deprecated
+
+# Dot Files
 .xml
-.env
-Spotify_Playback_SDK/learning_js.js
+code_backend/.env
+
+# User Files
+random_stuff.py
+
+
+# IDE Specific
+.idea
+.code-workspace
