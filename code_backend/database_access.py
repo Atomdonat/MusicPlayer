@@ -1,5 +1,4 @@
-from shared_config import *
-from secondary_methods import string_to_list
+from secondary_methods import *
 
 
 class MyAppDatabase:
@@ -97,7 +96,9 @@ class MyAppDatabase:
                 tempo_lower_limit REAL,
                 tempo_upper_limit REAL,
                 valence_lower_limit REAL,
-                valence_upper_limit REAL
+                valence_upper_limit REAL,
+                popularity INTEGER,
+                blacklisted INTEGER
             );
             
             CREATE TABLE IF NOT EXISTS playlists(
@@ -343,8 +344,10 @@ class MyAppDatabase:
             tempo_lower_limit,
             tempo_upper_limit,
             valence_lower_limit,
-            valence_upper_limit
-        ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) """
+            valence_upper_limit,
+            popularity,
+            blacklisted
+        ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) """
 
         sql_values = (
             genre.genre_name,
@@ -370,7 +373,9 @@ class MyAppDatabase:
             genre.tempo_lower_limit,
             genre.tempo_upper_limit,
             genre.valence_lower_limit,
-            genre.valence_upper_limit
+            genre.valence_upper_limit,
+            genre.popularity,
+            genre.blacklisted
         )
 
         self.execute_query(sql_command, sql_values)
@@ -437,28 +442,15 @@ class MyAppDatabase:
             self.database.commit()
             self.initialize_tables()
 
-    def update_value(self, table_name: Literal['albums', 'artists', 'tracks', 'playlists', 'users'], item_id: SpotifyID, attribute, new_value):
+    def update_value(self, table_name: Literal['albums', 'artists', 'tracks', 'playlists', 'users', 'genres', 'track_analysis'], item_id: str, table_column: str, new_value):
         if table_name == 'track_analysis':
             primary_key = 'track_id'
         else:
             primary_key = table_name[:-1] + "_id"
-        sql_command = f"""UPDATE {table_name} SET {attribute} = %s WHERE {primary_key} = %s;"""
+        sql_command = f"""UPDATE {table_name} SET {table_column} = %s WHERE {primary_key} = %s;"""
         self.execute_query(sql_command, (new_value, item_id,))
 
 
 if __name__ == '__main__':
     database = MyAppDatabase('../Databases/main_database.db')
-    from music_classes import Track
-    current_track_id = SpotifyID("73QoCfWJJWbRYmm5nCH5Y2")
-    database.add_track_to_tracks(Track(current_track_id))
-
-    # playlist_id =
-    # database.cursor.execute('SELECT playlist_ids from tracks WHERE track_id = ?', (current_track_id,))
-    # used_in_playlists = database.cursor.fetchone()
-    # if playlist_id not in used_in_playlists:
-    #     database.update_value(
-    #         table_name='tracks',
-    #         item_id=current_track_id,
-    #         attribute='playlist_ids',
-    #         new_value=self.playlist_id
-    #     )
+    database.reset_database()

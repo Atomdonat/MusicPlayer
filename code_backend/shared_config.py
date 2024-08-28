@@ -38,30 +38,6 @@ skipping_steps: dict = {
 }
 
 
-@dataclass
-class SpotifyID:
-    spotify_id: base62
-
-
-@dataclass
-class SpotifyURI:
-    spotify_uri: str
-
-    def __post_init__(self):
-        valid_uri_starts = [
-            'spotify:album:',
-            'spotify:artist:',
-            'spotify:playlist:',
-            'spotify:track:',
-            'spotify:user:',
-        ]
-        if not self.spotify_uri.startswith(tuple(valid_uri_starts)):
-            raise ValueError('Spotify URI is invalid')
-
-    def split(self, sep: str) -> List[str]:
-        return self.spotify_uri.split(sep)
-
-
 # noinspection DuplicatedCode
 @dataclass
 class Album:
@@ -69,11 +45,11 @@ class Album:
     album_name: str
     album_url: str
     album_image: str
-    genre_names: list
+    genre_names: list[str]
     total_duration: int
     track_count: int
-    artist_ids: list
-    track_ids: list
+    artist_ids: list[str]
+    track_ids: list[str]
     popularity: int
     blacklisted: int
 
@@ -85,11 +61,11 @@ class Artist:
     artist_name: str
     artist_url: str
     artist_image: str
-    genre_names: list
+    genre_names: list[str]
     follower: int
-    album_ids: list
-    playlist_ids: list
-    top_tracks_ids: list
+    album_ids: list[str]
+    playlist_ids: list[str]
+    top_tracks_ids: list[str]
     popularity: int
     blacklisted: int
 
@@ -121,6 +97,8 @@ class Genre:
     tempo_upper_limit: float
     valence_lower_limit: float
     valence_upper_limit: float
+    popularity: int
+    blacklisted: int
 
 
 # noinspection DuplicatedCode
@@ -130,11 +108,11 @@ class Playlist:
     playlist_name: str
     playlist_url: str
     playlist_image: str
-    genre_names: list
+    genre_names: list[str]
     total_duration: int
     track_count: int
     owner_id: str
-    track_ids: list
+    track_ids: list[str]
     popularity: int
     blacklisted: int
 
@@ -146,11 +124,11 @@ class Track:
     track_name: str
     track_url: str
     track_image: str
-    genre_names: list
+    genre_names: list[str]
     track_duration: int
-    artist_ids: list
-    album_ids: list
-    playlist_ids: list
+    artist_ids: list[str]
+    album_ids: list[str]
+    playlist_ids: list[str]
     popularity: int
     blacklisted: int
 
@@ -182,10 +160,9 @@ class User:
     user_url: str
     user_image: str
     follower: int
-    playlist_ids: list
-    top_tracks_ids: list
-    top_artists_ids: list
-    top_genre_names: list
+    playlist_ids: list[str]
+    top_tracks_ids: list[str]
+    top_artists_ids: list[str]
+    top_genre_names: list[str]
     popularity: int
     blacklisted: int
-    

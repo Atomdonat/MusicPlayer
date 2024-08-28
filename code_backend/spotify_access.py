@@ -1,3 +1,5 @@
+import json
+
 import spotipy
 from spotipy import SpotifyException
 from spotipy.oauth2 import SpotifyOAuth
@@ -58,5 +60,11 @@ def spotify_client() -> spotipy.Spotify:
 
 if __name__ == '__main__':
     sp1 = spotify_client()
+    _id = "4Gfnly5CzMJQqkUFfoHaP3"
+    _type = {0: 'albums', 1: 'artists', 2: 'tracks', 3: 'playlists', 4: 'users'}
+
     if sp1 is not None:
-        sp1.add_to_queue(uri="spotify:track:7AOJcugo17Kr1WUheSI6Oq")
+        data = 0  # sp.
+        extra = "_"
+        with open(f"../Databases/JSON_Files/spotify_{type[0]}{extra}_{_id}.json", 'w') as f:
+            json.dump(data, f)

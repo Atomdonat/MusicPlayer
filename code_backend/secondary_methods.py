@@ -13,7 +13,7 @@ def millis_to_minutes(millis: int, to_hours: bool = False) -> str:
         return str(timedelta(seconds=millis // 1000)) + "." + str(millis % 1000)  # .strip(":")[2:]
 
 
-def url_to_uri(spotify_url: str, to_id: bool = False) -> SpotifyURI | SpotifyID:
+def url_to_uri(spotify_url: str, to_id: bool = False) -> str:
     class_type = spotify_url.split("/")[-2]
 
     if class_type[-1] == "s":
@@ -21,17 +21,17 @@ def url_to_uri(spotify_url: str, to_id: bool = False) -> SpotifyURI | SpotifyID:
 
     id_ = (spotify_url.split("/")[-1]).split("?")[0]
     if to_id:
-        return SpotifyID(id_)
+        return id_
     else:
-        return SpotifyURI("spotify:" + class_type + ":" + id_)
+        return "spotify:" + class_type + ":" + id_
 
 
-def id_to_uri(class_type: str, spotify_id: SpotifyID) -> SpotifyURI:
-    return SpotifyURI("spotify:" + class_type + ":" + str(spotify_id))
+def id_to_uri(class_type: str, spotify_id: str) -> str:
+    return "spotify:" + class_type + ":" + spotify_id
 
 
-def uri_to_id(spotify_uri: SpotifyURI) -> SpotifyID:
-    return SpotifyID(spotify_uri.split(":")[-1])
+def uri_to_id(spotify_uri: str) -> str:
+    return spotify_uri.split(":")[-1]
 
 
 def json_to_file(json_filepath, json_data, overwrite: bool = False):
@@ -103,10 +103,10 @@ def try_spotify_connection():
         return try_spotify_connection()
 
 
-def valid_spotify_uri(spotify_connection: spotipy.Spotify, spotify_uri: SpotifyURI) -> bool:
+def valid_spotify_uri(spotify_connection: spotipy.Spotify, spotify_uri: str) -> bool:
     uri_parts = spotify_uri.split(':')
     uri_type, spotify_id = uri_parts[1:]
-    print(uri_type, ';', spotify_id)
+
     try:
         match uri_type:
             case 'album':
@@ -126,11 +126,11 @@ def valid_spotify_uri(spotify_connection: spotipy.Spotify, spotify_uri: SpotifyU
         return False
 
 
-def list_from_id_string(id_string: str) -> list[SpotifyID]:
+def list_from_id_string(id_string: str) -> list[str]:
     list_elements = id_string[1:-1].replace("'", "").split(', ')
     id_list = []
     for element in list_elements:
-        id_list.append(SpotifyID(element).spotify_id)
+        id_list.append(element)
 
     return id_list
 

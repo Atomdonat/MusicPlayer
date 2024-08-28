@@ -1,7 +1,7 @@
 # General Information
 
 ## Future of the project
-switching the main functionality from a GUI based Spotify Player to a (maybe Player independent) Music Analyzer and User specific Playlist generation using Machine Learning
+switching the main functionality from a GUI based Spotify Player to a (maybe Player independent) Music Analyzer and User/Mood tailored Playlist generation using Machine Learning
 
 ## Installation
 
@@ -31,7 +31,7 @@ or update only half of the attributes
 * though Playlist have markets don't use them
 * catching exceptions can be a helpful but uncommon benefit
 * superclasses can be profitable, but hurt the code readability 
-
+* added separate changes.md file to better track changes
 ## Known Error messages
 
 * requests.exceptions.ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')) -> Just retry
