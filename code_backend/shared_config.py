@@ -166,3 +166,15 @@ class User:
     top_genre_names: list[str]
     popularity: int
     blacklisted: int
+
+
+@dataclass
+class Device:
+    device_id: str
+    device_name: str
+    device_type:str
+    is_active: int
+    is_private_session: int
+    is_restricted: int
+    supports_volume: int
+    volume_percent:int

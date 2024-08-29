@@ -42,6 +42,17 @@ class MyAppDatabase:
                 self.cursor.lastrowid
                 self.database.commit()
 
+    def add_dummies(self):
+        sql_script = """
+        INSERT INTO albums (album_id, album_name, album_url, album_image, genre_names, total_duration, track_count, artist_ids, track_ids, popularity, blacklisted) VALUES ('0000000000000000000000','dummy','','','[]', 0, 0, '[]', '[]', 0, 0);
+        INSERT INTO artists (artist_id, artist_name, artist_url, artist_image, genre_names, follower, album_ids, playlist_ids, top_tracks_ids, popularity, blacklisted) VALUES ('0000000000000000000000','dummy','','','[]', 0, '[]', '[]', '[]', 0, 0);
+        INSERT INTO devices (device_id, device_name, device_type, is_active, is_private_session, is_restricted, supports_volume, volume_percent) VALUES ('0000000000000000000000','dummy','',0,0,0,0,0);
+        INSERT INTO playlists (playlist_id, playlist_name, playlist_url, playlist_image, genre_names, total_duration, track_count, owner_id, track_ids, popularity, blacklisted) VALUES ('0000000000000000000000','dummy','','','[]', 0, 0, '[]', '[]', 0, 0);
+        INSERT INTO tracks (track_id, track_name, track_url, track_image, genre_names, track_duration, artist_ids, album_ids, playlist_ids, popularity, blacklisted) VALUES ('0000000000000000000000','dummy','','','[]', 0, '[]', '[]', '[]', 0, 0);
+        INSERT INTO users (user_id, user_name, user_url, user_image, follower, playlist_ids, top_tracks_ids, top_artists_ids, top_genre_names, popularity, blacklisted) VALUES ('0000000000000000000000','dummy','','',0, '[]', '[]', '[]', '[]', 0, 0);
+        """
+        self.execute_script(sql_script)
+
     def initialize_tables(self) -> None:
         sqlite_command = """
             CREATE TABLE IF NOT EXISTS albums (
@@ -70,6 +81,17 @@ class MyAppDatabase:
                 top_tracks_ids TEXT,
                 popularity INTEGER,
                 blacklisted INTEGER
+            );
+            
+            CREATE TABLE IF NOT EXISTS devices (
+                device_id TEXT PRIMARY KEY,
+                device_name TEXT,
+                device_type TEXT,
+                is_active INTEGER,
+                is_private_session INTEGER,
+                is_restricted INTEGER,
+                supports_volume INTEGER,
+                volume_percent INTEGER
             );
             
             CREATE TABLE IF NOT EXISTS  genres (
@@ -163,9 +185,10 @@ class MyAppDatabase:
             """
 
         self.execute_script(sqlite_command)
+        self.add_dummies()
 
     def add_album_to_albums(self, album: Album):
-        sql_command = f"""INSERT INTO albums (
+        sql_command = """INSERT INTO albums (
             album_id,
             album_name,
             album_url,
@@ -413,6 +436,31 @@ class MyAppDatabase:
             track_analysis.track_speechiness,
             track_analysis.track_tempo,
             track_analysis.track_valence,
+        )
+
+        self.execute_query(sql_command, sql_values)
+
+    def add_device_to_devices(self, device:Device):
+        sql_command = f"""INSERT INTO devices (
+                device_id,
+                device_name,
+                device_type,
+                is_active,
+                is_private_session,
+                is_restricted,
+                supports_volume,
+                volume_percent  
+        ) VALUES(?,?,?,?,?,?,?,?)"""
+
+        sql_values = (
+            device.device_id,
+            device.device_name,
+            device.device_type,
+            device.is_active,
+            device.is_private_session,
+            device.is_restricted,
+            device.supports_volume,
+            device.volume_percent,
         )
 
         self.execute_query(sql_command, sql_values)

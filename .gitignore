@@ -8,10 +8,12 @@ zz_deprecated
 code_backend/.env
 
 # User Files
-random_stuff.py
-
+/random_stuff.py
+/Structure.ods
+/Databases/main_database.db
 
 # IDE Specific
 .idea
 .code-workspace
 .obsidian
+

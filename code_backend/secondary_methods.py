@@ -107,6 +107,9 @@ def valid_spotify_uri(spotify_connection: spotipy.Spotify, spotify_uri: str) -> 
     uri_parts = spotify_uri.split(':')
     uri_type, spotify_id = uri_parts[1:]
 
+    if spotify_id == "0000000000000000000000":
+        return True
+
     try:
         match uri_type:
             case 'album':
