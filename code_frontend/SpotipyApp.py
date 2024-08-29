@@ -1,24 +1,11 @@
 # import libraries
-from tkinter import *
-from tkinter import ttk
-from tkinter.font import Font
-from PIL.ImageTk import PhotoImage
-
-# import local files
-from zz_deprecated import backend
-from zz_deprecated.backend import Artist, Album, Playlist, Track
-
-import os
-import re
-from typing import *
-
-from PIL import ImageTk
-import requests
-from tkinter import PhotoImage
+from code_backend.music_classes import Album, Artist, Device, Genre, Player, Playlist, Track, TrackAnalysis, User
+from code_backend.secondary_methods import *
+from shared_config import *
 
 button_image_size = 20
 window_size = '800x400'
-app_icon = backend.image_from_file(file_path='Icons/Spotipy_Logo.png')
+app_icon = image_from_file(file_path='Icons/Spotipy_Logo.png')
 
 # Player Icons:
 shuffle_off_path = 'Icons/shuffle_off.png'
@@ -41,11 +28,11 @@ def get_tk_image_icons(image_path: str) -> ImageTk:
     if not os.path.exists(image_path):
         raise FileNotFoundError
 
-    image = backend.tk_image_from_file(file_path=image_path)
+    image = tk_image_from_file(file_path=image_path)
     if image is None:
         raise Exception("Image could not be loaded")
 
-    return backend.get_tk_image(
+    return get_tk_image(
         image=image,
         image_size=[button_image_size, button_image_size]
     )
@@ -62,7 +49,7 @@ class SpotifyAppWindow:
         master.geometry(window_size)
         master.resizable(False, False)
 
-        self.sp = backend.try_spotify_connection()
+        self.sp = try_spotify_connection()
         self.player = spotify_App.player
         self.repeat_state = self.player.repeat_state
 
@@ -99,16 +86,16 @@ class SpotifyAppWindow:
         global image_repeat_off
         global image_add_queue
 
-        image_shuffle_off = backend.tk_image_from_file(file_path=shuffle_off_path)
-        image_shuffle_on = backend.tk_image_from_file(file_path=shuffle_on_path)
-        image_prev_track = backend.tk_image_from_file(file_path=prev_track_path)
-        image_play = backend.tk_image_from_file(file_path=play_path)
-        image_pause = backend.tk_image_from_file(file_path=pause_path)
-        image_next_track = backend.tk_image_from_file(file_path=next_track_path)
-        image_repeat_context = backend.tk_image_from_file(file_path=repeat_context_path)
-        image_repeat_track = backend.tk_image_from_file(file_path=repeat_track_path)
-        image_repeat_off = backend.tk_image_from_file(file_path=repeat_off_path)
-        image_add_queue = backend.tk_image_from_file(file_path=add_queue)
+        image_shuffle_off = tk_image_from_file(file_path=shuffle_off_path)
+        image_shuffle_on = tk_image_from_file(file_path=shuffle_on_path)
+        image_prev_track = tk_image_from_file(file_path=prev_track_path)
+        image_play = tk_image_from_file(file_path=play_path)
+        image_pause = tk_image_from_file(file_path=pause_path)
+        image_next_track = tk_image_from_file(file_path=next_track_path)
+        image_repeat_context = tk_image_from_file(file_path=repeat_context_path)
+        image_repeat_track = tk_image_from_file(file_path=repeat_track_path)
+        image_repeat_off = tk_image_from_file(file_path=repeat_off_path)
+        image_add_queue = tk_image_from_file(file_path=add_queue)
 
         # Player Interactions
         self.player_label = Label(self.mainframe, text='Player:', fg=textcolor, bg=backcolor, font=self.bold_font)
@@ -250,8 +237,8 @@ class SpotifyAppWindow:
 
         # Update the text of the labels
         self.track_name.config(text=self.player.current_track.name, font=self.normal_font)
-        self.artist_name.config(text=backend.value_from_dict(self.player.current_track.artist), font=self.normal_font)
-        self.album_name.config(text=backend.value_from_dict(self.player.current_track.album), font=self.normal_font)
+        self.artist_name.config(text=value_from_dict(self.player.current_track.artist), font=self.normal_font)
+        self.album_name.config(text=value_from_dict(self.player.current_track.album), font=self.normal_font)
 
         # Update the track image
         self.get_track_image()
@@ -337,9 +324,9 @@ class SpotifyAppWindow:
             query_name = re.sub(query_type, '', query_name)
 
         if query_type == '':
-            results = self.sp.search(q=query_name, market=backend.market, limit=50)
+            results = self.sp.search(q=query_name, market=market, limit=50)
         else:
-            results = self.sp.search(q=query_name, type=query_type, market=backend.market, limit=50)
+            results = self.sp.search(q=query_name, type=query_type, market=market, limit=50)
 
         for current_object in results[next(iter(results.keys()))]['items']:
 
@@ -347,7 +334,7 @@ class SpotifyAppWindow:
             self.current_object_name.config(text=current_instance.name, font=self.normal_font)
             match current_instance.instance['type']:
                 case 'album':
-                    self.current_object_info.config(text=backend.value_from_dict(current_instance.artist),
+                    self.current_object_info.config(text=value_from_dict(current_instance.artist),
                                                     font=self.normal_font)
                 case 'artist':
                     self.current_object_info.config(text='', font=self.normal_font)
@@ -355,11 +342,11 @@ class SpotifyAppWindow:
                     self.current_object_info.config(text=current_instance.owner.name, font=self.normal_font)
                 case 'track':
                     self.current_object_info.config(
-                        text=backend.value_from_dict(current_instance.album) + ', ' + backend.value_from_dict(
+                        text=value_from_dict(current_instance.album) + ', ' + value_from_dict(
                             current_instance.artist),
                         font=self.normal_font)
             global current_image
-            current_image = backend.get_tk_image(current_instance.image, [100, 100])
+            current_image = get_tk_image(current_instance.image, [100, 100])
             self.current_object_image.config(image=current_image)
 
             self.organize_elements()
@@ -515,17 +502,11 @@ class SpotifyAppWindow:
 
     def get_track_image(self):
         global track_image
-        track_image = backend.get_tk_image(self.player.current_track.image, [200, 200])
+        track_image = get_tk_image(self.player.current_track.image, [200, 200])
         self.image_label.config(image=track_image)
 
 
 if __name__ == '__main__':
-    textcolor = '#fff'
-    backcolor = '#222'
-
-    spotify_App = backend.SpotifyApp()
-
-
     def start_window():
         try:
             SpotifyAppWindow()
@@ -533,6 +514,4 @@ if __name__ == '__main__':
             print("Spotify went mimimi")
             return start_window
 
-
-    start_window()
 

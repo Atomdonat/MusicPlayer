@@ -64,7 +64,7 @@ if __name__ == '__main__':
     _type = {0: 'albums', 1: 'artists', 2: 'tracks', 3: 'playlists', 4: 'users', 5: ''}
 
     if sp1 is not None:
-        data = sp1.current_user_playing_track()  # sp1.some_method()
-        extra = "current_playback"  # "_some_detail"
+        data = sp1.available_markets()  # sp1.some_method()
+        extra = "available_markets"  # "_some_detail"
         with open(f"../Databases/JSON_Files/spotify_{_type[5]}{extra}_{_id}.json", 'w') as f:
             json.dump(data, f)

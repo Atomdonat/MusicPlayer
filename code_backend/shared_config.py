@@ -25,6 +25,7 @@ from dotenv import load_dotenv
 from dataclasses import dataclass
 
 
+
 frontend_window_size: list = [800, 400]
 json_path: str = 'Databases/JSON_Files/spotify_devices.json'
 no_image_path: str = 'Icons/Spotify_if_no_image.png'

@@ -40,11 +40,11 @@ or update only half of the attributes
 
 * [ ] do ToDo's in Code
 * [ ] test Code
-* [ ] comment Code
+* [ ] comment Code and add Docstrings
 
 ### Backend related
 
-* [ ] fix valid_spotify_uri()
+* [x] fix valid_spotify_uri()
 * [ ] optimize track search distribution in 'random_playlist_by_genre()' -> implement ML
 * [ ] connect app with Home Assistant
 * [ ] use Spotify's Audio Features & Analytics (own genres) -> implement ML
@@ -80,3 +80,4 @@ or update only half of the attributes
 ### Other
 
 * [Markdown](https://www.markdownguide.org/basic-syntax/)
+* [Docstring Conventions](https://peps.python.org/pep-0257/)

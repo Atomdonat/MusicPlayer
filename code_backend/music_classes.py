@@ -1,7 +1,4 @@
-import sys
-
 from spotipy import Spotify
-
 from secondary_methods import *
 from spotify_access import spotify_client
 from database_access import MyAppDatabase

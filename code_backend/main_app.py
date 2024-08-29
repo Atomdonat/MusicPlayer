@@ -1,10 +1,12 @@
-from shared_config import *
-from secondary_methods import *
+from music_classes import *
 
 
 class SpotifyApp:
     def __init__(self) -> None:
-        # check if market exists
+        available_markets = sp.available_markets()
+        if market not in available_markets["markets"]:
+            raise Exception(f"Market not available\nAvailable markets: {available_markets["markets"]}")
+
         self.market = market
         self.client = spotify_client()
         self.user = self.client.current_user()
@@ -14,15 +16,15 @@ class SpotifyApp:
         return self.client.queue()
 
     def add_to_queue(self, track: Track):
-        return self.client.add_to_queue(track.id)
+        return self.client.add_to_queue(track.track_id)
 
     def find_object(self,
                     object_name: str,
                     object_type: Literal['album', 'artist', 'playlist', 'track', 'user'] | None
                     ) -> Album | Artist | Playlist | Track:
 
+        # relevant for GUI
         if object_type is None:
-            search_type = ''
             if re.search('album', object_name, re.IGNORECASE) is not None:
                 search_type = 'album'
             elif re.search('artist', object_name, re.IGNORECASE) is not None:
@@ -33,6 +35,8 @@ class SpotifyApp:
                 search_type = 'track'
             elif re.search('user', object_name, re.IGNORECASE) is not None:
                 search_type = 'user'
+            else:
+                search_type = ''
 
             object_name = re.sub(search_type, '', object_name)
 
@@ -95,27 +99,30 @@ class SpotifyApp:
             return None
 
     def random_playlist_shuffle(self, playlist: Playlist, shuffle_mode: Literal['random', 'all']):
+        """
+        :param: playlist: Playlist object
+        :param: shuffle_mode: shuffle all tracks (random: duplicates possible; all: no duplicates)
+        """
+
         iteration = True
-        playlist_track_id_list = keys_from_dict(playlist.tracks)
 
         def random_shuffle():
             while iteration:
-                tmp_input = input("\nContinue (Y/n):")
-                if tmp_input != 'n':
+                if input("\nContinue (Y/n):") != 'n':
                     random_position = random.randint(0, playlist.track_count-1)
-                    current_track_id = playlist_track_id_list[random_position]
+                    current_track_id = playlist.track_ids[random_position]
                     self.client.add_to_queue(current_track_id)
                 else:
                     break
 
-        def all_shuffle():
-            while iteration and len(playlist_track_id_list) > 0:
-                tmp_input = input("\nContinue (Y/n):")
-                if tmp_input != 'n':
-                    random_position = random.randint(0, playlist.track_count - 1)
-                    current_track_id = playlist_track_id_list[random_position]
+        def all_shuffle() -> None:
+            shuffle_track_ids = playlist.track_ids
+            while iteration and len(shuffle_track_ids) > 0:
+                if input("\nContinue (Y/n):") != 'n':
+                    random_position = random.randint(0, len(shuffle_track_ids) - 1)
+                    current_track_id = shuffle_track_ids[random_position]
                     self.client.add_to_queue(current_track_id)
-                    playlist_track_id_list.pop(random_position)
+                    shuffle_track_ids.pop(random_position)
                 else:
                     break
 
@@ -127,22 +134,22 @@ class SpotifyApp:
 
     def add_to_playlist(self, playlist: Playlist, track: Track):
         try:
-            id_playlist = playlist.id
-            uri_track = id_to_uri('track', track.id)
+            id_playlist = playlist.playlist_id
+            uri_track = id_to_uri('track', track.track_id)
             self.client.playlist_add_items(id_playlist, [uri_track])
 
         except Exception as e:
             print(e)
 
         finally:
-            return self.client.playlist_items(playlist_id=playlist.id, limit=100, market=self.market)
+            return self.client.playlist_items(playlist_id=playlist.playlist_id, limit=100, market=self.market)
 
     def create_playlist(self, name: str, public: bool = False, collaborative: bool = False, description: str = '') -> Playlist:
         new_playlist_json = self.client.user_playlist_create(user=self.user['id'], name=name, public=public, collaborative=collaborative, description=description)
         new_playlist = Playlist(new_playlist_json['id'])
 
-        b64_image = openImage.image_to_b64(new_playlist.image)
-        self.client.playlist_upload_cover_image(playlist_id=new_playlist.id, image_b64=b64_image)
+        b64_image = image_to_b64(new_playlist.playlist_image, 'PNG')
+        self.client.playlist_upload_cover_image(playlist_id=new_playlist.playlist_id, image_b64=b64_image)
 
         return new_playlist
 
@@ -161,3 +168,8 @@ class SpotifyApp:
     @property
     def player(self) -> Player:
         return Player()
+
+
+if __name__ == '__main__':
+    app = SpotifyApp()
+    sp.mar
