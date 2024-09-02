@@ -1,3 +1,5 @@
+import sqlite3
+
 from secondary_methods import *
 
 
@@ -13,34 +15,37 @@ class MyAppDatabase:
             print('Db Not found', str(e))
         finally:
             self.cursor = self.database.cursor()
+            self.sql_query_queue = []
 
-    def execute_query(self, sql_query: str, parameters = None):
+    def execute_query(self, sql_query: str, parameters=None, fetch: bool = False):
         with self.database:
             try:
                 self.cursor.execute(sql_query, parameters)
+                if fetch:
+                    return self.cursor.fetchall()
 
             except Exception as e:
-                if e is not None:
-                    print(e)
+                print(e)
 
             finally:
-                # noinspection PyStatementEffect
-                self.cursor.lastrowid
                 self.database.commit()
 
-    def execute_script(self, sql_script: str):
+    def execute_script(self, sql_script: str, fetch: bool = False):
         with self.database:
             try:
                 self.cursor.executescript(sql_script)
+                if fetch:
+                    return self.cursor.fetchall()
 
             except Exception as e:
-                if e is not None:
-                    print(e)
+                print(e)
 
             finally:
-                # noinspection PyStatementEffect
-                self.cursor.lastrowid
                 self.database.commit()
+
+    def execute_queue_queries(self) -> None:
+        for sql_query, sql_values in self.sql_query_queue:
+            self.execute_query(sql_query, sql_values)
 
     def add_dummies(self):
         sql_script = """
@@ -51,7 +56,7 @@ class MyAppDatabase:
         INSERT INTO tracks (track_id, track_name, track_url, track_image, genre_names, track_duration, artist_ids, album_ids, playlist_ids, popularity, blacklisted) VALUES ('0000000000000000000000','dummy','','','[]', 0, '[]', '[]', '[]', 0, 0);
         INSERT INTO users (user_id, user_name, user_url, user_image, follower, playlist_ids, top_tracks_ids, top_artists_ids, top_genre_names, popularity, blacklisted) VALUES ('0000000000000000000000','dummy','','',0, '[]', '[]', '[]', '[]', 0, 0);
         """
-        self.execute_script(sql_script)
+        self.execute_script(sql_script, False)
 
     def initialize_tables(self) -> None:
         sqlite_command = """
@@ -207,11 +212,11 @@ class MyAppDatabase:
             album.album_name,
             album.album_url,
             album.album_image,
-            string_to_list(album.genre_names),
+            string_from_list(album.genre_names),
             album.total_duration,
             album.track_count,
-            string_to_list(album.artist_ids),
-            string_to_list(album.track_ids),
+            string_from_list(album.artist_ids),
+            string_from_list(album.track_ids),
             album.popularity,
             album.blacklisted
         )
@@ -238,15 +243,14 @@ class MyAppDatabase:
             artist.artist_name,
             artist.artist_url,
             artist.artist_image,
-            string_to_list(artist.genre_names),
+            string_from_list(artist.genre_names),
             artist.follower,
-            string_to_list(artist.album_ids),
-            string_to_list(artist.playlist_ids),
-            string_to_list(artist.top_tracks_ids),
+            string_from_list(artist.album_ids),
+            string_from_list(artist.playlist_ids),
+            string_from_list(artist.top_tracks_ids),
             artist.popularity,
             artist.blacklisted
         )
-
         self.execute_query(sql_command, sql_values)
 
     def add_playlist_to_playlists(self, playlist: Playlist):
@@ -269,11 +273,11 @@ class MyAppDatabase:
             playlist.playlist_name,
             playlist.playlist_url,
             playlist.playlist_image,
-            string_to_list(playlist.genre_names),
+            string_from_list(playlist.genre_names),
             playlist.total_duration,
             playlist.track_count,
             playlist.owner_id,
-            string_to_list(playlist.track_ids),
+            string_from_list(playlist.track_ids),
             playlist.popularity,
             playlist.blacklisted
         )
@@ -300,11 +304,11 @@ class MyAppDatabase:
             track.track_name,
             track.track_url,
             track.track_image,
-            string_to_list(track.genre_names),
+            string_from_list(track.genre_names),
             track.track_duration,
-            string_to_list(track.artist_ids),
-            string_to_list(track.album_ids),
-            string_to_list(track.playlist_ids),
+            string_from_list(track.artist_ids),
+            string_from_list(track.album_ids),
+            string_from_list(track.playlist_ids),
             track.popularity,
             track.blacklisted
         )
@@ -332,10 +336,10 @@ class MyAppDatabase:
             user.user_url,
             user.user_image,
             user.follower,
-            string_to_list(user.playlist_ids),
-            string_to_list(user.top_tracks_ids),
-            string_to_list(user.top_artists_ids),
-            string_to_list(user.top_genre_names),
+            string_from_list(user.playlist_ids),
+            string_from_list(user.top_tracks_ids),
+            string_from_list(user.top_artists_ids),
+            string_from_list(user.top_genre_names),
             user.popularity,
             user.blacklisted
         )
@@ -465,19 +469,19 @@ class MyAppDatabase:
 
         self.execute_query(sql_command, sql_values)
 
-    def remove_specific_entry(self, table_name: str, entry_id: str):
+    def remove_specific_item(self, table_name: str, item_id: str):
         if table_name == 'track_analysis':
             primary_key = 'track_id'
         else:
             primary_key = table_name[:-1] + "_id"
         sql_delete_command = f'DELETE FROM {table_name} WHERE {primary_key} = ?'
 
-        self.execute_query(sql_delete_command, (entry_id,))
+        self.execute_query(sql_delete_command, (item_id,))
 
     def reset_table(self, table_name: str):
         # noinspection PyStatementEffect
-        self.cursor.execute(f'DELETE FROM {table_name}')
-        self.database.commit()
+        self.execute_script(f'DELETE FROM {table_name}', False)
+        self.add_dummies()
 
     def reset_database(self):
         self.cursor.execute("""SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;""")
@@ -490,13 +494,84 @@ class MyAppDatabase:
             self.database.commit()
             self.initialize_tables()
 
-    def update_value(self, table_name: Literal['albums', 'artists', 'tracks', 'playlists', 'users', 'genres', 'track_analysis'], item_id: str, table_column: str, new_value):
+    def fetch_item(
+            self,
+            table_name: Literal['albums', 'artists', 'tracks', 'playlists', 'users', 'genres', 'track_analysis', 'devices'],
+            item_id: str,
+            table_column: str = '*'
+    ) -> list | str | int | float | None:
+
         if table_name == 'track_analysis':
             primary_key = 'track_id'
         else:
             primary_key = table_name[:-1] + "_id"
-        sql_command = f"""UPDATE {table_name} SET {table_column} = %s WHERE {primary_key} = %s;"""
-        self.execute_query(sql_command, (new_value, item_id,))
+
+        sql_command = f"""SELECT {table_column} FROM {table_name} WHERE {primary_key} = ?;"""
+        result = self.execute_query(sql_command, (item_id,), True)
+
+        return result[0] if result else None
+
+    def fetch_column(
+            self,
+            table_name: Literal['albums', 'artists', 'tracks', 'playlists', 'users', 'genres', 'track_analysis', 'devices'],
+            table_column: str
+    ) -> list | str | int | float | None:
+
+        result = self.execute_script(f'SELECT {table_column} FROM {table_name};', True)
+        return result[0] if result else None
+
+    def update_item(
+            self,
+            table_name: Literal['albums', 'artists', 'tracks', 'playlists', 'users', 'genres', 'track_analysis', 'devices'],
+            item_id: str,
+            table_column: str,
+            new_value: str | int | float | None
+    ) -> None:
+
+        if table_name == 'track_analysis':
+            primary_key = 'track_id'
+        else:
+            primary_key = table_name[:-1] + "_id"
+
+        sql_command = f"""UPDATE {table_name} SET {table_column} = ? WHERE {primary_key} = ?;"""
+        self.execute_query(sql_command, (str(new_value), item_id,), False)
+
+    def update_item_ids_list(
+            self,
+            current_id: str,
+            match_id: str,
+            table_name: Literal['albums', 'artists', 'tracks', 'playlists', 'users', 'genres', 'track_analysis'],
+            table_column: Literal['album_ids', 'artist_ids', 'track_ids', 'top_track_ids', 'playlist_ids', 'genre_names'],
+            item_id_queue: list[str]
+    ) -> None:
+
+        # Check if Item is in Database
+        fetched_item_ids = self.fetch_item(
+            table_name=table_name,
+            item_id=current_id,
+            table_column=table_column
+        )
+
+        if fetched_item_ids is None:
+            if match_id not in item_id_queue:
+                item_id_queue.append(current_id)
+
+            # add album_id to artists album_ids
+            if not fetched_item_ids:
+                fetched_item_ids = [match_id]
+            else:
+                # Convert fetched_item_ids to a list if it's not already
+                fetched_item_ids = list_from_id_string(fetched_item_ids)
+                if match_id not in fetched_item_ids:
+                    fetched_item_ids.append(match_id)
+
+            # Update the item in the database
+            self.update_item(
+                table_name=table_name,
+                item_id=current_id,
+                table_column=table_column,
+                new_value=str(fetched_item_ids)
+            )
 
 
 if __name__ == '__main__':

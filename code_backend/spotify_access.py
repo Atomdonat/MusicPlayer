@@ -60,11 +60,11 @@ def spotify_client() -> spotipy.Spotify:
 
 if __name__ == '__main__':
     sp1 = spotify_client()
-    _id = ""  # "4Gfnly5CzMJQqkUFfoHaP3"
-    _type = {0: 'albums', 1: 'artists', 2: 'tracks', 3: 'playlists', 4: 'users', 5: ''}
+    _id = "1164847650"  # "4Gfnly5CzMJQqkUFfoHaP3"
+    _type = {0: 'album', 1: 'artist', 2: 'track', 3: 'playlist', 4: 'user', 5: ''}
 
     if sp1 is not None:
-        data = sp1.available_markets()  # sp1.some_method()
-        extra = "available_markets"  # "_some_detail"
-        with open(f"../Databases/JSON_Files/spotify_{_type[5]}{extra}_{_id}.json", 'w') as f:
+        data = sp1.user(_id)  # sp1.some_method()
+        extra = ""  # "_some_detail"
+        with open(f"../Databases/JSON_Files/spotify_{_type[4]}{extra}_{_id}.json", 'w') as f:
             json.dump(data, f)

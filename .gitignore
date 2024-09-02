@@ -8,7 +8,7 @@ zz_deprecated
 code_backend/.env
 
 # User Files
-/random_stuff.py
+/code_backend/random_stuff.py
 /Structure.ods
 /Databases/main_database.db
 
@@ -17,3 +17,4 @@ code_backend/.env
 .code-workspace
 .obsidian
 
+/Databases/test.db

@@ -107,9 +107,11 @@ def valid_spotify_uri(spotify_connection: spotipy.Spotify, spotify_uri: str) -> 
     uri_parts = spotify_uri.split(':')
     uri_type, spotify_id = uri_parts[1:]
 
+    # Dummy
     if spotify_id == "0000000000000000000000":
         return True
 
+    # Normal ID
     try:
         match uri_type:
             case 'album':
@@ -138,7 +140,7 @@ def list_from_id_string(id_string: str) -> list[str]:
     return id_list
 
 
-def string_to_list(id_list: list) -> str:
+def string_from_list(id_list: list) -> str:
     return str(id_list)
 
 

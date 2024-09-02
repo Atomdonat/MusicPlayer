@@ -32,19 +32,64 @@ or update only half of the attributes
 * catching exceptions can be a helpful but uncommon benefit
 * superclasses can be profitable, but hurt the code readability 
 * added separate changes.md file to better track changes
+
+## Code/Comment Highlighting in Pycharm
+- TODO:
+  - Usage: Used to mark tasks that need to be done.
+  - Main Color (Light Green): `#A4C639`
+  - Darker Version: `#8CAF2D`
+- FIXME:
+  - Usage: Used to highlight code that needs fixing.
+  - Main Color (Light Red or Pink): `#FF6F61`
+  - Darker Version: `#E65B4F`
+- BUG:
+  - Usage: Used to mark known bugs in the code.
+  - Main Color (Light Red or Pink): `#FF6F61`
+  - Darker Version: `#E65B4F`
+- IDEA:
+  - Usage: Used to denote an idea or suggestion for the code.
+  - Main Color (Light Yellow): `#FFD700`
+  - Darker Version: `#E6BE00`
+- NOTE:
+  - Usage: Used to add notes or explanations about the code.
+  - Main Color (Light Blue): `#ADD8E6`
+  - Darker Version: `#93C2CF`
+- WARNING:
+  - Usage: Used to indicate something that might need attention or could be problematic.
+  - Main Color (Orange): `#FFA500`
+  - Darker Version: `#E69500`
+- HACK:
+  - Usage: Used to mark code that is a workaround or temporary solution.
+  - Main Color (Purple): `#9370DB`
+  - Darker Version: `#7D60BF`
+
+## Own Terminology/Abbreviations
+- **IR Loop:** infinite recursion loop
+
 ## Known Error messages
 
 * requests.exceptions.ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')) -> Just retry
 
-## ToDo List
+## ToDo List (prioritized)
 
 * [ ] do ToDo's in Code
 * [ ] test Code
-* [ ] comment Code and add Docstrings
+* [ ] comment Code (including Highlightings) add Docstrings
 
 ### Backend related
 
+* [ ] Rework Item Creation to avoid IR-Loop (caused by class properties)
+  * [ ] replace add\_xyz\_to\_xyzs() in database with @property und @xyz.setter (implement getter for items)
+  * [ ] Create Queue for SQLite queries (replacing multiple execute() to one executescript() and therefore, replace db lookup with queue lookup in Item creation)
+* [ ] every database call should be done in childproccess, parent one waits until the child is dead
+* [ ] check if any Spotify API request gets bottlenecked by the API limit of 100 items
 * [x] fix valid_spotify_uri()
+* [ ] fix Database insertion (Playlist.track_ids(): **every** new item should be inserted).
+  * tracing the Error for Playlist 5kuT9ddlqoiZjW7cgnDv2X with 1743 tracks:
+    * fetching tracks_id from db returns only 100 ids (could be Spotify's API limit)
+    * requesting Playlist 5kuT9ddlqoiZjW7cgnDv2X from API only returns 100 tracks 
+  * => Error/Problem caused by Spotify's standard API limit
+  
 * [ ] optimize track search distribution in 'random_playlist_by_genre()' -> implement ML
 * [ ] connect app with Home Assistant
 * [ ] use Spotify's Audio Features & Analytics (own genres) -> implement ML
