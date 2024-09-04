@@ -5,7 +5,6 @@ import requests
 import numpy
 import spotipy
 from spotipy import SpotifyException, SpotifyOAuth
-import base62
 
 
 import random
@@ -23,7 +22,6 @@ from datetime import timedelta
 from PIL import Image, ImageTk
 from dotenv import load_dotenv
 from dataclasses import dataclass
-
 
 
 frontend_window_size: list = [800, 400]

@@ -156,24 +156,6 @@ class MyAppDatabase:
                 blacklisted INTEGER
             );
             
-            CREATE TABLE IF NOT EXISTS track_analysis (
-                track_id TEXT PRIMARY KEY,
-                track_name TEXT,
-                track_acousticness REAL,
-                track_danceability REAL,
-                track_duration_ms INTEGER,
-                track_energy REAL,
-                track_instrumentalness REAL,
-                track_key INTEGER,
-                track_liveness REAL,
-                track_loudness REAL,
-                track_mode INTEGER,
-                track_speechiness REAL,
-                track_tempo REAL,
-                track_valence REAL,
-                FOREIGN KEY (track_id) REFERENCES tracks(track_id)
-            );
-            
             CREATE TABLE IF NOT EXISTS users (
                 user_id TEXT PRIMARY KEY,
                 user_name TEXT,
@@ -407,43 +389,6 @@ class MyAppDatabase:
 
         self.execute_query(sql_command, sql_values)
 
-    def add_track_to_track_analysis(self, track_analysis: TrackAnalysis):
-        sql_command = f"""INSERT INTO track_analysis (
-            track_id,
-            track_name,
-            track_acousticness,
-            track_danceability,
-            track_duration_ms,
-            track_energy,
-            track_instrumentalness,
-            track_key,
-            track_liveness,
-            track_loudness,
-            track_mode,
-            track_speechiness,
-            track_tempo,
-            track_valence
-        ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?) """
-
-        sql_values = (
-            track_analysis.track_id,
-            track_analysis.track_name,
-            track_analysis.track_acousticness,
-            track_analysis.track_danceability,
-            track_analysis.track_duration_ms,
-            track_analysis.track_energy,
-            track_analysis.track_instrumentalness,
-            track_analysis.track_key,
-            track_analysis.track_liveness,
-            track_analysis.track_loudness,
-            track_analysis.track_mode,
-            track_analysis.track_speechiness,
-            track_analysis.track_tempo,
-            track_analysis.track_valence,
-        )
-
-        self.execute_query(sql_command, sql_values)
-
     def add_device_to_devices(self, device:Device):
         sql_command = f"""INSERT INTO devices (
                 device_id,
@@ -470,10 +415,7 @@ class MyAppDatabase:
         self.execute_query(sql_command, sql_values)
 
     def remove_specific_item(self, table_name: str, item_id: str):
-        if table_name == 'track_analysis':
-            primary_key = 'track_id'
-        else:
-            primary_key = table_name[:-1] + "_id"
+        primary_key = table_name[:-1] + "_id"
         sql_delete_command = f'DELETE FROM {table_name} WHERE {primary_key} = ?'
 
         self.execute_query(sql_delete_command, (item_id,))
@@ -496,7 +438,7 @@ class MyAppDatabase:
 
     def fetch_item(
             self,
-            table_name: Literal['albums', 'artists', 'tracks', 'playlists', 'users', 'genres', 'track_analysis', 'devices'],
+            table_name: Literal['albums', 'artists', 'tracks', 'playlists', 'users', 'genres', 'devices'],
             item_id: str,
             table_column: str = '*'
     ) -> list | str | int | float | None:
@@ -513,7 +455,7 @@ class MyAppDatabase:
 
     def fetch_column(
             self,
-            table_name: Literal['albums', 'artists', 'tracks', 'playlists', 'users', 'genres', 'track_analysis', 'devices'],
+            table_name: Literal['albums', 'artists', 'tracks', 'playlists', 'users', 'genres', 'devices'],
             table_column: str
     ) -> list | str | int | float | None:
 
@@ -522,16 +464,13 @@ class MyAppDatabase:
 
     def update_item(
             self,
-            table_name: Literal['albums', 'artists', 'tracks', 'playlists', 'users', 'genres', 'track_analysis', 'devices'],
+            table_name: Literal['albums', 'artists', 'tracks', 'playlists', 'users', 'genres', 'devices'],
             item_id: str,
             table_column: str,
             new_value: str | int | float | None
     ) -> None:
 
-        if table_name == 'track_analysis':
-            primary_key = 'track_id'
-        else:
-            primary_key = table_name[:-1] + "_id"
+        primary_key = table_name[:-1] + "_id"
 
         sql_command = f"""UPDATE {table_name} SET {table_column} = ? WHERE {primary_key} = ?;"""
         self.execute_query(sql_command, (str(new_value), item_id,), False)
@@ -576,4 +515,4 @@ class MyAppDatabase:
 
 if __name__ == '__main__':
     database = MyAppDatabase('../Databases/main_database.db')
-    database.reset_database()
+    database.initialize_tables()

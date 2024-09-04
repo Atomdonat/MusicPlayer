@@ -6,7 +6,7 @@ from database_access import MyAppDatabase
 
 sp = spotify_client()
 market = 'DE'
-my_app_database = MyAppDatabase('/home/simon/git_repos/MusicPlayer/Databases/main_database.db')
+my_app_database = MyAppDatabase('./Databases/main_database.db')
 
 
 class ItemIdQueues:
@@ -827,7 +827,7 @@ class TrackAnalysis:
         #   if not valid_spotify_uri(spotify_connection=sp, spotify_uri=spotify_uri):
         #       raise Exception(f"Invalid Spotify Track ID for: {spotify_track_id}")
 
-        result = my_app_database.fetch_item('track_analysis', spotify_track_id)
+        # ToDo: get from csv
 
         # Fetch from Spotify API if not in the database
         if result is None:
@@ -849,7 +849,7 @@ class TrackAnalysis:
             self.track_tempo: float = self.instance[0]["tempo"]
             self.track_valence: float = self.instance[0]["valence"]
 
-            my_app_database.add_track_to_track_analysis(self)
+            # ToDo: add to csv
 
         # Unpack the database result into instance variables
         self.track_id, \
