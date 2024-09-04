@@ -32,6 +32,7 @@ or update only half of the attributes
 * catching exceptions can be a helpful but uncommon benefit
 * superclasses can be profitable, but hurt the code readability 
 * added separate changes.md file to better track changes
+* do not reset Database before Analyzing anything (No Data in DB -> no Data for Analysis)
 
 ## Code/Comment Highlighting in Pycharm
 - TODO:
@@ -78,11 +79,10 @@ or update only half of the attributes
 
 ### Backend related
 
-* [ ] Rework Item Creation to avoid IR-Loop (caused by class properties)
-  * [ ] replace add\_xyz\_to\_xyzs() in database with @property und @xyz.setter (implement getter for items)
-  * [ ] Create Queue for SQLite queries (replacing multiple execute() to one executescript() and therefore, replace db lookup with queue lookup in Item creation)
-* [ ] every database call should be done in childproccess, parent one waits until the child is dead
-* [ ] check if any Spotify API request gets bottlenecked by the API limit of 100 items
+* [ ] simplify API calls (instead of 500 requests à 1 item, do (e.g.) 10 requests à 50 items (recommended by Spotify))
+* [x] Rework Item Creation to avoid IR-Loop (caused by class properties) -> ItemIdQueues()
+  * [x] add fetch method for tables (implement getter for items)
+* [ ] check if any Spotify API request gets bottlenecked by the API limit of 100 items (split like in Playlist.track_ids())
 * [x] fix valid_spotify_uri()
 * [ ] fix Database insertion (Playlist.track_ids(): **every** new item should be inserted).
   * tracing the Error for Playlist 5kuT9ddlqoiZjW7cgnDv2X with 1743 tracks:
@@ -105,6 +105,10 @@ or update only half of the attributes
 * [ ] too long texts should move automatically
 * [ ] QT GUI/better Frontend
 * [ ] if searched track is already in queue, show/highlighted where (App Window)
+
+## Tags
+- Dictionaries / JSON
+- SQLite
 
 ## Documentations
 
