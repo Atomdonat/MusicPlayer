@@ -78,7 +78,6 @@ Track:
 
 TrackAnalysis:
     track_id: str
-    track_name: str
     track_acousticness: float
     track_danceability: float
     track_duration_ms: int

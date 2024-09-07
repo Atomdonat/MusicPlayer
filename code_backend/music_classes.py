@@ -2,11 +2,14 @@ from spotipy import Spotify
 from secondary_methods import *
 from spotify_access import spotify_client
 from database_access import MyAppDatabase
+import analysis
+import numpy as np
+import numexpr
 
 
 sp = spotify_client()
-market = 'DE'
-my_app_database = MyAppDatabase('./Databases/main_database.db')
+my_app_database = MyAppDatabase("../Databases/main_database.db")
+track_analysis = analysis.TrackAnalysis(track_analysis_tsv_file_path)
 
 
 class ItemIdQueues:
@@ -822,12 +825,8 @@ class Genre:
 
 class TrackAnalysis:
     def __init__(self, spotify_track_id: str):
-        # Note: not needed because (for now) only tracks with valid Sporify ID will be inserted to the db
-        #   spotify_uri = 'spotify:track:' + spotify_track_id
-        #   if not valid_spotify_uri(spotify_connection=sp, spotify_uri=spotify_uri):
-        #       raise Exception(f"Invalid Spotify Track ID for: {spotify_track_id}")
-
-        # ToDo: get from csv
+        result = track_analysis.get_track_analysis(spotify_track_id)
+        self.track_id = spotify_track_id
 
         # Fetch from Spotify API if not in the database
         if result is None:
@@ -835,7 +834,6 @@ class TrackAnalysis:
             self.instance = sp.audio_features(tracks=[spotify_track_id])
 
             self.track_id: str = analyzed_track.track_id
-            self.track_name: str = analyzed_track.track_name
             self.track_acousticness: float = self.instance[0]["acousticness"]
             self.track_danceability: float = self.instance[0]["danceability"]
             self.track_duration_ms: int = self.instance[0]["duration_ms"]
@@ -849,11 +847,39 @@ class TrackAnalysis:
             self.track_tempo: float = self.instance[0]["tempo"]
             self.track_valence: float = self.instance[0]["valence"]
 
-            # ToDo: add to csv
+            track_analysis.append_new_track_to_data(
+                track_id=self.track_id,
+                track_acousticness=self.track_acousticness,
+                track_danceability=self.track_danceability,
+                track_duration_ms=self.track_duration_ms,
+                track_energy=self.track_energy,
+                track_instrumentalness=self.track_instrumentalness,
+                track_key=self.track_key,
+                track_liveness=self.track_liveness,
+                track_loudness=self.track_loudness,
+                track_mode=self.track_mode,
+                track_speechiness=self.track_speechiness,
+                track_tempo=self.track_tempo,
+                track_valence=self.track_valence
+            )
 
-        # Unpack the database result into instance variables
+        else:
+            self.track_id, \
+                self.track_acousticness, \
+                self.track_danceability, \
+                self.track_duration_ms, \
+                self.track_energy, \
+                self.track_instrumentalness, \
+                self.track_key, \
+                self.track_liveness, \
+                self.track_loudness, \
+                self.track_mode, \
+                self.track_speechiness, \
+                self.track_tempo, \
+                self.track_valence = track_analysis.get_track_analysis(spotify_track_id)
+
+    def get_data_from_dataframe(self):
         self.track_id, \
-            self.track_name, \
             self.track_acousticness, \
             self.track_danceability, \
             self.track_duration_ms, \
@@ -865,7 +891,8 @@ class TrackAnalysis:
             self.track_mode, \
             self.track_speechiness, \
             self.track_tempo, \
-            self.track_valence = result
+            self.track_valence = track_analysis.get_track_analysis(self.track_id)
+
 
 
 class Device:
@@ -1044,18 +1071,24 @@ class Player:
 
 class Analysis:
     def __init__(self):
-        pass
+        self.track_analysis = analysis.TrackAnalysis(track_analysis_tsv_file_path)
 
     # Fixme: not working
-    @staticmethod
-    def analyse_tracks_in_db():
+    def analyse_tracks_in_db(self):
         track_ids = my_app_database.fetch_column('tracks', 'track_id')
         if track_ids:
-            print(track_ids[:20])
-            # for track_id in track_ids:
-            #     if track_id == "0000000000000000000000":
-            #         continue
-            #     TrackAnalysis(track_id)
+            try:
+                format_length = int(np.ceil(np.log10(len(track_ids))))
+                for i, track_id in enumerate(track_ids):
+                    if track_id == "0000000000000000000000":
+                        continue
+                    TrackAnalysis(track_id)
+                    print("Track {}/{}: {}".format(str(i).zfill(format_length), len(track_ids), track_id))
+
+            except Exception as e:
+                print(e)
+            finally:
+                self.track_analysis.add_data_rows()
 
 
 if __name__ == '__main__':

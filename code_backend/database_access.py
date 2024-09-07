@@ -6,16 +6,17 @@ from secondary_methods import *
 class MyAppDatabase:
     def __init__(self, database_file: str) -> None:
         if not os.path.isfile(database_file):
-            with open(database_file, 'w') as file:
-                pass
+            raise FileNotFoundError(database_file)
+            # with open(database_file, 'w') as file:
+            #     pass
 
         try:
             self.database = sqlite3.connect(database_file)
-        except sqlite3.Error as e:
-            print('Db Not found', str(e))
-        finally:
             self.cursor = self.database.cursor()
             self.sql_query_queue = []
+
+        except sqlite3.Error as e:
+            print('Db Not found', str(e))
 
     def execute_query(self, sql_query: str, parameters=None, fetch: bool = False):
         with self.database:
@@ -33,9 +34,11 @@ class MyAppDatabase:
     def execute_script(self, sql_script: str, fetch: bool = False):
         with self.database:
             try:
-                self.cursor.executescript(sql_script)
                 if fetch:
+                    self.cursor.execute(sql_script, ())
                     return self.cursor.fetchall()
+                else:
+                    self.cursor.executescript(sql_script)
 
             except Exception as e:
                 print(e)
@@ -459,8 +462,8 @@ class MyAppDatabase:
             table_column: str
     ) -> list | str | int | float | None:
 
-        result = self.execute_script(f'SELECT {table_column} FROM {table_name};', True)
-        return result[0] if result else None
+        result = self.execute_query(f"""SELECT {table_column} FROM {table_name};""", (), fetch=True)
+        return [row[0] for row in result] if result else None
 
     def update_item(
             self,
@@ -479,7 +482,7 @@ class MyAppDatabase:
             self,
             current_id: str,
             match_id: str,
-            table_name: Literal['albums', 'artists', 'tracks', 'playlists', 'users', 'genres', 'track_analysis'],
+            table_name: Literal['albums', 'artists', 'tracks', 'playlists', 'users', 'genres'],
             table_column: Literal['album_ids', 'artist_ids', 'track_ids', 'top_track_ids', 'playlist_ids', 'genre_names'],
             item_id_queue: list[str]
     ) -> None:
@@ -515,4 +518,4 @@ class MyAppDatabase:
 
 if __name__ == '__main__':
     database = MyAppDatabase('../Databases/main_database.db')
-    database.initialize_tables()
+    # database.initialize_tables()

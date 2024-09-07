@@ -7,6 +7,7 @@
 
 ### database_access.py
 - moved TrackAnalysis() related code to analysis.py
+- fixed execute_script() always returns None if fetch=True (cursor.executescript() does not return anything)
 
 ### analysis.py
 - created file for anything pandas (and ML) related code for data analysis
