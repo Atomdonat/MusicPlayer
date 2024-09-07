@@ -11,6 +11,7 @@ code_backend/.env
 /code_backend/random_stuff.py
 /Structure.ods
 /Databases/main_database.db
+/Databases/CSV_Files/track_analysis.tsv
 
 # IDE Specific
 .idea
