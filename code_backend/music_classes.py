@@ -4,7 +4,6 @@ from spotify_access import spotify_client
 from database_access import MyAppDatabase
 import analysis
 import numpy as np
-import numexpr
 
 
 sp = spotify_client()
@@ -1093,29 +1092,29 @@ class Analysis:
 
 if __name__ == '__main__':
     # _player = Player()
-    # my_app_database.reset_database()
+    my_app_database.reset_database()
 
-    # Album("4Gfnly5CzMJQqkUFfoHaP3")
-    # Artist("6XyY86QOPPrYVGvF9ch6wz")
-    # Track("60a0Rd6pjrkxjPbaKzXjfq")
-    # Playlist("3ng02xAP0YashD9ZFOyYk7")
-    # Playlist("7bbWOJLSohSS7yOOHzXCAN")
-    # User("simonluca1")
-    # print(
-    #     ' new Albums:   ', item_queues.album_id_queue, '\n',
-    #     'new Artists:  ', item_queues.artist_id_queue, '\n',
-    #     'new Tracks:   ', item_queues.track_id_queue, '\n'
-    #     'new Playlists:', item_queues.playlist_id_queue, '\n',
-    #     'new Users:    ', item_queues.user_id_queue
-    # )
-    # item_queues.add_items_to_db_and_dequeue()
-    # print(
-    #     '\n',
-    #     'new Albums:   ', item_queues.album_id_queue, '\n',
-    #     'new Artists:  ', item_queues.artist_id_queue, '\n',
-    #     'new Tracks:   ', item_queues.track_id_queue, '\n'
-    #     'new Playlists:', item_queues.playlist_id_queue, '\n',
-    #     'new Users:    ', item_queues.user_id_queue
-    # )
-    analysis = Analysis()
-    analysis.analyse_tracks_in_db()
+    Album("4Gfnly5CzMJQqkUFfoHaP3")
+    Artist("6XyY86QOPPrYVGvF9ch6wz")
+    Track("60a0Rd6pjrkxjPbaKzXjfq")
+    Playlist("3ng02xAP0YashD9ZFOyYk7")
+    Playlist("7bbWOJLSohSS7yOOHzXCAN")
+    User("simonluca1")
+    print(
+        ' new Albums:   ', item_queues.album_id_queue, '\n',
+        'new Artists:  ', item_queues.artist_id_queue, '\n',
+        'new Tracks:   ', item_queues.track_id_queue, '\n'
+        'new Playlists:', item_queues.playlist_id_queue, '\n',
+        'new Users:    ', item_queues.user_id_queue
+    )
+    item_queues.add_items_to_db_and_dequeue()
+    print(
+        '\n',
+        'new Albums:   ', item_queues.album_id_queue, '\n',
+        'new Artists:  ', item_queues.artist_id_queue, '\n',
+        'new Tracks:   ', item_queues.track_id_queue, '\n'
+        'new Playlists:', item_queues.playlist_id_queue, '\n',
+        'new Users:    ', item_queues.user_id_queue
+    )
+    # analysis = Analysis()
+    # analysis.analyse_tracks_in_db()
