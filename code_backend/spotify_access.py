@@ -42,29 +42,30 @@ def spotify_client() -> spotipy.Spotify:
                 cache_path=".spotify_cache",
                 show_dialog=True  # Set to True to force the user to approve the app every time
             ))
+            return sp
 
-        except ConnectionError as e:
-            print(f"Error encountered: {e}")
-            print(f"Retrying... (Attempt {retry_count + 1} of {max_retries})")
-            retry_count += 1
-            time.sleep(5)
+        # except ConnectionError as e:
+        #     print(f"Error encountered: {e}")
+        #     print(f"Retrying... (Attempt {retry_count + 1} of {max_retries})")
+        #     retry_count += 1
+        #     time.sleep(5)
 
         except SpotifyException as e:
-            print(e)
-            retry_count += 1
-            time.sleep(5)
-
-        finally:
-            return sp
+            if e.http_status == 429:
+                print("'retry-after' value:", e.headers['retry-after'])
+                retry_value = e.headers['retry-after']
+                if int(e.headers['retry-after']) > 60:
+                    print("STOP FOR TODAY, retry value too high {}".format(retry_value))
+                    exit()
 
 
 if __name__ == '__main__':
     sp1 = spotify_client()
-    # _id = "1164847650"  # "4Gfnly5CzMJQqkUFfoHaP3"
-    # _type = {0: 'album', 1: 'artist', 2: 'track', 3: 'playlist', 4: 'user', 5: ''}
-    #
-    # if sp1 is not None:
-    #     data = sp1.user(_id)  # sp1.some_method()
-    #     extra = ""  # "_some_detail"
-    #     with open(f"../Databases/JSON_Files/spotify_{_type[4]}{extra}_{_id}.json", 'w') as f:
-    #         json.dump(data, f)
+    _id = "1164847650"  # "4Gfnly5CzMJQqkUFfoHaP3"
+    _type = {0: 'album', 1: 'artist', 2: 'track', 3: 'playlist', 4: 'user', 5: ''}
+
+    if sp1 is not None:
+        data = sp1.user(_id)  # sp1.some_method()
+        # extra = ""  # "_some_detail"
+        # with open(f"../Databases/JSON_Files/spotify_{_type[4]}{extra}_{_id}.json", 'w') as f:
+        #     json.dump(data, f)

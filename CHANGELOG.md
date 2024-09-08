@@ -3,17 +3,22 @@
 ## Changes in Backend Code
 
 ### main_app.py
-- replaced TrackAnalysis() Database stuff with CSV for pandas  
+- moved Device() and Player() from music_classes.py here
+   
+### music_classes.py
+- reducing API calls to a minimal (reducing risc to get long "timeout" again)
+  - removed (redundant) ID check/validation
 
-### database_access.py
-- moved TrackAnalysis() related code to analysis.py
-- fixed execute_script() always returns None if fetch=True (cursor.executescript() does not return anything)
+[//]: # (### database_access.py)
+ 
+### share_config
+- made path strings dependent of root dir (using os.path.dirname() and os.path.abspath())
 
-### analysis.py
-- created file for anything pandas (and ML) related code for data analysis
+[//]: # (### analysis.py)
 
-### other files
-- minor changes/updates
 
 [//]: # (## Changes in Frontend Code)
 [//]: # (- minor changes/updates)
+
+### other files
+- minor changes/updates

@@ -5,7 +5,7 @@ import requests
 import numpy
 import spotipy
 from spotipy import SpotifyException, SpotifyOAuth
-
+import timeit
 
 import random
 import time
@@ -25,10 +25,13 @@ from dataclasses import dataclass
 
 
 # local paths for files
-json_path: str = '/home/simon/git_repos/MusicPlayer/Databases/JSON_Files/spotify_devices.json'
-no_image_path: str = '/home/simon/git_repos/MusicPlayer/Icons/Spotify_if_no_image.png'
-main_database_path = '/home/simon/git_repos/MusicPlayer/Databases/main_database.db'
-track_analysis_tsv_file_path = "/home/simon/git_repos/MusicPlayer/Databases/CSV_Files/track_analysis.tsv"
+current_dir = os.path.dirname(os.path.abspath(__file__))
+root_dir_path = os.path.abspath(os.path.join(current_dir, os.pardir))
+
+no_image_path = os.path.join(root_dir_path, 'Icons', 'Spotify_if_no_image.png')
+main_database_path = os.path.join(root_dir_path, 'Databases', 'main_database.db')
+json_path = os.path.join(root_dir_path, 'Databases', 'JSON_Files', 'spotify_devices.json')
+track_analysis_tsv_file_path = os.path.join(root_dir_path, 'Databases', 'CSV_Files', 'track_analysis.tsv')
 
 max_popularity = 20
 skipping_steps: dict = {
@@ -182,3 +185,7 @@ class Device:
     is_restricted: int
     supports_volume: int
     volume_percent:int
+
+
+if __name__ == '__main__':
+    pass

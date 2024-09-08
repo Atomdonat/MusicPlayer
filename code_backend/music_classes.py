@@ -1,3 +1,5 @@
+import timeit
+
 from spotipy import Spotify
 from secondary_methods import *
 from spotify_access import spotify_client
@@ -7,9 +9,16 @@ import numpy as np
 
 
 sp = spotify_client()
-my_app_database = MyAppDatabase("../Databases/main_database.db")
+my_app_database = MyAppDatabase(main_database_path)
 track_analysis = analysis.TrackAnalysis(track_analysis_tsv_file_path)
 
+
+# Fixme: creating new instances not working right now
+#   fix (usage ItemIdQueues.process_all_queues())
+
+# Idea: Outsource everything API Request related to independent file
+#   new_file: handling the requests and returning JSON Objects / Dictionaries
+#   music_classes: each class just receives the Dict with the relevant key-value entries
 
 class ItemIdQueues:
     def __init__(self):
@@ -19,69 +28,74 @@ class ItemIdQueues:
         self.track_id_queue: list[str] = []
         self.user_id_queue: list[str] = []
 
-    def get_queue_by_type(self, queue_type: Literal['albums', 'artists', 'tracks', 'playlists', 'users']):
-        class_queues = {
-            'albums': self.album_id_queue,
-            'artists': self.artist_id_queue,
-            'tracks': self.track_id_queue,
-            'playlists': self.playlist_id_queue,
-            'users': self.user_id_queue
-        }
-        return class_queues[queue_type]
+    def _process_queue(self, item_type: Literal['album', 'artist', 'track', 'playlist', 'user'], queue: list[str], model_class) -> None:
+        def process_album_artist_or_track(current_type):
+            # Split the queue into chunks
+            chunked_queue = split_list_into_chunks(queue)
+            id_instance_queue: list[dict] = []
 
-    def add_items_to_db(self, queue_type: Literal['albums', 'artists', 'tracks', 'playlists', 'users']):
-        dict_classes = {
-            'albums': Album,
-            'artists': Artist,
-            'tracks': Track,
-            'playlists': Playlist,
-            'users': User
-        }
+            # Request data for each chunk
+            for chunk in chunked_queue:
+                current_chunk_instances = request_up_to_50_items(
+                    sp=sp,
+                    item_type=current_type,
+                    items=chunk
+                )
+                id_instance_queue = concat_iterables(id_instance_queue, current_chunk_instances)
 
-        current_queue = self.get_queue_by_type(queue_type)
+            # Process the retrieved items
+            while id_instance_queue:
+                model_class(id_instance_queue[0])
+                print(f"added {id_instance_queue[0]['uri']} to DB ({len(queue)} items left)")
+                queue.remove(id_instance_queue[0]['id'])
+                id_instance_queue.pop(0)
 
-        while len(current_queue) > 0:
-            try:
-                if not my_app_database.fetch_item(queue_type, current_queue[0]):
-                    dict_classes[queue_type](current_queue[0])
-            except Exception as e:
-                print(e)
-            finally:
-                print(f"added {queue_type}:{current_queue[0]} to db ({len(current_queue)} items left)")
-                current_queue.pop(0)
+        def process_playlist_or_user(current_type):
+            while len(queue) > 0:
+                try:
+                    model_class(queue[0])
+                    print(f"added spotify:{current_type}:{queue[0]} to db ({len(queue)} items left)")
+                    queue.pop(0)
+                except Exception as e:
+                    print(e)
 
-    def add_items_to_db_and_dequeue(self):
-        while any([
-            len(self.album_id_queue) > 0,
-            len(self.artist_id_queue) > 0,
-            len(self.playlist_id_queue) > 0,
-            len(self.track_id_queue) > 0,
-            len(self.user_id_queue) > 0
-        ]):
-            i: Literal['albums', 'artists', 'tracks', 'playlists', 'users']
-            for i in ['albums', 'artists', 'tracks', 'playlists', 'users']:
-                if len(self.get_queue_by_type(i)) > 0:
-                    self.add_items_to_db(i)
+        if item_type in ['album', 'artist', 'track']:
+            return process_album_artist_or_track(item_type)
+        elif item_type in ['playlist', 'user']:
+            return process_playlist_or_user(item_type)
+
+    def process_all_queues(self):
+        # Continue until all queues are empty
+        while any([self.album_id_queue, self.artist_id_queue, self.playlist_id_queue, self.track_id_queue, self.user_id_queue]):
+            if self.album_id_queue:
+                self._process_queue('album', self.album_id_queue, Album)
+            if self.artist_id_queue:
+                self._process_queue('artist', self.artist_id_queue, Artist)
+            if self.playlist_id_queue:
+                self._process_queue('playlist', self.playlist_id_queue, Playlist)
+            if self.track_id_queue:
+                self._process_queue('track', self.track_id_queue, Track)
+            if self.user_id_queue:
+                self._process_queue('user', self.user_id_queue, User)
 
 
 item_queues = ItemIdQueues()
 
 
 class Album:
-    def __init__(self, spotify_album_id: str):
-        spotify_uri = 'spotify:album:' + spotify_album_id
-        if not valid_spotify_uri(spotify_connection=sp, spotify_uri=spotify_uri):
-            raise Exception(f"Invalid Spotify Album ID for: {spotify_album_id}")
-
-        result = my_app_database.fetch_item('albums', spotify_album_id)
+    def __init__(self, spotify_album: str | dict):
+        result = my_app_database.fetch_item('albums', spotify_album)
 
         if result is None:
-            # Fetch from Spotify API if not in the database
-            try:
-                self.instance = sp.album(album_id=spotify_album_id, market=market)
-            except Exception as e:
-                print(f'\x1b[31mError with Spotify API request for {spotify_uri}:\n{e}')
-                sys.exit(1)
+            if type(spotify_album) is str:
+                # Fetch from Spotify API if not in the database
+                try:
+                    self.instance = sp.album(album_id=spotify_album, market=market)
+                except Exception as e:
+                    print(f'\x1b[31mError with Spotify API request for Album {spotify_album}:\n{e}')
+                    sys.exit(1)
+            else:
+                self.instance = spotify_album
 
             self.album_id: str = self.instance['id']
             self.album_name: str = self.instance['name']
@@ -201,21 +215,20 @@ class Album:
 
 
 class Artist:
-    def __init__(self, spotify_artist_id: str):
-        spotify_uri = 'spotify:artist:' + spotify_artist_id
-        if not valid_spotify_uri(spotify_connection=sp, spotify_uri=spotify_uri):
-            raise Exception(f"Invalid Spotify Artist ID for: {spotify_artist_id}")
-
-        result = my_app_database.fetch_item('artists', spotify_artist_id)
+    def __init__(self, spotify_artist: str | dict):
+        result = my_app_database.fetch_item('artists', spotify_artist)
 
         if result is None:
-            # Fetch from Spotify API if not in the database
-            try:
-                self.instance = sp.artist(artist_id=spotify_artist_id)
-            except Exception as e:
-                print(f'\x1b[31mError with Spotify API request for {spotify_uri}:\n{e}')
-                sys.exit(1)
-            
+            if type(spotify_artist) is str:
+                # Fetch from Spotify API if not in the database
+                try:
+                    self.instance = sp.artist(artist_id=spotify_artist)
+                except Exception as e:
+                    print(f'\x1b[31mError with Spotify API request for Artist {spotify_artist}:\n{e}')
+                    sys.exit(1)
+            else:
+                self.instance = spotify_artist
+
             self.artist_id: str = self.instance['id']
             self.artist_name: str = self.instance['name']
             self.artist_url: str = self.instance['external_urls']['spotify']
@@ -310,26 +323,19 @@ class Artist:
 
 
 class Playlist:
-    # Note: Database partly insertion (--Fixed--)
-    #     1. Database latency? issue, too many executions too fast (would explain why only a third was inserted) [l. 272: my_app_database.add_playlist_to_playlists(self)]
-    #     2. sp.playlist() only returns limited tracks in items [l. 255: self.instance = sp.playlist(playlist_id=spotify_playlist_id, market=market)] <- API limits requests to 100 items
-    #     3. checking Spotify ID ... the API limit (Should raise error -> unlikely) [ll. 313, 400: if not valid_spotify_uri(spotify_connection=sp, spotify_uri=spotify_uri)]
-    # Fixme: still causes some problems with limits
-
-    def __init__(self, spotify_playlist_id: str):
-        spotify_uri = 'spotify:playlist:' + spotify_playlist_id
-        if not valid_spotify_uri(spotify_connection=sp, spotify_uri=spotify_uri):
-            raise Exception(f"Invalid Spotify Playlist ID for Playlist ID: {spotify_playlist_id}")
-
-        result = my_app_database.fetch_item('playlists', spotify_playlist_id)
+    def __init__(self, spotify_playlist: str | dict):
+        result = my_app_database.fetch_item('playlists', spotify_playlist)
 
         if result is None:
-            # Fetch from Spotify API if not in the database
-            try:
-                self.instance = sp.playlist(playlist_id=spotify_playlist_id, market=market)
-            except Exception as e:
-                print(f'\x1b[31mError with Spotify API request for {spotify_uri}:\n{e}')
-                sys.exit(1)
+            if type(spotify_playlist) is str:
+                # Fetch from Spotify API if not in the database
+                try:
+                    self.instance = sp.playlist(playlist_id=spotify_playlist, market=market)
+                except Exception as e:
+                    print(f'\x1b[31mError with Spotify API request for Playlist{spotify_playlist}:\n{e}')
+                    sys.exit(1)
+            else:
+                self.instance = spotify_playlist
 
             self.playlist_id: str = self.instance['id']
             self.playlist_name: str = self.instance['name']
@@ -410,7 +416,7 @@ class Playlist:
                 iterate_tracks(100, i*100)  # e.g.: tracks 1-1700
 
             if last_iteration_limit > 0:
-                iterate_tracks(last_iteration_limit, len(tracks))  # e.g.: tracks 1701-1743
+                iterate_tracks(last_iteration_limit, self.track_count-last_iteration_limit)  # e.g.: tracks 1701-1743
 
             self._track_ids = tracks
         return self._track_ids
@@ -448,21 +454,20 @@ class Playlist:
 
 
 class Track:
-    def __init__(self, spotify_track_id: str):
-        spotify_uri = 'spotify:track:' + spotify_track_id
-        if not valid_spotify_uri(spotify_connection=sp, spotify_uri=spotify_uri):
-            raise Exception(f"Invalid Spotify Track ID for: {spotify_track_id}")
-
-        result = my_app_database.fetch_item('tracks', spotify_track_id)
+    def __init__(self, spotify_track: str | dict):
+        result = my_app_database.fetch_item('tracks', spotify_track)
 
         if result is None:
-            # Fetch from Spotify API if not in the database
-            try:
-                self.instance = sp.track(track_id=spotify_track_id, market=market)
-            except Exception as e:
-                print(f'\x1b[31mError with Spotify API request for {spotify_uri}:\n{e}')
-                sys.exit(1)
-                
+            if type(spotify_track) is str:
+                # Fetch from Spotify API if not in the database
+                try:
+                    self.instance = sp.track(track_id=spotify_track, market=market)
+                except Exception as e:
+                    print(f'\x1b[31mError with Spotify API request for Track {spotify_track}:\n{e}')
+                    sys.exit(1)
+            else:
+                self.instance = spotify_track
+
             self.track_id: str = self.instance['id']
             self.track_name: str = self.instance['name']
             self.track_url: str = self.instance['external_urls']['spotify']
@@ -571,25 +576,25 @@ class Track:
         self._blacklisted = new_value
 
 
-# Note: (--Fixed--)
-#   User creation somehow still creates IR Loop
 class User:
-    def __init__(self, spotify_user_id: str) -> None:
-        spotify_uri = 'spotify:user:' + spotify_user_id
-        if not valid_spotify_uri(spotify_connection=sp, spotify_uri=spotify_uri):
-            raise Exception(f"Invalid Spotify User ID for: {spotify_user_id}")
-
-        cursor = my_app_database.database.execute('SELECT * from track_analysis WHERE track_id = ?', (spotify_user_id,))
-        result = cursor.fetchone()
+    def __init__(self, spotify_user: str | dict) -> None:
+        result = my_app_database.fetch_item(
+            table_name='users',
+            item_id=spotify_user,
+            table_column='user_id',
+        )
 
         if result is None:
-            # Fetch from Spotify API if not in the database
-            try:
-                self.instance = sp.user(user=spotify_user_id)
+            if type(spotify_user) is str:
+                # Fetch from Spotify API if not in the database
+                try:
+                    self.instance = sp.user(user=spotify_user)
 
-            except Exception as e:
-                print(f'\x1b[31mError with Spotify API request for {spotify_uri}:\n{e}')
-                sys.exit(1)
+                except Exception as e:
+                    print(f'\x1b[31mError with Spotify API request for User {spotify_user}:\n{e}')
+                    sys.exit(1)
+            else:
+                self.instance = spotify_user
 
             self.user_id: str = self.instance['id']
             self.user_name: str = self.instance['display_name']
@@ -696,8 +701,8 @@ class User:
         self._blacklisted = new_value
 
 
+# TODO: figure out what to do here
 class Genre:
-    # TODO: figure out what to do here
     def __init__(
             self,
             genre_name: str,
@@ -726,8 +731,11 @@ class Genre:
             valence_upper_limit: float
     ) -> None:
 
-        cursor = my_app_database.database.execute('SELECT * from genres WHERE genre_name = ?', (genre_name,))
-        result = cursor.fetchone()
+        result = my_app_database.fetch_item(
+            table_name='genres',
+            item_id=genre_name,
+            table_column=genre_name
+        )
 
         # Create if not in the database
         if result is None:
@@ -893,181 +901,6 @@ class TrackAnalysis:
             self.track_valence = track_analysis.get_track_analysis(self.track_id)
 
 
-
-class Device:
-    def __init__(self, device_id: str) -> None:
-        result = my_app_database.fetch_item('devices', device_id)
-
-        # Create if not in the database
-        if result is None:
-            self.instance = sp.devices()
-            if not self.get_specific_device(device_id):
-                raise Exception("Invalid Device ID")
-
-            self.device_id: str = self.instance['id']
-            self.device_name: str = self.instance['name']
-            self.device_type: str = self.instance['type']
-            self.is_active: bool = bool(self.instance['is_active'])
-            self.is_private_session: bool = bool(self.instance['is_private_session'])
-            self.is_restricted: bool = bool(self.instance['is_restricted'])
-            self.supports_volume: bool = bool(self.instance['supports_volume'])
-            self.volume_percent: int = int(self.instance['volume_percent'])
-
-        else:
-            self.device_id, \
-                self.device_name, \
-                self.device_type, \
-                self.is_active, \
-                self.is_private_session, \
-                self.is_restricted, \
-                self.supports_volume, \
-                self.volume_percent = result
-
-    def get_specific_device(self, device_id: str) -> ValueError | Any:
-        for current_device in self.instance['devices']:
-
-            if current_device['id'] == device_id:
-                return current_device
-
-        valid_device_ids = []
-        for current_device in self.instance['devices']:
-            valid_device_ids.append(current_device['id'])
-
-        return ValueError(f'The device named {device_id} was not found \n Valid Names are: {valid_device_ids}')
-
-
-class Player:
-
-    def __init__(self) -> None:
-        self.instance = sp.current_playback(market=market)
-        if self.instance:
-            if self.instance['context']['type'] == 'album':
-                self.current_collection = Album(uri_to_id(self.instance['context']['uri']))
-            elif self.instance['context']['type'] == 'playlist':
-                self.current_collection = Playlist(uri_to_id(self.instance['context']['uri']))
-
-            self.current_album = Album(self.instance['item']['album']['id'])
-            self.current_artist = Artist(self.instance['item']['artists'][0]['id'])
-            self.current_track = Track(self.instance['item']['id'])
-
-            self.device = Device(self.instance['device']['name'])
-            self.is_playing = bool(self.instance['is_playing'])
-            self.progress = int(self.instance['progress_ms'])
-            self.repeat_state = self.instance['repeat_state']  # no = 'off', on = 'context', once = 'track',
-            self.shuffle_state = bool(self.instance['shuffle_state'])
-
-        else:
-            self.current_collection = Playlist("0000000000000000000000")  # Dummy
-            self.current_album = Album("0000000000000000000000")  # Dummy
-            self.current_artist = Artist("0000000000000000000000")  # Dummy
-            self.current_track = Track("0000000000000000000000")  # Dummy
-            self.device = Device("0000000000000000000000")  # Dummy
-            self.is_playing = False
-            self.repeat_state = "Null"
-            self.shuffle_state = "Null"
-
-        self.dummy_player = (self.device.device_id == "0000000000000000000000")
-
-    # JSON Files:
-    def initialize_player(self):
-        try:
-            self.instance = sp.current_playback(market=market)
-        except SpotifyException as e:
-            print(f'\x1b[31mNo Spotify instance found:\n{e}\n\nPlease start Spotify and retry')
-            sys.exit(1)
-
-        if self.instance:
-            if self.instance['context']['type'] == 'album':
-                self.current_collection = Album(uri_to_id(self.instance['context']['uri']))
-            elif self.instance['context']['type'] == 'playlist':
-                self.current_collection = Playlist(uri_to_id(self.instance['context']['uri']))
-
-            self.current_album = Album(self.instance['item']['album']['id'])
-            self.current_artist = Artist(self.instance['item']['artists'][0]['id'])
-            self.current_track = Track(self.instance['item']['id'])
-
-            self.device = Device(self.instance['device']['name'])
-            self.is_playing = bool(self.instance['is_playing'])
-            self.repeat_state = self.instance['repeat_state']  # no = 'off', on = 'context', once = 'track',
-            self.shuffle_state = bool(self.instance['shuffle_state'])
-
-        self.dummy_player = (self.device.device_id == "0000000000000000000000")
-        self.skip_blacklisted_items()
-
-    def change_playing_state(self):
-        if not self.dummy_player:
-            # HACK: abusing error to know if Spotify is playing
-            try:
-                sp.pause_playback(self.device.device_id)
-            except:
-                # if it is not supposed to work, why does it? xD
-                sp.start_playback(self.device.device_id)
-
-    @property
-    def progress(self) -> int:
-        if not self.dummy_player:
-            playback_data = sp.current_user_playing_track()
-            if playback_data:
-                return playback_data["progress_ms"]
-        else:
-            return -1
-
-    @progress.setter
-    def progress(self, time_in_ms: int):
-        if not self.dummy_player:
-            sp.seek_track(time_in_ms, self.device.device_id)
-            self.progress = time_in_ms
-        else:
-            self.progress = -1
-
-    def change_repeat_state(self, new_state: Literal['context', 'track', 'off']):
-        if not self.dummy_player:
-            if new_state == "context":
-                sp.repeat('context', self.device.device_id)
-            elif new_state == "track":
-                sp.repeat('track', self.device.device_id)
-            elif new_state == "off":
-                sp.repeat('off', self.device.device_id)
-
-    def next_track(self):
-        if not self.dummy_player:
-            sp.next_track(self.device.device_id)
-
-    def prev_track(self):
-        if not self.dummy_player:
-            sp.previous_track(self.device.device_id)
-
-    def change_shuffle_state(self):
-        if not self.dummy_player:
-            self.shuffle_state = not self.shuffle_state
-            sp.shuffle(self.shuffle_state, self.device.device_id)
-
-    def set_volume(self, new_volume: int):
-        if not (0 <= new_volume <= 100):
-            raise ValueError("Volume must be in the range from 0 to 100.")
-        if not self.dummy_player:
-            sp.volume(new_volume, self.device.device_id)
-
-    def skip_blacklisted_items(self):
-        if self.dummy_player:
-            return
-
-        album_is_blacklisted = my_app_database.fetch_item('albums', self.current_album.album_id)
-        if isinstance(self.current_collection, Album):
-            collection_is_blacklisted = my_app_database.fetch_item('albums', self.current_collection.album_id)
-        elif isinstance(self.current_collection, Playlist):
-            collection_is_blacklisted = my_app_database.fetch_item('playlists', self.current_collection.playlist_id)
-        else:
-            print("How did we get here")
-            return
-
-        artist_is_blacklisted = my_app_database.fetch_item('artists', self.current_artist.artist_id)
-        track_is_blacklisted = my_app_database.fetch_item('tracks', self.current_track.track_id)
-
-        if any([album_is_blacklisted, collection_is_blacklisted, artist_is_blacklisted, track_is_blacklisted]):
-            self.next_track()
-
-
 class Analysis:
     def __init__(self):
         self.track_analysis = analysis.TrackAnalysis(track_analysis_tsv_file_path)
@@ -1091,30 +924,22 @@ class Analysis:
 
 
 if __name__ == '__main__':
-    # _player = Player()
-    my_app_database.reset_database()
+    # my_app_database.reset_database()
 
-    Album("4Gfnly5CzMJQqkUFfoHaP3")
-    Artist("6XyY86QOPPrYVGvF9ch6wz")
-    Track("60a0Rd6pjrkxjPbaKzXjfq")
-    Playlist("3ng02xAP0YashD9ZFOyYk7")
-    Playlist("7bbWOJLSohSS7yOOHzXCAN")
-    User("simonluca1")
-    print(
-        ' new Albums:   ', item_queues.album_id_queue, '\n',
-        'new Artists:  ', item_queues.artist_id_queue, '\n',
-        'new Tracks:   ', item_queues.track_id_queue, '\n'
-        'new Playlists:', item_queues.playlist_id_queue, '\n',
-        'new Users:    ', item_queues.user_id_queue
-    )
-    item_queues.add_items_to_db_and_dequeue()
-    print(
-        '\n',
-        'new Albums:   ', item_queues.album_id_queue, '\n',
-        'new Artists:  ', item_queues.artist_id_queue, '\n',
-        'new Tracks:   ', item_queues.track_id_queue, '\n'
-        'new Playlists:', item_queues.playlist_id_queue, '\n',
-        'new Users:    ', item_queues.user_id_queue
-    )
+    try:
+        # Album("4Gfnly5CzMJQqkUFfoHaP3")
+        # Artist("6XyY86QOPPrYVGvF9ch6wz")
+        Track("60a0Rd6pjrkxjPbaKzXjfq")
+        # Playlist("3ng02xAP0YashD9ZFOyYk7")
+        # Playlist("7bbWOJLSohSS7yOOHzXCAN")
+        # User("simonluca1")
+
+    except Exception as e:
+        print(e)
+
+    finally:
+        item_queues.process_all_queues()
+
     # analysis = Analysis()
     # analysis.analyse_tracks_in_db()
+

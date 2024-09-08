@@ -446,10 +446,7 @@ class MyAppDatabase:
             table_column: str = '*'
     ) -> list | str | int | float | None:
 
-        if table_name == 'track_analysis':
-            primary_key = 'track_id'
-        else:
-            primary_key = table_name[:-1] + "_id"
+        primary_key = table_name[:-1] + "_id"
 
         sql_command = f"""SELECT {table_column} FROM {table_name} WHERE {primary_key} = ?;"""
         result = self.execute_query(sql_command, (item_id,), True)

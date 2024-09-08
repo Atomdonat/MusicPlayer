@@ -33,6 +33,8 @@ or update only half of the attributes
 * superclasses can be profitable, but hurt the code readability 
 * added separate changes.md file to better track changes
 * do not reset Database before Analyzing anything (No Data in DB -> no Data for Analysis)
+* you wont get an error (or smth. similar) if you cross the API request limit (for each request the delay grows exponentially)
+* if current Spotify (API) Session/cookie is invalid delete `.spotify_cache`-file and retry
 
 ## Code/Comment Highlighting in Pycharm
 - TODO:
@@ -88,16 +90,7 @@ or update only half of the attributes
 
 * [ ] finish analysis.py 
 * [ ] simplify API calls (instead of 500 requests à 1 item, do (e.g.) 10 requests à 50 items (recommended by Spotify))
-* [x] Rework Item Creation to avoid IR-Loop (caused by class properties) -> ItemIdQueues()
-  * [x] add fetch method for tables (implement getter for items)
-* [ ] check if any Spotify API request gets bottlenecked by the API limit of 100 items (split like in Playlist.track_ids())
-* [x] fix valid_spotify_uri()
-* [x] fix Database insertion (Playlist.track_ids(): **every** new item should be inserted).
-  * tracing the Error for Playlist 5kuT9ddlqoiZjW7cgnDv2X with 1743 tracks:
-    * fetching tracks_id from db returns only 100 ids (could be Spotify's API limit)
-    * requesting Playlist 5kuT9ddlqoiZjW7cgnDv2X from API only returns 100 tracks 
-  * => Error/Problem caused by Spotify's standard API limit
-  
+* [ ] check if any Spotify API request gets smashed by the API limit of 100 items (split like in Playlist.track_ids())
 * [ ] optimize track search distribution in 'random_playlist_by_genre()' -> implement ML
 * [ ] connect app with Home Assistant
 * [ ] use Spotify's Audio Features & Analytics (own genres) -> implement ML

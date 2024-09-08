@@ -103,32 +103,28 @@ def try_spotify_connection():
         return try_spotify_connection()
 
 
-def valid_spotify_uri(spotify_connection: spotipy.Spotify, spotify_uri: str) -> bool:
-    uri_parts = spotify_uri.split(':')
-    uri_type, spotify_id = uri_parts[1:]
-
-    # Dummy
+def valid_spotify_uri(sp: spotipy.Spotify, item_type: Literal['album', 'artist', 'track', 'track_analysis'], spotify_id: str) -> dict | None:
     if spotify_id == "0000000000000000000000":
-        return True
+        return None
 
     # Normal ID
     try:
-        match uri_type:
+        match item_type:
             case 'album':
-                spotify_connection.album(album_id=spotify_id, market=market)
+                return sp.album(album_id=spotify_id, market=market)
             case 'artist':
-                spotify_connection.artist(artist_id=spotify_id)
+                return sp.artist(artist_id=spotify_id)
             case 'playlist':
-                spotify_connection.playlist(playlist_id=spotify_id, market=market)
+                return sp.playlist(playlist_id=spotify_id, market=market)
             case 'track':
-                spotify_connection.track(track_id=spotify_id, market=market)
+                return sp.track(track_id=spotify_id, market=market)
             case 'user':
-                spotify_connection.user(user=spotify_id)
-
-        return True
+                return sp.user(user=spotify_id)
+            case _:
+                return None
 
     except SpotifyException:
-        return False
+        return None
 
 
 def list_from_id_string(id_string: str) -> list[str]:
@@ -219,6 +215,34 @@ def spotify_image_bytes(image_url: str) -> str:
 def file_image_bytes(image_path: str) -> str:
     image = image_from_file(image_path)
     return image_to_b64(image=image, image_format='JPEG')
+
+
+def request_up_to_50_items(sp: spotipy.Spotify, item_type: Literal['album', 'artist', 'track', 'track_analysis'], items: list) -> list:
+    if len(items) > 50:
+        raise ValueError(f"Too many items requested: {len(items)}")
+
+    match item_type:
+        case 'album':
+            fetched_items = sp.albums(items)['albums']
+        case 'artist':
+            fetched_items = sp.artists(items)['artists']
+        case 'track':
+            fetched_items = sp.tracks(items, market=market)['tracks']
+        case 'track_analysis':
+            fetched_items = sp.audio_features(items)
+        case _:
+            raise ValueError(f"Unknown item type: {item_type}")
+
+    return fetched_items
+
+
+def split_list_into_chunks(lst:list, chunk_length: int = 50) -> list:
+    return [lst[x:x+chunk_length] for x in range(0, len(lst), chunk_length)]
+
+
+T = TypeVar('T')
+def concat_iterables(iter1: Iterable[T], iter2: Iterable[T]) -> List[T]:
+    return [*iter1, *iter2]
 
 
 if __name__ == '__main__':

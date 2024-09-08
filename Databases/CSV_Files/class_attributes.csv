@@ -1,0 +1,6 @@
+,item_type,item_id,item_name,item_url,item_image,genre_names,track_duration,total_duration,track_count,follower,artist_ids,owner_id,track_ids,album_ids,playlist_ids,top_tracks_ids,top_artists_ids,top_genre_names,popularity,blacklisted
+0,album,1,1,1,1,1,0,1,1,0,1,0,1,0,0,0,0,0,1,1
+1,artist,1,1,1,1,1,0,0,0,1,0,0,0,1,1,1,0,0,1,1
+2,playlist,1,1,1,1,1,0,1,1,0,0,1,1,0,0,0,0,0,1,1
+3,track,1,1,1,1,1,1,0,0,0,1,0,0,1,1,0,0,0,1,1
+4,user,1,1,1,1,0,0,0,0,1,0,0,0,0,1,1,1,1,1,1
