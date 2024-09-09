@@ -1,8 +1,9 @@
+import sys
 import timeit
 
 from spotipy import Spotify
 from secondary_methods import *
-from spotify_access import spotify_client
+from spotify_access import *
 from database_access import MyAppDatabase
 import analysis
 import numpy as np
@@ -13,10 +14,10 @@ my_app_database = MyAppDatabase(main_database_path)
 track_analysis = analysis.TrackAnalysis(track_analysis_tsv_file_path)
 
 
-# Fixme: creating new instances not working right now
+# Note: (--Fixed--) creating new instances not working right now
 #   fix (usage ItemIdQueues.process_all_queues())
 
-# Idea: Outsource everything API Request related to independent file
+# Note: (--Implemented--) Outsource everything API Request related to independent file (-> spotify_access)
 #   new_file: handling the requests and returning JSON Objects / Dictionaries
 #   music_classes: each class just receives the Dict with the relevant key-value entries
 
@@ -26,87 +27,62 @@ class ItemIdQueues:
         self.artist_id_queue: list[str] = []
         self.playlist_id_queue: list[str] = []
         self.track_id_queue: list[str] = []
+        self.track_analysis_id_queue: list[str] = []
         self.user_id_queue: list[str] = []
 
-    def _process_queue(self, item_type: Literal['album', 'artist', 'track', 'playlist', 'user'], queue: list[str], model_class) -> None:
-        def process_album_artist_or_track(current_type):
-            # Split the queue into chunks
-            chunked_queue = split_list_into_chunks(queue)
-            id_instance_queue: list[dict] = []
-
-            # Request data for each chunk
-            for chunk in chunked_queue:
-                current_chunk_instances = request_up_to_50_items(
-                    sp=sp,
-                    item_type=current_type,
-                    items=chunk
-                )
-                id_instance_queue = concat_iterables(id_instance_queue, current_chunk_instances)
-
-            # Process the retrieved items
-            while id_instance_queue:
-                model_class(id_instance_queue[0])
-                print(f"added {id_instance_queue[0]['uri']} to DB ({len(queue)} items left)")
-                queue.remove(id_instance_queue[0]['id'])
-                id_instance_queue.pop(0)
-
-        def process_playlist_or_user(current_type):
-            while len(queue) > 0:
-                try:
-                    model_class(queue[0])
-                    print(f"added spotify:{current_type}:{queue[0]} to db ({len(queue)} items left)")
-                    queue.pop(0)
-                except Exception as e:
-                    print(e)
-
-        if item_type in ['album', 'artist', 'track']:
-            return process_album_artist_or_track(item_type)
-        elif item_type in ['playlist', 'user']:
-            return process_playlist_or_user(item_type)
-
     def process_all_queues(self):
-        # Continue until all queues are empty
+        def _process_queue(item_type: Literal['album', 'artist', 'playlist', 'track', 'track_analysis', 'user'], queue: list[str], model_class) -> None:
+            id_instance_queue = request_multiple_items_of_same_type(
+                sp=sp,
+                items=queue,
+                item_type=item_type
+            )
+
+            while id_instance_queue:
+                try:
+                    model_class(id_instance_queue[0])
+                    print(f"added {id_instance_queue[0]['uri']} to DB ({len(queue)} items left)")
+                    queue.remove(id_instance_queue[0]['id'])
+                    id_instance_queue.pop(0)
+                except Exception as exc:
+                    print(f"{exc}\nItem: {id_instance_queue[0]['id']}\nQueue: {queue}\nItemQueues:\n{self.__dict__}")
+                    sys.exit(1)
+
+        # Fixme:
         while any([self.album_id_queue, self.artist_id_queue, self.playlist_id_queue, self.track_id_queue, self.user_id_queue]):
             if self.album_id_queue:
-                self._process_queue('album', self.album_id_queue, Album)
+                _process_queue('album', self.album_id_queue, Album)
             if self.artist_id_queue:
-                self._process_queue('artist', self.artist_id_queue, Artist)
+                _process_queue('artist', self.artist_id_queue, Artist)
             if self.playlist_id_queue:
-                self._process_queue('playlist', self.playlist_id_queue, Playlist)
+                _process_queue('playlist', self.playlist_id_queue, Playlist)
             if self.track_id_queue:
-                self._process_queue('track', self.track_id_queue, Track)
+                _process_queue('track', self.track_id_queue, Track)
+            if self.track_analysis_id_queue:
+                _process_queue('track_analysis', self.track_id_queue, Track)
             if self.user_id_queue:
-                self._process_queue('user', self.user_id_queue, User)
+                _process_queue('user', self.user_id_queue, User)
 
 
 item_queues = ItemIdQueues()
 
 
 class Album:
-    def __init__(self, spotify_album: str | dict):
-        result = my_app_database.fetch_item('albums', spotify_album)
+    def __init__(self, spotify_album: dict):
+        result = my_app_database.fetch_item('albums', spotify_album['id'])
 
         if result is None:
-            if type(spotify_album) is str:
-                # Fetch from Spotify API if not in the database
-                try:
-                    self.instance = sp.album(album_id=spotify_album, market=market)
-                except Exception as e:
-                    print(f'\x1b[31mError with Spotify API request for Album {spotify_album}:\n{e}')
-                    sys.exit(1)
-            else:
-                self.instance = spotify_album
+            self.album_instance = spotify_album
+            self.album_id: str = spotify_album['id']
+            self.album_name: str = spotify_album['name']
+            self.album_url: str = spotify_album['external_urls']['spotify']
 
-            self.album_id: str = self.instance['id']
-            self.album_name: str = self.instance['name']
-            self.album_url: str = self.instance['external_urls']['spotify']
-
-            if 'url' not in self.instance['images'][0]:
+            if 'url' not in spotify_album['images'][0]:
                 self.album_image: str = file_image_bytes(no_image_path)
             else:
-                self.album_image: str = spotify_image_bytes(self.instance['images'][0]['url'])
+                self.album_image: str = spotify_image_bytes(spotify_album['images'][0]['url'])
 
-            self.track_count: int = self.instance['total_tracks']
+            self.track_count: int = spotify_album['total_tracks']
 
             my_app_database.add_album_to_albums(self)
 
@@ -129,9 +105,6 @@ class Album:
             self._artist_ids = list_from_id_string(self._artist_ids)
             self._track_ids = list_from_id_string(self._track_ids)
 
-            # No need to fetch from Spotify API in this case
-            self.instance = None
-
     @property
     def genre_names(self) -> list[str]:
         if not hasattr(self, '_genre_names'):
@@ -146,7 +119,7 @@ class Album:
     def artist_ids(self) -> list[str]:
         if not hasattr(self, '_artist_ids'):
             artists = []
-            for artist in self.instance['artists']:
+            for artist in self.album_instance['artists']:
                 current_artist_id = artist['id']
                 artists.append(current_artist_id)
 
@@ -166,7 +139,7 @@ class Album:
     def track_ids(self) -> list[str]:
         if not hasattr(self, '_track_ids'):
             tracks = []
-            for current_track in self.instance['tracks']['items']:
+            for current_track in self.album_instance['tracks']['items']:
                 current_track_id = current_track['id']
 
                 # Check if Track in DB or Queue, add if in neither
@@ -186,7 +159,7 @@ class Album:
     def total_duration(self) -> int:
         if not hasattr(self, '_total_duration'):
             duration = 0
-            for current_track in self.instance['tracks']['items']:
+            for current_track in self.album_instance['tracks']['items']:
                 duration += int(current_track['duration_ms'])
             self._total_duration = duration
         return self._total_duration
@@ -215,30 +188,21 @@ class Album:
 
 
 class Artist:
-    def __init__(self, spotify_artist: str | dict):
-        result = my_app_database.fetch_item('artists', spotify_artist)
+    def __init__(self, spotify_artist: dict):
+        result = my_app_database.fetch_item('artists', spotify_artist['id'])
 
         if result is None:
-            if type(spotify_artist) is str:
-                # Fetch from Spotify API if not in the database
-                try:
-                    self.instance = sp.artist(artist_id=spotify_artist)
-                except Exception as e:
-                    print(f'\x1b[31mError with Spotify API request for Artist {spotify_artist}:\n{e}')
-                    sys.exit(1)
-            else:
-                self.instance = spotify_artist
+            self.artist_instance = spotify_artist
+            self.artist_id: str = spotify_artist['id']
+            self.artist_name: str = spotify_artist['name']
+            self.artist_url: str = spotify_artist['external_urls']['spotify']
 
-            self.artist_id: str = self.instance['id']
-            self.artist_name: str = self.instance['name']
-            self.artist_url: str = self.instance['external_urls']['spotify']
-
-            if 'url' not in self.instance['images'][0]:
+            if 'url' not in spotify_artist['images'][0]:
                 self.artist_image: str = file_image_bytes(no_image_path)
             else:
-                self.artist_image: str = spotify_image_bytes(self.instance['images'][0]['url'])
+                self.artist_image: str = spotify_image_bytes(spotify_artist['images'][0]['url'])
 
-            self.follower: int = self.instance['followers']['total']
+            self.follower: int = spotify_artist['followers']['total']
             self.album_ids: List[str] = []
             self.playlist_ids: List[str] = []
 
@@ -264,14 +228,11 @@ class Artist:
             self.album_ids = list_from_id_string(self.album_ids)
             self.playlist_ids = list_from_id_string(self.playlist_ids)
 
-            # No need to fetch from Spotify API in this case
-            self.instance = None
-
     @property
     def genre_names(self) -> list[str]:
         if not hasattr(self, '_genre_names'):
             genres = []
-            for genre in self.instance['genres']:
+            for genre in self.artist_instance['genres']:
                 genres.append(genre)
             self._genre_names = genres
         return self._genre_names
@@ -323,31 +284,22 @@ class Artist:
 
 
 class Playlist:
-    def __init__(self, spotify_playlist: str | dict):
-        result = my_app_database.fetch_item('playlists', spotify_playlist)
+    def __init__(self, spotify_playlist: dict):
+        result = my_app_database.fetch_item('playlists', spotify_playlist['id'])
 
         if result is None:
-            if type(spotify_playlist) is str:
-                # Fetch from Spotify API if not in the database
-                try:
-                    self.instance = sp.playlist(playlist_id=spotify_playlist, market=market)
-                except Exception as e:
-                    print(f'\x1b[31mError with Spotify API request for Playlist{spotify_playlist}:\n{e}')
-                    sys.exit(1)
-            else:
-                self.instance = spotify_playlist
+            self.playlist_instance = spotify_playlist
+            self.playlist_id: str = spotify_playlist['id']
+            self.playlist_name: str = spotify_playlist['name']
+            self.playlist_url: str = spotify_playlist['external_urls']['spotify']
 
-            self.playlist_id: str = self.instance['id']
-            self.playlist_name: str = self.instance['name']
-            self.playlist_url: str = self.instance['external_urls']['spotify']
-
-            if 'url' not in self.instance['images'][0]:
+            if 'url' not in spotify_playlist['images'][0]:
                 self.playlist_image: str = file_image_bytes(no_image_path)
             else:
-                self.playlist_image: str = spotify_image_bytes(self.instance['images'][0]['url'])
+                self.playlist_image: str = spotify_image_bytes(spotify_playlist['images'][0]['url'])
 
-            self.track_count: int = self.instance['tracks']['total']
-            self.owner_id: str = self.instance['owner']['id']
+            self.track_count: int = spotify_playlist['tracks']['total']
+            self.owner_id: str = spotify_playlist['owner']['id']
 
             # Check if User in DB or Queue, add if in neither
             if self.owner_id not in item_queues.user_id_queue:
@@ -372,9 +324,6 @@ class Playlist:
             # convert List Strings back to list
             self._genre_names = list_from_id_string(self._genre_names)
             self._track_ids = list_from_id_string(self._track_ids)
-
-            # No need to fetch from Spotify API in this case
-            self.instance = None
 
     @property
     def genre_names(self) -> list[str]:
@@ -425,7 +374,7 @@ class Playlist:
     def total_duration(self) -> int:
         if not hasattr(self, '_total_duration'):
             duration = 0
-            for current_track in self.instance['tracks']['items']:
+            for current_track in self.playlist_instance['tracks']['items']:
                 duration += int(current_track['track']['duration_ms'])
             self._total_duration = duration
         return self._total_duration
@@ -454,33 +403,24 @@ class Playlist:
 
 
 class Track:
-    def __init__(self, spotify_track: str | dict):
-        result = my_app_database.fetch_item('tracks', spotify_track)
+    def __init__(self, spotify_track: dict):
+        result = my_app_database.fetch_item('tracks', spotify_track['id'])
 
         if result is None:
-            if type(spotify_track) is str:
-                # Fetch from Spotify API if not in the database
-                try:
-                    self.instance = sp.track(track_id=spotify_track, market=market)
-                except Exception as e:
-                    print(f'\x1b[31mError with Spotify API request for Track {spotify_track}:\n{e}')
-                    sys.exit(1)
-            else:
-                self.instance = spotify_track
+            self.track_instance = spotify_track
+            self.track_id: str = spotify_track['id']
+            self.track_name: str = spotify_track['name']
+            self.track_url: str = spotify_track['external_urls']['spotify']
 
-            self.track_id: str = self.instance['id']
-            self.track_name: str = self.instance['name']
-            self.track_url: str = self.instance['external_urls']['spotify']
-
-            if 'images' not in self.instance:
-                self.track_image: str = spotify_image_bytes(self.instance['album']['images'][0]['url'])
+            if 'images' not in spotify_track:
+                self.track_image: str = spotify_image_bytes(spotify_track['album']['images'][0]['url'])
             else:
                 self.track_image: str = file_image_bytes(no_image_path)
 
             # Playlist ID gets added when the Playlist() is instantiated
             self.playlist_ids: list[str] = []
 
-            self.track_duration: int = self.instance['duration_ms']
+            self.track_duration: int = spotify_track['duration_ms']
 
             my_app_database.add_track_to_tracks(self)
 
@@ -504,9 +444,6 @@ class Track:
             self._album_ids = list_from_id_string(self._album_ids)
             self._playlist_ids = list_from_id_string(self.playlist_ids)
 
-            # No need to fetch from Spotify API in this case
-            self.instance = None
-
     @property
     def genre_names(self) -> list[str]:
         if not hasattr(self, '_genre_names'):
@@ -521,7 +458,7 @@ class Track:
     def artist_ids(self) -> list[str]:
         if not hasattr(self, '_artist_ids'):
             artists = []
-            for artist in self.instance['artists']:
+            for artist in self.track_instance['artists']:
                 current_artist_id = artist['id']
 
                 # Check if Track in DB or Queue, add if in neither
@@ -540,7 +477,7 @@ class Track:
     @property
     def album_ids(self) -> list[str]:
         if not hasattr(self, '_album_ids'):
-            self._album_ids = [self.instance['album']['id']]
+            self._album_ids = [self.track_instance['album']['id']]
 
             # Check if Track in DB or Queue, add if in neither
             my_app_database.update_item_ids_list(
@@ -577,35 +514,25 @@ class Track:
 
 
 class User:
-    def __init__(self, spotify_user: str | dict) -> None:
+    def __init__(self, spotify_user: dict) -> None:
         result = my_app_database.fetch_item(
             table_name='users',
-            item_id=spotify_user,
+            item_id=spotify_user['id'],
             table_column='user_id',
         )
 
         if result is None:
-            if type(spotify_user) is str:
-                # Fetch from Spotify API if not in the database
-                try:
-                    self.instance = sp.user(user=spotify_user)
+            self.user_instance = spotify_user
+            self.user_id: str = spotify_user['id']
+            self.user_name: str = spotify_user['display_name']
+            self.user_url: str = spotify_user['external_urls']['spotify']
 
-                except Exception as e:
-                    print(f'\x1b[31mError with Spotify API request for User {spotify_user}:\n{e}')
-                    sys.exit(1)
-            else:
-                self.instance = spotify_user
-
-            self.user_id: str = self.instance['id']
-            self.user_name: str = self.instance['display_name']
-            self.user_url: str = self.instance['external_urls']['spotify']
-
-            if 'url' not in self.instance['images'][0]:
+            if 'url' not in spotify_user['images'][0]:
                 self.user_image: str = file_image_bytes(no_image_path)
             else:
-                self.user_image: str = spotify_image_bytes(self.instance['images'][0]['url'])
+                self.user_image: str = spotify_image_bytes(spotify_user['images'][0]['url'])
 
-            self.follower: int = self.instance['followers']
+            self.follower: int = spotify_user['followers']
 
             my_app_database.add_user_to_users(self)
 
@@ -831,28 +758,25 @@ class Genre:
 
 
 class TrackAnalysis:
-    def __init__(self, spotify_track_id: str):
-        result = track_analysis.get_track_analysis(spotify_track_id)
-        self.track_id = spotify_track_id
+    def __init__(self, spotify_track_analysis: dict):
+        self.track_id = spotify_track_analysis['id']
+        result = track_analysis.get_track_analysis(self.track_id)
 
-        # Fetch from Spotify API if not in the database
         if result is None:
-            analyzed_track = Track(spotify_track_id)
-            self.instance = sp.audio_features(tracks=[spotify_track_id])
+            Track(spotify_track_analysis)
 
-            self.track_id: str = analyzed_track.track_id
-            self.track_acousticness: float = self.instance[0]["acousticness"]
-            self.track_danceability: float = self.instance[0]["danceability"]
-            self.track_duration_ms: int = self.instance[0]["duration_ms"]
-            self.track_energy: float = self.instance[0]["energy"]
-            self.track_instrumentalness: float = self.instance[0]["instrumentalness"]
-            self.track_key: int = self.instance[0]["key"]
-            self.track_liveness: float = self.instance[0]["liveness"]
-            self.track_loudness: float = self.instance[0]["loudness"]
-            self.track_mode: int = self.instance[0]["mode"]
-            self.track_speechiness: float = self.instance[0]["speechiness"]
-            self.track_tempo: float = self.instance[0]["tempo"]
-            self.track_valence: float = self.instance[0]["valence"]
+            self.track_acousticness: float = spotify_track_analysis["acousticness"]
+            self.track_danceability: float = spotify_track_analysis["danceability"]
+            self.track_duration_ms: int = spotify_track_analysis["duration_ms"]
+            self.track_energy: float = spotify_track_analysis["energy"]
+            self.track_instrumentalness: float = spotify_track_analysis["instrumentalness"]
+            self.track_key: int = spotify_track_analysis["key"]
+            self.track_liveness: float = spotify_track_analysis["liveness"]
+            self.track_loudness: float = spotify_track_analysis["loudness"]
+            self.track_mode: int = spotify_track_analysis["mode"]
+            self.track_speechiness: float = spotify_track_analysis["speechiness"]
+            self.track_tempo: float = spotify_track_analysis["tempo"]
+            self.track_valence: float = spotify_track_analysis["valence"]
 
             track_analysis.append_new_track_to_data(
                 track_id=self.track_id,
@@ -883,7 +807,7 @@ class TrackAnalysis:
                 self.track_mode, \
                 self.track_speechiness, \
                 self.track_tempo, \
-                self.track_valence = track_analysis.get_track_analysis(spotify_track_id)
+                self.track_valence = track_analysis.get_track_analysis(self.track_id)
 
     def get_data_from_dataframe(self):
         self.track_id, \
@@ -924,12 +848,16 @@ class Analysis:
 
 
 if __name__ == '__main__':
-    # my_app_database.reset_database()
+    my_app_database.reset_database()
 
     try:
         # Album("4Gfnly5CzMJQqkUFfoHaP3")
         # Artist("6XyY86QOPPrYVGvF9ch6wz")
-        Track("60a0Rd6pjrkxjPbaKzXjfq")
+        Track(request_one_item(
+            sp=sp,
+            item_type='track',
+            spotify_id="60a0Rd6pjrkxjPbaKzXjfq"
+        ))
         # Playlist("3ng02xAP0YashD9ZFOyYk7")
         # Playlist("7bbWOJLSohSS7yOOHzXCAN")
         # User("simonluca1")

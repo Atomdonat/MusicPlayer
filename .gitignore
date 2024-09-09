@@ -5,7 +5,8 @@ zz_deprecated
 
 # Dot Files
 .xml
-/code_backend/.env
+.env
+*/.env
 
 # User Files
 /code_backend/random_stuff.py

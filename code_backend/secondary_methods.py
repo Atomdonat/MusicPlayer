@@ -1,5 +1,4 @@
 from shared_config import *
-from spotify_access import *
 
 
 frontend_window_size = [800, 400]
@@ -94,39 +93,6 @@ def value_from_dict(dictio: dict) -> str:
     return next(iter(dictio.values()))
 
 
-def try_spotify_connection():
-    try:
-        sp = spotify_client()
-        return sp
-    except SpotifyException:
-        print('Spotify went mimimi...\n will retry again')
-        return try_spotify_connection()
-
-
-def valid_spotify_uri(sp: spotipy.Spotify, item_type: Literal['album', 'artist', 'track', 'track_analysis'], spotify_id: str) -> dict | None:
-    if spotify_id == "0000000000000000000000":
-        return None
-
-    # Normal ID
-    try:
-        match item_type:
-            case 'album':
-                return sp.album(album_id=spotify_id, market=market)
-            case 'artist':
-                return sp.artist(artist_id=spotify_id)
-            case 'playlist':
-                return sp.playlist(playlist_id=spotify_id, market=market)
-            case 'track':
-                return sp.track(track_id=spotify_id, market=market)
-            case 'user':
-                return sp.user(user=spotify_id)
-            case _:
-                return None
-
-    except SpotifyException:
-        return None
-
-
 def list_from_id_string(id_string: str) -> list[str]:
     list_elements = id_string[1:-1].replace("'", "").split(', ')
     id_list = []
@@ -215,25 +181,6 @@ def spotify_image_bytes(image_url: str) -> str:
 def file_image_bytes(image_path: str) -> str:
     image = image_from_file(image_path)
     return image_to_b64(image=image, image_format='JPEG')
-
-
-def request_up_to_50_items(sp: spotipy.Spotify, item_type: Literal['album', 'artist', 'track', 'track_analysis'], items: list) -> list:
-    if len(items) > 50:
-        raise ValueError(f"Too many items requested: {len(items)}")
-
-    match item_type:
-        case 'album':
-            fetched_items = sp.albums(items)['albums']
-        case 'artist':
-            fetched_items = sp.artists(items)['artists']
-        case 'track':
-            fetched_items = sp.tracks(items, market=market)['tracks']
-        case 'track_analysis':
-            fetched_items = sp.audio_features(items)
-        case _:
-            raise ValueError(f"Unknown item type: {item_type}")
-
-    return fetched_items
 
 
 def split_list_into_chunks(lst:list, chunk_length: int = 50) -> list:

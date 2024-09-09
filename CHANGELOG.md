@@ -8,8 +8,12 @@
 ### music_classes.py
 - reducing API calls to a minimal (reducing risc to get long "timeout" again)
   - removed (redundant) ID check/validation
+- outsourced API calls to spotify_access.py
 
 [//]: # (### database_access.py)
+
+### spotify_access.py
+- added request methods
  
 ### share_config
 - made path strings dependent of root dir (using os.path.dirname() and os.path.abspath())
