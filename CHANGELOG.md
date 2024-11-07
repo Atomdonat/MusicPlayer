@@ -1,22 +1,23 @@
 # Changes for current commit
 
+
 ## Changes in Backend Code
 
-### main_app.py
-- moved Device() and Player() from music_classes.py here
+
+[//]: # (### main_app.py)
    
-### music_classes.py
-- reducing API calls to a minimal (reducing risc to get long "timeout" again)
-  - removed (redundant) ID check/validation
-- outsourced API calls to spotify_access.py
+
+[//]: # (### music_classes.py)
+
 
 [//]: # (### database_access.py)
 
-### spotify_access.py
-- added request methods
+
+[//]: # (### spotify_access.py)
+
  
-### share_config
-- made path strings dependent of root dir (using os.path.dirname() and os.path.abspath())
+[//]: # (### share_config)
+
 
 [//]: # (### analysis.py)
 
@@ -25,4 +26,4 @@
 [//]: # (- minor changes/updates)
 
 ### other files
-- minor changes/updates
+- added method/file to re-/shuffle Playlist -> no more bad Spotify shuffle with only limited number and always the same tracks
