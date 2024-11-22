@@ -21,9 +21,12 @@
 
 [//]: # (### analysis.py)
 
+### organize_playlist.py
+- method/file to re-/shuffle Playlist -> no more bad Spotify shuffle with only limited number and always the same tracks
+- added (WIP) feature to remove specified tracks
+
 
 [//]: # (## Changes in Frontend Code)
 [//]: # (- minor changes/updates)
 
-### other files
-- added method/file to re-/shuffle Playlist -> no more bad Spotify shuffle with only limited number and always the same tracks
+[//]: # (### other files)
