@@ -1,0 +1,65 @@
+{
+  "200": {
+    "code": "200",
+    "name": "OK",
+    "explanation": "The request has succeeded. The client can read the result of the request in the body and the headers of the response."
+  },
+  "201": {
+    "code": "201",
+    "name": "Created",
+    "explanation": "The request has been fulfilled and resulted in a new resource being created."
+  },
+  "202": {
+    "code": "202",
+    "name": "Accepted",
+    "explanation": "The request has been accepted for processing, but the processing has not been completed."
+  },
+  "204": {
+    "code": "204",
+    "name": "No Content",
+    "explanation": "The request has succeeded but returns no message body."
+  },
+  "304": {
+    "code": "304",
+    "name": "Not Modified. See Conditional requests."
+  },
+  "400": {
+    "code": "400",
+    "name": "Bad Request",
+    "explanation": "The request could not be understood by the server due to malformed syntax. The message body will contain more information; see Response Schema."
+  },
+  "401": {
+    "code": "401",
+    "name": "Unauthorized",
+    "explanation": "The request requires user authentication or, if the request included authorization credentials, authorization has been refused for those credentials."
+  },
+  "403": {
+    "code": "403",
+    "name": "Forbidden",
+    "explanation": "The server understood the request, but is refusing to fulfill it."
+  },
+  "404": {
+    "code": "404",
+    "name": "Not Found",
+    "explanation": "The requested resource could not be found. This error can be due to a temporary or permanent condition."
+  },
+  "429": {
+    "code": "429",
+    "name": "Too Many Requests",
+    "explanation": "Rate limiting has been applied."
+  },
+  "500": {
+    "code": "500",
+    "name": "Internal Server Error. You should never receive this error because our clever coders catch them all ... but if you are unlucky enough to get one, please report it to us through a comment at the bottom of this page."
+  },
+  "502": {
+    "code": "502",
+    "name": "Bad Gateway",
+    "explanation": "The server was acting as a gateway or proxy and received an invalid response from the upstream server."
+  },
+  "503": {
+    "code": "503",
+    "name": "Service Unavailable",
+    "explanation": "The server is currently unable to handle the request due to a temporary condition which will be alleviated after some delay. You can choose to resend the request again."
+  }
+}

@@ -10,9 +10,11 @@ zz_deprecated
 
 # User Files
 /code_backend/random_stuff.py
+*debugging*
 /Structure.ods
 /Databases/main_database.db
 /Databases/CSV_Files/track_analysis.tsv
+
 
 # IDE Specific
 .idea

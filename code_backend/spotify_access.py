@@ -1,4 +1,5 @@
 import json
+import sys
 
 import spotipy
 from spotipy import SpotifyException
@@ -6,7 +7,7 @@ from spotipy.oauth2 import SpotifyOAuth
 import os
 from dotenv import load_dotenv
 from typing import Literal
-from secondary_methods import split_list_into_chunks, concat_iterables
+from secondary_methods import split_list_into_chunks, concat_iterables, url_to_uri
 
 # load Spotipy credentials
 load_dotenv()
@@ -24,7 +25,8 @@ SCOPES = [
     'user-top-read',
     'ugc-image-upload',
     'playlist-modify-public',
-    'playlist-modify-private'
+    'playlist-modify-private',
+    'playlist-read-private'
 ]
 
 market = 'DE'
@@ -57,7 +59,7 @@ def spotify_client() -> spotipy.Spotify:
             spotify_exceptions(e)
 
 
-def try_spotify_connection(_iter: int = 0) -> spotipy.Spotify:
+def try_spotify_connection(_iter: int = 0) -> spotipy.Spotify | None:
     if _iter < 10:
         try:
             sp = spotify_client()
@@ -65,21 +67,24 @@ def try_spotify_connection(_iter: int = 0) -> spotipy.Spotify:
         except SpotifyException as e:
             spotify_exceptions(e)
             return try_spotify_connection(_iter+1)
+    else:
+        spotify_exceptions()
+        return
 
 
 def request_multiple_items_of_same_type(sp: spotipy.Spotify, items: list[str], item_type: Literal['album', 'artist', 'playlist', 'track', 'track_analysis', 'user']) -> list[dict]:
     """
-    Spotify API request limits:
-        Album = 20;
+    Spotify item limit per request:
+        ??Album = 20??;
         Artist = 50;
         Playlist = 1;
         Track = 50;
         Audio Features = 100;
         User = 1
     """
-
-    # Fixme: Somehow Albums still get split into chunks larger than 20
-    def request_up_to_50_items() -> list[dict]:
+    # ToDo: check if every API call returns expected json
+    # Fixme: Somehow Albums still get split into chunks larger than 20, or at least catch http errors for too many ids
+    def request_up_to_50_items() -> list[dict] | None:
         items_instance_list = []
         if item_type == 'album':
             chunked_items = split_list_into_chunks(items, 20)
@@ -88,7 +93,8 @@ def request_multiple_items_of_same_type(sp: spotipy.Spotify, items: list[str], i
 
         for current_chunk in chunked_items:
             if len(current_chunk) > 50 or (len(current_chunk) > 20 and item_type == 'album'):
-                raise ValueError(f"Too many items requested: {len(current_chunk)}")
+                print(f"Too many items requested: {len(current_chunk)}")
+                continue
 
             try:
                 match item_type:
@@ -116,11 +122,20 @@ def request_multiple_items_of_same_type(sp: spotipy.Spotify, items: list[str], i
         for current_item in items:
             match item_type:
                 case 'playlist':
-                    fetched_items: dict = sp.playlist(current_item, market=market)
+                    try:
+                        fetched_items: dict = sp.playlist(current_item, market=market)
+
+                        with open("../Databases/JSON_Files/tmp_data.json", "w") as file:
+                            json.dump(fetched_items, file)
+                            sys.exit(0)
+                    except SpotifyException as e:
+                        spotify_exceptions(e)
+                        exit(1)
                 case 'user':
                     fetched_items: dict = sp.user(current_item)
                 case _:
-                    raise ValueError(f"Unknown item type: {item_type}")
+                    print(f"Unknown item type: {item_type}")
+                    continue
             items_instance_list.append(fetched_items)
 
         return items_instance_list
@@ -155,7 +170,7 @@ def request_one_item(sp: spotipy.Spotify, item_type: Literal['album', 'artist', 
         spotify_exceptions(e)
 
 
-def spotify_exceptions(error: SpotifyException, _raise: bool = True) -> None:
+def spotify_exceptions(error: SpotifyException = None, _raise: bool = True) -> None:
     match error.http_status:
         case 400:
             if 'token revoked' in error.msg:
@@ -164,23 +179,27 @@ def spotify_exceptions(error: SpotifyException, _raise: bool = True) -> None:
                 print("Too many ids requested. retry with less ids")
             else:
                 print(f"Error 400: {error.msg}")
+        case 414:
+            print(f"Request-URI Too Long:\n{error.msg}")
         case 429:
-            print("'retry-after' value:", error.headers['retry-after'])
-            retry_value = error.headers['retry-after']
-            if int(error.headers['retry-after']) > 60:
-                print("STOP FOR TODAY, retry value too high {}".format(retry_value))
-                exit()
+            if "too many 502 error responses" in error.msg:
+                print("Max Retries reached")
+                return
         case _:
             print(error)
 
 
 if __name__ == '__main__':
     sp = spotify_client()
-    _id = "1164847650"  # "4Gfnly5CzMJQqkUFfoHaP3"
-    _type = {0: 'album', 1: 'artist', 2: 'track', 3: 'playlist', 4: 'user', 5: ''}
-
-    if sp is not None:
-        data = sp.user(_id)  # sp1.some_method()
+    _id = url_to_uri("https://open.spotify.com/playlist/1TufW5MXE6oDxo7KVw4ACV?si=547ca2fa281d4557", to_id=True)  # "4Gfnly5CzMJQqkUFfoHaP3"
+    # test = url_to_uri("https://open.spotify.com/playlist/6bRkO7PLCXgmV4EJH52iU4?si=fbe6a250558f45f8", to_id=True)  # track_count=5
+    # _type = {0: 'album', 1: 'artist', 2: 'track', 3: 'playlist', 4: 'user', 5: ''}
+    # image = image_to_b64(Image.open("/home/simon/git_repos/MusicPlayer/Icons/Spotipy_Logo.png"), 'PNG')
+    # if sp is not None:
+    #     sp.playlist_upload_cover_image(playlist_id="1TufW5MXE6oDxo7KVw4ACV", image_b64=)
+        # data = sp.album_tracks(_id, market=market)  # sp1.some_method()
         # extra = ""  # "_some_detail"
-        # with open(f"../Databases/JSON_Files/spotify_{_type[4]}{extra}_{_id}.json", 'w') as f:
+        # with open(f"../Databases/JSON_Files/tmp_data.json", 'w') as f:
         #     json.dump(data, f)
+    tmp = sp.artist("52qKfVcIV4GS8A8Vay2xtt")
+    print(tmp["images"][0])

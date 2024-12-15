@@ -1,4 +1,4 @@
-from shared_config import *
+from code_backend.shared_config import *
 
 
 frontend_window_size = [800, 400]
@@ -183,7 +183,7 @@ def file_image_bytes(image_path: str) -> str:
     return image_to_b64(image=image, image_format='JPEG')
 
 
-def split_list_into_chunks(lst:list, chunk_length: int = 50) -> list:
+def split_list_into_chunks(lst: list, chunk_length: int = 50) -> list:
     return [lst[x:x+chunk_length] for x in range(0, len(lst), chunk_length)]
 
 
