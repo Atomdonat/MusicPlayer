@@ -35,41 +35,42 @@ or update only half of the attributes
 * do not reset Database before Analyzing anything (No Data in DB -> no Data for Analysis)
 * you wont get an error (or smth. similar) if you cross the API request limit (for each request the delay grows exponentially)
 * if current Spotify (API) Session/cookie is invalid delete `.spotify_cache`-file and retry
+* spotipy is a shitty library no documentation -> if it is bad do it yourself but better
 
 ## Code/Comment Highlighting in Pycharm
 - TODO:
   - Usage: Used to mark tasks that need to be done.
-  - Pattern: `*\btodo\b*`
+  - Pattern: `\btodo\b.*`
   - Main Color (Light Green): `#A4C639`
   - Darker Version: `#8CAF2D`
 - FIXME:
   - Usage: Used to highlight code that needs fixing.
-  - Pattern: `*\bfixme\b*`
+  - Pattern: `\bfixme\b.*`
   - Main Color (Light Red or Pink): `#FF6F61`
   - Darker Version: `#E65B4F`
 - BUG:
   - Usage: Used to mark known bugs in the code.
-  - Pattern: `*\bbug\b*`
+  - Pattern: `\bbug\b.*`
   - Main Color (Light Red or Pink): `#FF6F61`
   - Darker Version: `#E65B4F`
 - IDEA:
   - Usage: Used to denote an idea or suggestion for the code.
-  - Pattern: `*\bidea\b*`
+  - Pattern: `\bidea\b.*`
   - Main Color (Light Yellow): `#FFD700`
   - Darker Version: `#E6BE00`
 - NOTE:
   - Usage: Used to add notes or explanations about the code.
-  - Pattern: `*\bnote\b*`
+  - Pattern: `\bnote\b.*`
   - Main Color (Light Blue): `#ADD8E6`
   - Darker Version: `#93C2CF`
 - WARNING:
   - Usage: Used to indicate something that might need attention or could be problematic.
-  - Pattern: `*\bwarning\b*`
+  - Pattern: `\bwarning\b.*`
   - Main Color (Orange): `#FFA500`
   - Darker Version: `#E69500`
 - HACK:
   - Usage: Used to mark code that is a workaround or temporary solution.
-  - Pattern: `*\bhack\b*`
+  - Pattern: `\bhack\b.*`
   - Main Color (Purple): `#9370DB`
   - Darker Version: `#7D60BF`
 
@@ -88,6 +89,10 @@ or update only half of the attributes
 
 ### Backend related
 
+
+* [ ] switch Spotify API from Spotipy (badly documented) to official Web-API (goodly documented) using [requests](https://docs.python-requests.org/en/latest/index.html) 
+  * new library in `spotify_web_api.py`
+* [ ] **Error handling ([Spotify API Codes](https://developer.spotify.com/documentation/web-api/concepts/api-calls#response-status-codes))**
 * [ ] finish analysis.py 
 * [ ] simplify API calls (instead of 500 requests à 1 item, do (e.g.) 10 requests à 50 items (recommended by Spotify))
 * [ ] check if any Spotify API request gets smashed by the API limit of 100 items (split like in Playlist.track_ids())
@@ -121,6 +126,7 @@ or update only half of the attributes
 ### Backend 
 
 * [SQLite for Python](https://www.sqlitetutorial.net/sqlite-python/)
+* [K-NN Algorithm](https://www.geeksforgeeks.org/k-nearest-neighbours/)
 
 ### Frontend
 
