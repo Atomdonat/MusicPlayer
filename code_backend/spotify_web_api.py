@@ -1,20 +1,15 @@
-import os
-import sys
-
-from dotenv import load_dotenv
-import requests
-import json
-from typing import Literal
 from code_backend.secondary_methods import image_from_url
-from PIL import Image
+from code_backend.shared_config import *
+
 from urllib.parse import quote
+
 
 TEXTCOLOR = "\033[38;2;172;174;180m"
 
 # Note: Curl -> Requests Converter:
 #  https://curlconverter.com/python/
 
-# Note: Method progress status (M.G.S.)
+# mps: Method progress status (M.P.S.)
 #  0: planned, not implemented
 #  1: implemented, not tested
 #  2: in testing/debugging
@@ -25,7 +20,7 @@ load_dotenv()
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 REDIRECT_URI = os.getenv("REDIRECT_URI")
-TOKEN_FILE = "../code_backend/.spotify_cache"
+TOKEN_FILE = root_dir_path + "/code_backend/.spotify_cache"
 MARKET = "DE"
 SCOPES = [
     'user-read-playback-state',
@@ -39,14 +34,14 @@ SCOPES = [
     'playlist-read-private'
 ]
 
-# mgs: 3
+# mps: 3
 def debug_json(jason: dict):
-    with open("testing/debugging.json", "w") as file:
-        json.dump(jason, file, indent=4)
+    with open(root_dir_path+"/code_backend/testing/debugging.json", "w") as json_file:
+        json.dump(jason, json_file, indent=4)
 
 
-# mgs: 3
-def check_limit(limit: int, api_max_limit: int = 50) -> None:
+# mps: 3
+def check_upper_limit(limit: int, api_max_limit: int = 50) -> None:
     """
     Checks if the user limit exceeded the API limit.
     :param limit: current limit
@@ -57,7 +52,19 @@ def check_limit(limit: int, api_max_limit: int = 50) -> None:
         raise Exception(f"Limit of {limit} exceeded API limit of {api_max_limit} per request")
 
 
-# mgs: 3
+# mps: 3
+def check_lower_limit(limit: int, api_min_limit: int = 1) -> None:
+    """
+    Checks if the user limit subceeded the API limit.
+    :param limit: current limit
+    :param api_min_limit: minimum API limit
+    :return: raise Exception if API limit subceeded
+    """
+    if limit < api_min_limit:
+        raise Exception(f"Limit of {limit} subceeded API limit of {api_min_limit} per request")
+
+
+# mps: 3
 def request_token() -> None:
     """
     Curl request calling Spotify Web API to obtain token (valid for 1 hour)
@@ -71,23 +78,22 @@ def request_token() -> None:
     headers = {
         "Content-Type": "application/x-www-form-urlencoded",
     }
-    data = {
+    body_data = {
         'grant_type': 'client_credentials',
         'client_id': CLIENT_ID,
         'client_secret': CLIENT_SECRET,
     }
 
-    response = requests.post(url=url, headers=headers, data=data)
-    with open('../code_backend/.spotify_cache', 'w') as token:
+    response = requests.post(url=url, headers=headers, data=body_data)
+    with open(root_dir_path+"/code_backend/.spotify_cache", 'w') as token:
         token.write(response.text)
 
 
 # load token
 token_header: dict
-# if not os.path.isfile(TOKEN_FILE):
 request_token()
 
-with open(".spotify_cache", "r") as file:
+with open(root_dir_path+"/code_backend/.spotify_cache", "r") as file:
     data = json.load(file)
     # Todo: implement token renewal after ~1h
     token_header = {
@@ -95,25 +101,23 @@ with open(".spotify_cache", "r") as file:
 }
 
 
-# mgs: 3
-def error_codes(code: int, message: str = None) -> None:
+# mps: 3
+def print_http_error_codes(code: int, message: str = None) -> None:
     """
     Web API uses the following response status codes, as defined in the RFC 2616 and RFC 6585
-    Needed Scopes: 
     Official API Documentation: https://developer.spotify.com/documentation/web-api/concepts/api-calls#response-status-codes
-    :param code:
-    :param message:
-    :return:
+    :param code: HTTP Code of the request response
+    :param message: Message of the error
     """
     error_data: dict
-    with open("../Databases/JSON_Files/http_errors.json", "r") as e_file:
+    with open(root_dir_path+"/Databases/JSON_Files/http_errors.json", "r") as e_file:
         error_data = json.load(e_file)[str(code)]
 
     print(f"\n\x1b[31mRequest returned Code: {error_data["code"]} - {error_data["name"]}\n{error_data["explanation"]}\n\x1b[37m{message}\n{TEXTCOLOR}")
     sys.exit(1)
 
 
-# mgs: 0
+# mps: 0
 def api_request_data(url: str, request_type: Literal["GET", "POST", "DELETE", "PUT"], json_data: dict | str = None, overwrite_header: dict = None) -> dict | list | None:
     """
     Transferring data from or to a server using Curl commands via [requests](https://docs.python-requests.org/en/latest/index.html). Currently supported HTTP methods are `GET`, `POST`, `PUT` and `DELETE` (This implementation is designed for Spotify API requests)
@@ -165,57 +169,74 @@ def api_request_data(url: str, request_type: Literal["GET", "POST", "DELETE", "P
             raise f"{request_type} not supported"
 
     if response.status_code != 200:
-        return error_codes(response.status_code, json.loads(response.text)["error"]["message"])
+        return print_http_error_codes(response.status_code, json.loads(response.text)["error"]["message"])
 
     return response.json()
 
 
-# mgs: 1
-def get_followed_artists(get_type: str = "artist", last_id: str = None, limit: int = 20):
+# mps: 1
+def get_followed_artists(get_type: str = "artist"):
     """
     Get the current user's followed artists.
     Needed Scopes: user-follow-read
     Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/get-followed
-    :param get_type:
-    :param last_id: ID of the last requested Artist
-    :param limit: how many artists to request
-    :return: List of artists
+    :param get_type: The ID type: currently only artist is supported.
+    :return: Dict containing Spotify Artists, in the form of {artist_uri: artist}
     """
-    check_limit(
-        limit=limit,
-        api_max_limit=50
-    )
 
+    artists = {}
+
+    # Get first (up to) 50 artists
     response = api_request_data(
-        url=f"https://api.spotify.com/v1/me/following?type={get_type}&limit={limit}&after={last_id}",
+        url=f"https://api.spotify.com/v1/me/following?type={get_type}&limit=50",
         request_type="GET",
         json_data=None
     )
-    return response["artists"]["items"]
+
+    tmp = {item["uri"]: item for item in response["artists"]["items"]}
+    artists.update(tmp)
+
+    # If there are more than 50 albums:
+    total_artists = response["artists"]["total"]
+
+    for current_offset in range(50, total_artists, 50):
+        last_id = artists[list(artists.keys())[-1]]["id"]
+
+        response = api_request_data(
+            url=f"https://api.spotify.com/v1/me/following?type={get_type}&limit=50&after={last_id}",
+            request_type="GET",
+            json_data=None
+        )
+        tmp = {item["uri"]: item for item in response["artists"]["items"]}
+        artists.update(tmp)
+
+    return artists
 
 
-# mgs: 1
+
+# mps: 1
 def get_users_profile(user_id: str):
     """
     Get public profile information about a Spotify user.
+    Needed Scopes: None
     Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/get-users-profile
-    :param user_id: User ID
-    :return: User Profile
+    :param user_id: The user's Spotify user ID.
+    :return: Dict containing Spotify Users, in the form of {user_uri: user}
     """
+
     response = api_request_data(
         url=f"https://api.spotify.com/v1/users/{user_id}",
         request_type="GET",
         json_data=None
     )
-    return response
+    return {response["uri"]: response}
 
 
-# mgs: 1
+# mps: 1
 def get_users_top_items(
         item_type: Literal["artist", "tracks"],
         time_range: Literal["short_term", "medium_term", "long_term"] = "medium_term",
-        limit: int = 20,
-        offset: int = 0,
+        limit: int = 20
 ) -> dict:
     """
     Get the current user's top artists or tracks based on calculated affinity.
@@ -223,28 +244,51 @@ def get_users_top_items(
     Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/get-users-top-artists-and-tracks
     :param item_type: The type of entity to return. Valid values: "artists" or "tracks"
     :param time_range: Over what time frame the affinities are computed. Valid values: "long_term" (calculated from ~1 year of data and including all new data as it becomes available), "medium_term" (approximately last 6 months), "short_term" (approximately last 4 weeks). Default: medium_term
-    :param limit: The maximum number of items to return. Default: 20. Minimum: 1. Maximum: 50.
-    :param offset: The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
-    :return: Dict containing Top Items, in the form of {item_uri: item}
+    :param limit: The maximum number of items to return. If `limit=None` **all** Top Tracks get returned. Default: 20. Minimum: 1.
+    :return: Dict containing Spotify Tracks, in the form of {track_uri: track}
     """
 
+    check_lower_limit(
+        limit=limit,
+        api_min_limit=1
+    )
+
+    tracks = {}
+
+    # Get first (up to) 50 artists
     response = api_request_data(
-        url=f"https://api.spotify.com/v1/me/top/{item_type}?time_range={time_range}&limit={limit}&offset={offset}",
+        url=f"https://api.spotify.com/v1/me/top/{item_type}?time_range={time_range}&limit={min(50, limit)}&offset=0",
         request_type="GET",
         json_data=None
-    )["items"]
+    )
 
-    item_dict = {item["uri"]:item for item in response}
-    return item_dict
+    tmp = {item["uri"]: item for item in response["items"]}
+    tracks.update(tmp)
+
+    # If there are more than 50 albums:
+    total_artists = response["total"]
+
+    for current_offset in range(50, min(total_artists,limit), 50):
+        response = api_request_data(
+        url=f"https://api.spotify.com/v1/me/top/{item_type}?time_range={time_range}&limit=50&offset={current_offset}",
+        request_type="GET",
+        json_data=None
+        )
+
+        tmp = {item["uri"]: item for item in response["items"]}
+        tracks.update(tmp)
+
+    return tracks
 
 
-# mgs: 1
+
+# mps: 1
 def get_current_users_profile():
     """
     Get detailed profile information about the current user (including the current user's username).
     Needed Scopes: user-read-private, user-read-email
     Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/get-current-users-profile
-    :return: Current Users Profile
+    :return: Dict containing Spotify Users, in the form of {user_uri: user}
     """
 
     response = api_request_data(
@@ -252,114 +296,144 @@ def get_current_users_profile():
         request_type="GET",
         json_data=None
     )
-    return response
+    return {response["uri"]: response}
 
 
-# mgs: 1
-def check_users_saved_tracks(check_ids: list[str]) -> list[bool]:
+# mps: 1
+def check_users_saved_tracks(check_ids: list[str]) -> dict:
     """
     Check if one or more tracks is already saved in the current Spotify user's 'Your Music' library.
     Needed Scopes: user-library-read
     Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/check-users-saved-tracks
-    :param check_ids: A list of the Spotify IDs to be checked. Maximum: 50 IDs.
-    :return: List containing the existence of the tracks
+    :param check_ids: A list of the Spotify IDs to be checked.
+    :return: Dict containing Saved Spotify Tracks, in the form of {track_uri: bool}
     """
-    check_limit(
-        limit=len(check_ids),
-        api_max_limit=50
-    )
 
-    response = api_request_data(
-        url=f"https://api.spotify.com/v1/me/tracks/contains",
-        request_type="GET",
-        json_data=None
-    )
+    tracks = {}
 
-    return response
+    for current_offset in range(0, len(check_ids), 50):
+        encoded_chunk = quote(",".join(check_ids[current_offset: current_offset + 50]))
+
+        response = api_request_data(
+            url=f"https://api.spotify.com/v1/me/tracks/contains?ids={encoded_chunk}",
+            request_type="GET",
+            json_data=None
+        )
+
+        for _id, existence in zip(check_ids[current_offset: current_offset + 50], response):
+            tracks[f"spotify:track:{_id}"] = existence
+
+    return tracks
 
 
-# mgs: 1
-def get_users_saved_tracks(limit: int = 20, offset: int = 0) -> dict:
+# mps: 1
+def get_users_saved_tracks(limit: int = 20) -> dict:
     """
     Get a list of the songs saved in the current Spotify user's 'Your Music' library.
     Needed Scopes: user-library-read
     Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/get-users-saved-tracks
-    :param limit: The maximum number of items to return. Default: 20. Minimum: 1. Maximum: 50.
-    :param offset: The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
-    :return: Dict containing Tracks, in the form of {item_uri: item}
+    :param limit: The maximum number of items to return. If `limit=None` **all** Saved Tracks get returned. Default: 20. Minimum: 1.
+    :return: Dict containing Saved Spotify Tracks, in the form of {track_uri: track}
     """
-    check_limit(
+
+    check_lower_limit(
         limit=limit,
-        api_max_limit=50
+        api_min_limit=1
     )
 
+    tracks = {}
+
+    # Get first (up to) 50 artists
     response = api_request_data(
-        url=f"https://api.spotify.com/v1/me/tracks?market={MARKET}&limit={limit}&offset={offset}",
+        url=f"https://api.spotify.com/v1/me/tracks?market={MARKET}&limit={min(50, limit)}&offset=0",
         request_type="GET",
         json_data=None
-    )["items"]
+    )
 
-    return {item["uri"]: item for item in response}
+    tmp = {item["uri"]: item for item in response["items"]}
+    tracks.update(tmp)
+
+    # If there are more than 50 albums:
+    total_tracks = response["total"]
+
+    for current_offset in range(50, min(total_tracks, limit), 50):
+        response = api_request_data(
+            url=f"https://api.spotify.com/v1/me/tracks?market={MARKET}&limit=50&offset={current_offset}",
+            request_type="GET",
+            json_data=None
+        )
+
+        tmp = {item["uri"]: item for item in response["items"]}
+        tracks.update(tmp)
+
+    return tracks
 
 
-# mgs: 1
+# mps: 1
 def get_several_tracks(track_ids: list[str]):
     """
     Get Spotify catalog information for multiple tracks based on their Spotify IDs.
-    Needed Scopes: 
+    Needed Scopes: None
     Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/get-several-tracks
-    :param track_ids: A list of the Spotify IDs to be checked. Maximum: 50 IDs.
-    :return: Dict of Spotify Tracks, in the form of {item_uri: item}
+    :param track_ids: A list of the Spotify IDs to be checked.
+    :return: Dict containing Spotify Tracks, in the form of {track_uri: track}
     """
-    check_limit(
-        limit=len(track_ids),
-        api_max_limit=50
-    )
 
-    response = api_request_data(
-        url=f"https://api.spotify.com/v1/tracks?market={MARKET}&ids={track_ids}",
-        request_type="GET",
-        json_data=None
-    )
-    return {item["uri"]: item for item in response["tracks"]}
+    tracks = {}
+
+    for current_offset in range(0, len(track_ids), 50):
+        encoded_chunk = quote(",".join(track_ids[current_offset: current_offset + 50]))
+
+        response = api_request_data(
+            url=f"https://api.spotify.com/v1/tracks?market={MARKET}&ids={encoded_chunk}",
+            request_type="GET",
+            json_data=None
+        )
+
+        tmp = {item["uri"]: item for item in response["tracks"]}
+        tracks.update(tmp)
+
+    return tracks
 
 
-# mgs: 1
+# mps: 1
 def get_track(track_id: str) -> dict:
     """
     Get Spotify catalog information for a single track identified by its unique Spotify ID.
-    Needed Scopes: 
+    Needed Scopes: None
     Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/get-track
     :param track_id: The Spotify ID for the track.
-    :return: A track
+    :return: Dict containing Spotify Tracks, in the form of {track_uri: track}
     """
+
     response = api_request_data(
         url=f"https://api.spotify.com/v1/tracks/{track_id}?market={MARKET}",
         request_type="GET",
         json_data=None
     )
-    return response
+    return {response["uri"]: response}
 
 
-# mgs: 2
-def get_playlist(playlist_id: str) -> dict | None:
+# mps: 2
+def get_playlist(playlist_id: str) -> dict:
     """
     Get a playlist owned by a Spotify user.
-    Needed Scopes: 
+    Needed Scopes: None
     Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/get-playlist
     :param playlist_id: The Spotify ID of the playlist.
-    :return: A playlist
+    :return: Dict containing Spotify Playlists, in the form of {playlist_id: playlist}
     """
+
     response = api_request_data(
         url=f"https://api.spotify.com/v1/playlists/{playlist_id}?market={MARKET}",
         request_type="GET",
         json_data=None
     )
-    return response
+    return {response["uri"]: response}
 
 
-# mgs: 1
-def change_playlist_details(playlist_id: str, name: str, public: bool, collaborative: bool, description: str) -> dict | None:
+# mps: 1
+def change_playlist_details(playlist_id: str, name: str, public: bool, collaborative: bool, description: str) -> None:
     """
     Change a playlist's name and public/private state. (The user must, of course, own the playlist.)
     Needed Scopes: playlist-modify-public, playlist-modify-private
@@ -369,6 +443,7 @@ def change_playlist_details(playlist_id: str, name: str, public: bool, collabora
     :param public: The playlist's public/private status (if it should be added to the user's profile or not): true the playlist will be public, false the playlist will be private, null the playlist status is not relevant. For more about public/private status, see [Working with Playlists](https://developer.spotify.com/documentation/web-api/concepts/playlists)
     :param collaborative: If `true`, the playlist will become collaborative and other users will be able to modify the playlist in their Spotify client. Note: You can only set `collaborative=true` on non-public playlists.
     :param description: Value for playlist description as displayed in Spotify Clients and in the Web API.
+    :return: Updates Playlist in App
     """
 
     json_data = {
@@ -378,62 +453,71 @@ def change_playlist_details(playlist_id: str, name: str, public: bool, collabora
         'collaborative': collaborative,
     }
 
-    response = api_request_data(
+    api_request_data(
         url=f"https://api.spotify.com/v1/playlists/{playlist_id}",
         request_type="PUT",
         json_data=json_data
     )
 
-    return response
 
-
-# mgs: 1
-def get_playlist_items(playlist_id:str) -> dict | None:
+# mps: 1
+def get_playlist_items(playlist_id:str) -> dict:
     """
     Get full details of the items of a playlist owned by a Spotify user.
     Needed Scopes: playlist-read-private
     Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/get-playlists-tracks
     :param playlist_id: The Spotify ID of the playlist.
-    :return:
+    :return: Dict containing Spotify Tracks, in the form of {track_uri: track}
     """
-    track_count = get_playlist(playlist_id)["tracks"]["total"]
-    track_dicts = {}
+    tracks = {}
 
-    for current_offset in range(0, track_count, 50):
-        items = api_request_data(
+    # Get first (up to) 50 artists
+    response = api_request_data(
+        url=f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks?limit=50&offset=0&market={MARKET}",
+        request_type="GET",
+        json_data=None
+    )
+
+    tmp = {item["track"]["uri"]: item["track"] for item in response["items"]}
+    tracks.update(tmp)
+
+    # If there are more than 50 albums:
+    total_tracks = response["total"]
+
+    for current_offset in range(50, total_tracks, 50):
+        response = api_request_data(
             url=f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks?limit=50&offset={current_offset}&market={MARKET}",
             request_type="GET",
             json_data=None
         )
 
-        if not items:
-            print(f"\n\x1b[31mWhat the fuck just happened? looks like you need to debug smth... xD{TEXTCOLOR}")
-            sys.exit(1)
+        tmp = {item["track"]["uri"]: item["track"] for item in response["items"]}
+        tracks.update(tmp)
 
-        for current_track in items["items"]:
-            track_dicts[current_track["track"]["uri"]] = current_track["track"]
+    if len(tracks) != total_tracks:
+        print(f"\n\x1b[31mCould not fetch all Playlist {playlist_id} items{TEXTCOLOR}\nTracks fetched: {len(tracks)}, Tracks in Playlist: {total_tracks}\n")
 
-    if len(track_dicts) != track_count:
-        print(f"\n\x1b[31mCould not fetch all Playlist {playlist_id} items{TEXTCOLOR}\nTracks fetched: {len(track_dicts)}, Tracks in Playlist: {track_count}\n")
-
-    return track_dicts
+    return tracks
 
 
-# mgs: 1
-def update_playlist_items(playlist_id:str, uris: list[str]) -> None:
+# mps: 1
+def update_playlist_items(playlist_id: str, uris: list[str]) -> None:
     """
-
+    Own implementation to update a Playlist
     Needed Scopes: playlist-read-private, playlist-modify-public, playlist-modify-private
     :param playlist_id: The Spotify ID of the playlist.
-    :param uris: A comma-separated list of Spotify URIs to add, can be track or episode URIs. For example: uris=spotify:track:4iV5W9uYEdYUVa79Axb7Rh, spotify:track:1301WleyT98MSxVHPZCA6M, spotify:episode:512ojhOuo1ktJprKbVcKyQ A maximum of 100 items can be added in one request. Note: it is likely that passing a large number of item URIs as a query parameter will exceed the maximum length of the request URI. When adding a large number of items, it is recommended to pass them in the request body, see below.
+    :param uris: A comma-separated list of Spotify URIs to add.
+    :return: Updates Playlist in App
     """
 
     # Fetch and remove current Tracks
     items = get_playlist_items(playlist_id=playlist_id)
+
     remove_playlist_items(
         playlist_id=playlist_id,
         track_uris=list(items.keys())
     )
+
     # Add new items
     add_items_to_playlist(
         playlist_id=playlist_id,
@@ -441,95 +525,155 @@ def update_playlist_items(playlist_id:str, uris: list[str]) -> None:
     )
 
 
-# mgs: 1
-def add_items_to_playlist(playlist_id: str, uris: list[str], position: int = 0) -> None:
+# mps: 1
+def add_items_to_playlist(playlist_id: str, uris: list[str]) -> None:
     """
-    Add one or more items to a user's playlist.
+    Append one or more items to a user's playlist.
     Needed Scopes: playlist-modify-public, playlist-modify-private
     Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/add-tracks-to-playlist
     :param playlist_id: The Spotify ID of the playlist.
-    :param position: The position to insert the items, a zero-based index. For example, to insert the items in the first position: position=0; to insert the items in the third position: position=2. If omitted, the items will be appended to the playlist. Items are added in the order they are listed in the query string or request body.
-    :param uris: A list of Spotify URIs to add, can be track or episode URIs. For example: uris=spotify:track:4iV5W9uYEdYUVa79Axb7Rh, spotify:track:1301WleyT98MSxVHPZCA6M, spotify:episode:512ojhOuo1ktJprKbVcKyQ A maximum of 100 items can be added in one request. Note: it is likely that passing a large number of item URIs as a query parameter will exceed the maximum length of the request URI. When adding a large number of items, it is recommended to pass them in the request body, see below.
+    :param uris: A list of Spotify URIs to add, can be track or episode URIs.
     """
 
-    # Todo: better conversion with urllib or request
-    uri_str = "%2C".join(uris).replace(":","%3")
+    check_lower_limit(
+        limit=len(uris),
+        api_min_limit=1
+    )
+
+    # Note: The position [...] If omitted, the items will be appended to the playlist. [...]
+    #  -> no position should work. Otherwise or if position is needed uncomment and update value
+    # Additionally, the URIs are in the Body instead of passing numerous item URIs as a query parameter and
+    # therefore, avoiding the surpassing of the maximum length of the request URI
 
     json_data = {
-        "position": 0
+        "uris": uris
+        # "position": position
     }
 
-    response = api_request_data(
-        url=f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks?uris={uri_str}",
-        request_type="POST",
-        json_data=json_data
-    )
-    return response
+
+    for current_offset in range(0, len(uris), 100):
+        api_request_data(
+            url=f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks",
+            request_type="POST",
+            json_data=json_data
+        )
 
 
-# mgs: 1
+# mps: 1
 def remove_playlist_items(playlist_id: str, track_uris: list[str]) -> None:
     """
-    Remove one or more items from a user's playlist.
+    Remove one or more items from a user's playlist (all appearances with these URIs/all Duplicates).
     Needed Scopes: playlist-modify-public, playlist-modify-private
     Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/remove-tracks-playlist
     :param playlist_id: The Spotify ID of the playlist.
-    :param track_uris: An array of objects containing Spotify URIs of the tracks or episodes to remove. A maximum of 100 objects can be sent at once.
+    :param track_uris: An array of objects containing Spotify URIs of the tracks or episodes to remove.
     """
 
-    track_dict = [{"uri": item} for item in track_uris]
-    json_data = {
-        'tracks': track_dict,
-    }
-
-    response = api_request_data(
-        url=f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks",
-        request_type="DELETE",
-        json_data=json_data
+    check_lower_limit(
+        limit=len(track_uris),
+        api_min_limit=1
     )
 
-    return response
+    track_dict = [{"uri": item} for item in track_uris]
 
+    for current_offset in range(0, len(track_uris), 100):
+        json_data = {
+            'tracks': track_dict[current_offset:current_offset + 100],
+        }
+        api_request_data(
+            url=f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks",
+            request_type="DELETE",
+            json_data=json_data
+        )
 
-# mgs: 1
-def get_current_users_playlists(limit: int = 20, offset: int = 0) -> dict | None:
+# mps: 1
+def get_current_users_playlists(limit: int = 20) -> dict | None:
     """
     Get a list of the playlists owned or followed by the current Spotify user.
     Needed Scopes: playlist-read-private
     Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/get-a-list-of-current-users-playlists
-    :param limit: The maximum number of items to return. Default: 20. Minimum: 1. Maximum: 50.
-    :param offset: The index of the first playlist to return. Default: 0 (the first object). Maximum offset: 100.000. Use with limit to get the next set of playlists.
-    :return: Dict of Spotify Playlists, in the form of {item_uri: item}
+    :param limit: The maximum number of items to return.  If `limit=None` **all** Top Playlists get returned. Default: 20. Minimum: 1.
+    :return: Dict containing Spotify Playlists, in the form of {playlist_uri: playlist}
     """
+
+    check_lower_limit(
+        limit=limit,
+        api_min_limit=1
+    )
+
+    playlists = {}
+
+    # Get first (up to) 50 artists
     response = api_request_data(
-        url=f"https://api.spotify.com/v1/me/playlists?limit={limit}&offset={offset}",
+        url=f"https://api.spotify.com/v1/me/playlists?limit={min(50, limit)}&offset=0",
         request_type="GET",
         json_data=None
     )
-    return {item["uri"]: item for item in response["items"]}
+
+    tmp = {item["uri"]: item for item in response["items"]}
+    playlists.update(tmp)
+
+    # If there are more than 50 albums:
+    total_playlists = response["total"]
+
+    for current_offset in range(50, min(total_playlists, limit), 50):
+        response = api_request_data(
+            url=f"https://api.spotify.com/v1/me/playlists?limit=50&offset={current_offset}",
+            request_type="GET",
+            json_data=None
+        )
+
+        tmp = {item["uri"]: item for item in response["items"]}
+        playlists.update(tmp)
+
+    return playlists
 
 
-# mgs: 1
-def get_users_playlists(user_id: str, limit: int = 20, offset: int = 0) -> dict | None:
+# mps: 1
+def get_users_playlists(user_id: str, limit: int = 20) -> dict | None:
     """
     Get a list of the playlists owned or followed by a Spotify user.
     Needed Scopes: playlist-read-private, playlist-read-collaborative
     Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/get-list-users-playlists
     :param user_id: The user's Spotify user ID.
-    :param limit: The maximum number of items to return. Default: 20. Minimum: 1. Maximum: 50.
-    :param offset: The index of the first playlist to return. Default: 0 (the first object). Maximum offset: 100.000. Use with limit to get the next set of playlists.
-    :return: Dict of Spotify Playlists, in the form of {item_uri: item}
+    :param limit: The maximum number of items to return.  If `limit=None` **all** Top Playlists get returned. Default: 20. Minimum: 1.
+    :return: Dict containing Spotify Playlists, in the form of {playlist_uri: playlist}
     """
 
+    check_lower_limit(
+        limit=limit,
+        api_min_limit=1
+    )
+
+    playlists = {}
+
+    # Get first (up to) 50 artists
     response = api_request_data(
-        url=f"https://api.spotify.com/v1/users/{user_id}/playlists?limit={limit}&offset={offset}",
+        url=f"https://api.spotify.com/v1/users/{user_id}/playlists?limit={min(50, limit)}&offset=0",
         request_type="GET",
         json_data=None
     )
-    return {item["uri"]: item for item in response["items"]}
+
+    tmp = {item["uri"]: item for item in response["items"]}
+    playlists.update(tmp)
+
+    # If there are more than 50 albums:
+    total_playlists = response["total"]
+
+    for current_offset in range(50, min(total_playlists, limit), 50):
+        response = api_request_data(
+            url=f"https://api.spotify.com/v1/users/{user_id}/playlists?limit=50&offset={current_offset}",
+            request_type="GET",
+            json_data=None
+        )
+
+        tmp = {item["uri"]: item for item in response["items"]}
+        playlists.update(tmp)
+
+    return playlists
 
 
-# mgs: 1
+# mps: 1
 def create_playlist(user_id: str, name: str, public: bool = True, collaborative: bool = False, description: str = None) -> dict | None:
     """
     Create a playlist for a Spotify user. (The playlist will be empty until you add tracks.) Each user is generally limited to a maximum of 11000 playlists.
@@ -540,7 +684,7 @@ def create_playlist(user_id: str, name: str, public: bool = True, collaborative:
     :param public: Defaults to true. The playlist's public/private status (if it should be added to the user's profile or not): true the playlist will be public, false the playlist will be private. To be able to create private playlists, the user must have granted the "playlist-modify-private" scope. For more about public/private status, see Working with Playlists
     :param collaborative: Defaults to false. If true the playlist will be collaborative. Note: to create a collaborative playlist you must also set public to false. To create collaborative playlists you must have granted "playlist-modify-private" and "playlist-modify-public" scopes.
     :param description: value for playlist description as displayed in Spotify Clients and in the Web API.
-    :return: A playlist, in the form of {item_uri: item}
+    :return: Dict containing Spotify Playlists, in the form of {playlist_uri: playlist}
     """
 
     json_data = {
@@ -557,12 +701,12 @@ def create_playlist(user_id: str, name: str, public: bool = True, collaborative:
     return {response["uri"]: response}
 
 
-# mgs: 1
+# mps: 1
 def get_playlist_cover_image(playlist_id: str) -> Image:
     """
-    https://developer.spotify.com/documentation/web-api/reference/get-playlist-cover
-    Needed Scopes: 
-    Official API Documentation: Get the current image associated with a specific playlist.
+    Get the current image associated with a specific playlist.
+    Needed Scopes: None
+    Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/get-playlist-cover
     :param playlist_id: The Spotify ID of the playlist.
     :return: Playlist Cover Image loaded as Pillow Image
     """
@@ -575,20 +719,21 @@ def get_playlist_cover_image(playlist_id: str) -> Image:
     return image_from_url(response[0]["url"])
 
 
-# mgs: 1
-def add_custom_playlist_cover_image(playlist_id: str, image: str) -> None:
+# mps: 1
+def add_custom_playlist_cover_image(playlist_id: str, b64_image: str) -> None:
     """
     Replace the image used to represent a specific playlist.
     Needed Scopes: ugc-image-upload, playlist-modify-private, playlist-modify-public
     Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/upload-custom-playlist-cover
     :param playlist_id: The Spotify ID of the playlist.
-    :param image: Base64 encoded JPEG image data, maximum payload size is 256 KB.
+    :param b64_image: Base64 encoded JPEG image data, maximum payload size is 256 KB.
+    :return: Updates Playlist in App
     """
 
     api_request_data(
         url=f"https://api.spotify.com/v1/playlists/{playlist_id}/images",
         request_type="PUT",
-        json_data=image,
+        json_data=b64_image,
         overwrite_header={
             'Authorization': f'Bearer {data["access_token"]}',
             'Content-Type': "image/jpeg"
@@ -596,14 +741,14 @@ def add_custom_playlist_cover_image(playlist_id: str, image: str) -> None:
     )
 
 
-# mgs: 1
+# mps: 1
 def get_artist(artist_id: str) -> dict | None:
     """
     Get Spotify catalog information for a single artist identified by their unique Spotify ID.
-    Needed Scopes: 
+    Needed Scopes: None
     Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/get-an-artist
     :param artist_id: The Spotify ID of the artist.
-    :return: Spotify Artist, in the form of {item_uri: item}
+    :return: Dict containing Spotify Artists, in the form of {artist_uri: artist}
     """
 
     response = api_request_data(
@@ -615,14 +760,14 @@ def get_artist(artist_id: str) -> dict | None:
     return {response["uri"]: response}
 
 
-# mgs: 1
+# mps: 1
 def get_several_artists(artist_ids: list[str]) -> dict | None:
     """
     Get Spotify catalog information for several artists based on their Spotify IDs.
-    Needed Scopes: 
+    Needed Scopes: None
     Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/get-multiple-artists
     :param artist_ids: A comma-separated list of the Spotify IDs for the artists.
-    :return: Spotify Artist, in the form of {item_uri: item}
+    :return: Dict containing Spotify Artists, in the form of {artist_uri: artist}
     """
 
     artists = {}
@@ -633,44 +778,65 @@ def get_several_artists(artist_ids: list[str]) -> dict | None:
             request_type="GET",
             json_data=None
         )
+
         tmp = {item["uri"]: item for item in response["artists"]}
         artists.update(tmp)
 
     return artists
 
 
-# mgs: 1
-def get_artists_albums(album_id: str, limit: int = 20, offset: int = 0) -> dict | None:
+# mps: 1
+def get_artists_albums(album_id: str, limit: int = 20) -> dict:
     """
     Get Spotify catalog information about an artist's albums.
-    Needed Scopes: 
+    Needed Scopes: None
     Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/get-an-artists-albums
     :param album_id: The Spotify ID of the album.
-    :param limit: The maximum number of items to return. Default: 20. Minimum: 1. Maximum: 50.
-    :param offset: The index of the first item to return. Default: 0 (the first item). Use with limit to get the next set of items.
+    :param limit: The maximum number of items to return.
+    :return: Dict containing Spotify Albums, in the form of {album_uri: album}
     """
 
-    check_limit(
+    check_lower_limit(
         limit=limit,
-        api_max_limit=50
+        api_min_limit=1
     )
 
+    albums = {}
+
+    # Get first (up to) 50 artists
     response = api_request_data(
-        url=f"https://api.spotify.com/v1/artists/{album_id}/albums?market={MARKET}&limit={limit}&offset={offset}",
+        url=f"https://api.spotify.com/v1/artists/{album_id}/albums?market={MARKET}&limit={min(50, limit)}&offset=0",
         request_type="GET",
         json_data=None
     )
-    return response
+
+    tmp = {item["uri"]: item for item in response["items"]}
+    albums.update(tmp)
+
+    # If there are more than 50 albums:
+    total_albums = response["total"]
+
+    for current_offset in range(50, min(total_albums, limit), 50):
+        response = api_request_data(
+            url=f"https://api.spotify.com/v1/artists/{album_id}/albums?market={MARKET}&limit=50&offset={current_offset}",
+            request_type="GET",
+            json_data=None
+        )
+
+        tmp = {item["uri"]: item for item in response["items"]}
+        albums.update(tmp)
+
+    return albums
 
 
-# mgs: 1
-def get_artists_top_tracks(artist_id: str) -> dict | None:
+# mps: 1
+def get_artists_top_tracks(artist_id: str) -> dict:
     """
     Get Spotify catalog information about an artist's top tracks by country.
-    Needed Scopes: 
+    Needed Scopes: None
     Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/get-an-artists-top-tracks
     :param artist_id: The Spotify ID of the artist.
-    :return: Spotify Artists, in the form of {item_uri: item}
+    :return: Dict containing Spotify Artists, in the form of {artist_uri: artist}
     """
 
     response = api_request_data(
@@ -682,14 +848,14 @@ def get_artists_top_tracks(artist_id: str) -> dict | None:
     return {item["uri"]: item for item in response["tracks"]}
 
 
-# mgs: 1
-def check_users_saved_albums(album_ids: list[str]) -> dict | None:
+# mps: 1
+def check_users_saved_albums(album_ids: list[str]) -> dict:
     """
     Check if one or more albums is already saved in the current Spotify user's 'Your Music' library.
     Needed Scopes: user-library-read
     Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/check-users-saved-albums
     :param album_ids: A comma-separated list of the Spotify IDs for the albums. Maximum: 20 IDs.
-    :return: Saved Spotify Albums, in the form of {item_uri: exists?}
+    :return: Dict containing Saved Spotify Albums, in the form of {album_uri: exists?}
     """
 
     albums = {}
@@ -707,14 +873,14 @@ def check_users_saved_albums(album_ids: list[str]) -> dict | None:
     return albums
 
 
-# mgs: 1
-def get_album_tracks(album_id: str) -> dict | None:
+# mps: 1
+def get_album_tracks(album_id: str) -> dict:
     """
     Get Spotify catalog information about an album’s tracks. Optional parameters can be used to limit the number of tracks returned.
-    Needed Scopes: 
+    Needed Scopes: None
     Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/get-an-albums-tracks
     :param album_id: The Spotify ID of the album.
-    :return: Spotify Album Tracks, in the form of {item_uri: item}
+    :return: Dict containing Spotify Tracks, in the form of {track_uri: track}
     """
 
     track_count = get_album(album_id=album_id)["total_tracks"]
@@ -740,19 +906,19 @@ def get_album_tracks(album_id: str) -> dict | None:
     return track_dicts
 
 
-# mgs: 1
-def get_several_albums(album_ids: list[str]) -> dict | None:
+# mps: 1
+def get_several_albums(album_ids: list[str]) -> dict:
     """
     Get Spotify catalog information for multiple albums identified by their Spotify IDs.
-    Needed Scopes: 
+    Needed Scopes: None
     Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/get-multiple-albums
     :param album_ids: A comma-separated list of the Spotify IDs for the albums.
-    :return: Spotify Albums, in the form of {item_uri: item}
+    :return: Dict containing Spotify Albums, in the form of {album_uri: album}
     """
 
     albums = {}
-    for current_chunk in range(0, len(album_ids), 50):
-        encoded_chunk = quote(",".join(album_ids[current_chunk: current_chunk + 50]))
+    for current_chunk in range(0, len(album_ids), 20):
+        encoded_chunk = quote(",".join(album_ids[current_chunk: current_chunk + 20]))
         response = api_request_data(
             url=f"https://api.spotify.com/v1/albums?ids={encoded_chunk}&market={MARKET}",
             request_type="GET",
@@ -764,14 +930,15 @@ def get_several_albums(album_ids: list[str]) -> dict | None:
 
     return albums
 
-# mgs: 1
-def get_album(album_id: str) -> dict | None:
+
+# mps: 1
+def get_album(album_id: str) -> dict:
     """
     Get Spotify catalog information for a single album.
-    Needed Scopes: 
+    Needed Scopes: None
     Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/get-an-album
     :param album_id: The Spotify ID of the album.
-    :return: Spotify Albums, in the form of {item_uri: item}
+    :return: Dict containing Spotify Albums, in the form of {album_uri: album}
     """
 
     response = api_request_data(
@@ -783,12 +950,13 @@ def get_album(album_id: str) -> dict | None:
     return {response["uri"]: response}
 
 
-# mgs: 1
+# mps: 1
 def get_users_saved_albums() -> dict | None:
     """
     Get a list of the albums saved in the current Spotify user's 'Your Music' library.
     Needed Scopes: user-library-read
     Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/get-users-saved-albums
+    :return: Dict containing Saved Spotify Albums, in the form of {album_uri: album}
     """
 
     albums = {}
@@ -822,6 +990,21 @@ def get_users_saved_albums() -> dict | None:
 
 
 if __name__ == '__main__':
-    print(get_playlist_items(
-        playlist_id="6QjbdNFUe4SFNE82RTmcCJ"
-    ))
+    test_album_id = "79fnwKynD56xIXBVWkyaE5"
+    test_album_uri = "spotify:album:79fnwKynD56xIXBVWkyaE5"
+    test_album_ids = ["79fnwKynD56xIXBVWkyaE5", "7CI6R1kJLUMfBl4FOKP8nc"]
+    test_artist_id = "6XyY86QOPPrYVGvF9ch6wz"
+    test_artist_ids = ["6XyY86QOPPrYVGvF9ch6wz", "00YTqRClk82aMchQQpYMd5"]
+    test_playlist_id = "6bRkO7PLCXgmV4EJH52iU4"
+    test_playlist_uri = "spotify:playlist:6bRkO7PLCXgmV4EJH52iU4"
+    test_track_id = "14FP9BNWHekbC17tqcppOR"
+    test_track_uri = "spotify:track:14FP9BNWHekbC17tqcppOR"
+    test_track_uris = ["spotify:track:6zrR8itT7IfAdl5aS7YQyt", "spotify:track:14FP9BNWHekbC17tqcppOR"]
+    test_track_ids = ["6zrR8itT7IfAdl5aS7YQyt", "14FP9BNWHekbC17tqcppOR"]
+    test_user_id = "simonluca1"
+    test_limit = 2
+    test_offset = 0
+
+    # if not items:
+    #     print(f"\n\x1b[31mWhat the fuck just happened? looks like you need to debug smth... xD{TEXTCOLOR}")
+    #     sys.exit(1)

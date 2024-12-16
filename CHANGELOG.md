@@ -28,9 +28,9 @@
 [//]: # (- added &#40;WIP&#41; feature to remove specified tracks)
 
 ### spotify_web_api.py
-- replacing spotipy calls by implementing Official Spotify Web API requests
-- Using Docstrings out of Official Documentation is way better than Documentation from spotipy 
-- still **WIP**; not tested yet
+- still **WIP**; not tested yet (implemented Progress status code: mps)
+- replaced check(_upper)_limit() calls with iterations of requests
+- Docstrings mostly finished
 
 [//]: # (## Changes in Frontend Code)
 [//]: # (- minor changes/updates)

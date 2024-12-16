@@ -14,7 +14,7 @@ zz_deprecated
 /Structure.ods
 /Databases/main_database.db
 /Databases/CSV_Files/track_analysis.tsv
-
+*tmp*
 
 # IDE Specific
 .idea
