@@ -94,8 +94,10 @@ or update only half of the attributes
   * new library in `spotify_web_api.py`
 * [ ] **Error handling ([Spotify API Codes](https://developer.spotify.com/documentation/web-api/concepts/api-calls#response-status-codes))**
 * [ ] finish analysis.py 
-* [ ] simplify API calls (instead of 500 requests à 1 item, do (e.g.) 10 requests à 50 items (recommended by Spotify))
-* [ ] check if any Spotify API request gets smashed by the API limit of 100 items (split like in Playlist.track_ids())
+* [ ] finish spotify_web_api.py 
+* [ ] remove spotipy Web API calls and replace with spotify_web_api.py  
+* [x] simplify API calls (instead of 500 requests à 1 item, do (e.g.) 10 requests à 50 items (recommended by Spotify))
+* [x] check if any Spotify API request gets smashed by the API limit of 100 items (split like in Playlist.track_ids())
 * [ ] optimize track search distribution in 'random_playlist_by_genre()' -> implement ML
 * [ ] connect app with Home Assistant
 * [ ] use Spotify's Audio Features & Analytics (own genres) -> implement ML
