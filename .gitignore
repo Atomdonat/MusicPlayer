@@ -9,7 +9,6 @@ venv
 */.env
 
 # User Files
-/code_backend/testing/dev_bench_1.py
 /Structure.ods
 /Databases/main_database.db
 /Databases/JSON_Files/spotify_*.json
