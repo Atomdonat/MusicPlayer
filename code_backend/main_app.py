@@ -46,7 +46,7 @@ class Device:
 class Player:
 
     def __init__(self) -> None:
-        self.instance = sp.current_playback(market=market)
+        self.instance = sp.current_playback(market=MARKET)
         if self.instance:
             if self.instance['context']['type'] == 'album':
                 self.current_collection = Album(uri_to_id(self.instance['context']['uri']))
@@ -78,7 +78,7 @@ class Player:
     # JSON Files:
     def initialize_player(self):
         try:
-            self.instance = sp.current_playback(market=market)
+            self.instance = sp.current_playback(market=MARKET)
         except SpotifyException as e:
             print(f'\x1b[31mNo Spotify instance found:\n{e}\n\nPlease start Spotify and retry')
             sys.exit(1)
@@ -178,10 +178,10 @@ class Player:
 class SpotifyApp:
     def __init__(self) -> None:
         available_markets = sp.available_markets()
-        if market not in available_markets["markets"]:
+        if MARKET not in available_markets["markets"]:
             raise Exception(f"Market not available\nAvailable markets: {available_markets["markets"]}")
 
-        self.market = market
+        self.market = MARKET
         self.client = spotify_client()
         self.user = self.client.current_user()
 
@@ -346,4 +346,6 @@ class SpotifyApp:
 
 if __name__ == '__main__':
     app = SpotifyApp()
-    sp.mar
+    # sp.mar
+    playlist_id = url_to_uri("https://open.spotify.com/playlist/0hGzj1fOgiXaOIOaHA2Deo?si=b218716371d04c5f", to_id=True)
+    app.random_playlist_shuffle()

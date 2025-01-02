@@ -1,4 +1,5 @@
 import sys
+import time
 import timeit
 
 from spotipy import Spotify
@@ -10,18 +11,14 @@ import numpy as np
 
 
 sp = spotify_client()
-my_app_database = MyAppDatabase(main_database_path)
-track_analysis = analysis.TrackAnalysis(track_analysis_tsv_file_path)
+my_app_database = MyAppDatabase(MAIN_DATABASE_PATH)
+track_analysis = analysis.TrackAnalysis(TRACK_ANALYSIS_TSV_FILE_PATH)
 
-
-# Note: (--Fixed--) creating new instances not working right now
-#   fix (usage ItemIdQueues.process_all_queues())
-
-# Note: (--Implemented--) Outsource everything API Request related to independent file (-> spotify_access)
-#   new_file: handling the requests and returning JSON Objects / Dictionaries
-#   music_classes: each class just receives the Dict with the relevant key-value entries
 
 class ItemIdQueues:
+    """
+    Todo: Docstring
+    """
     def __init__(self):
         self.album_id_queue: list[str] = []
         self.artist_id_queue: list[str] = []
@@ -31,22 +28,29 @@ class ItemIdQueues:
         self.user_id_queue: list[str] = []
 
     def process_all_queues(self):
+        """
+        iterates through every queue and adds the items to the database if they dont exist
+        """
         def _process_queue(item_type: Literal['album', 'artist', 'playlist', 'track', 'track_analysis', 'user'], queue: list[str], model_class) -> None:
             id_instance_queue = request_multiple_items_of_same_type(
                 sp=sp,
                 items=queue,
                 item_type=item_type
             )
+            queue.clear()
 
             while id_instance_queue:
                 try:
                     model_class(id_instance_queue[0])
-                    print(f"added {id_instance_queue[0]['uri']} to DB ({len(queue)} items left)")
-                    queue.remove(id_instance_queue[0]['id'])
+                    print(f"added {id_instance_queue[0]['uri']} to DB ({len(id_instance_queue)} items left)")
                     id_instance_queue.pop(0)
+
                 except Exception as exc:
-                    print(f"{exc}\nItem: {id_instance_queue[0]['id']}\nQueue: {queue}\nItemQueues:\n{self.__dict__}")
-                    sys.exit(1)
+                    # with open("./errors.log", "a")as efile:
+                        # efile.write(f"{exc}\nItem: {id_instance_queue[0]['id']}\nQueue: {queue}\nItemQueues:\n{self.__dict__}")
+                    raise f"\n\x1b[31mError occured while adding {id_instance_queue[0]['uri']} to DB\x1b[30m\n\n{exc}"
+
+            queue.clear()
 
         # Fixme:
         while any([self.album_id_queue, self.artist_id_queue, self.playlist_id_queue, self.track_id_queue, self.user_id_queue]):
@@ -54,12 +58,12 @@ class ItemIdQueues:
                 _process_queue('album', self.album_id_queue, Album)
             if self.artist_id_queue:
                 _process_queue('artist', self.artist_id_queue, Artist)
-            if self.playlist_id_queue:
-                _process_queue('playlist', self.playlist_id_queue, Playlist)
             if self.track_id_queue:
                 _process_queue('track', self.track_id_queue, Track)
             if self.track_analysis_id_queue:
                 _process_queue('track_analysis', self.track_id_queue, Track)
+            if self.playlist_id_queue:
+                _process_queue('playlist', self.playlist_id_queue, Playlist)
             if self.user_id_queue:
                 _process_queue('user', self.user_id_queue, User)
 
@@ -68,6 +72,10 @@ item_queues = ItemIdQueues()
 
 
 class Album:
+    """
+    Todo: Docstring
+    :param spotify_album: JSON response from Spotify API request (e.g. return value of sp.album)
+    """
     def __init__(self, spotify_album: dict):
         result = my_app_database.fetch_item('albums', spotify_album['id'])
 
@@ -78,7 +86,7 @@ class Album:
             self.album_url: str = spotify_album['external_urls']['spotify']
 
             if 'url' not in spotify_album['images'][0]:
-                self.album_image: str = file_image_bytes(no_image_path)
+                self.album_image: str = file_image_bytes(NO_IMAGE_PATH)
             else:
                 self.album_image: str = spotify_image_bytes(spotify_album['images'][0]['url'])
 
@@ -107,6 +115,9 @@ class Album:
 
     @property
     def genre_names(self) -> list[str]:
+        """
+        :return: list of genre names
+        """
         if not hasattr(self, '_genre_names'):
             genres = []
 
@@ -117,6 +128,9 @@ class Album:
 
     @property
     def artist_ids(self) -> list[str]:
+        """
+        :return: list of artist ids
+        """
         if not hasattr(self, '_artist_ids'):
             artists = []
             for artist in self.album_instance['artists']:
@@ -137,6 +151,9 @@ class Album:
 
     @property
     def track_ids(self) -> list[str]:
+        """
+        :return: list of track ids
+        """
         if not hasattr(self, '_track_ids'):
             tracks = []
             for current_track in self.album_instance['tracks']['items']:
@@ -157,6 +174,9 @@ class Album:
 
     @property
     def total_duration(self) -> int:
+        """
+        :return: Total duration of the Album in milliseconds
+        """
         if not hasattr(self, '_total_duration'):
             duration = 0
             for current_track in self.album_instance['tracks']['items']:
@@ -166,17 +186,28 @@ class Album:
 
     @property
     def popularity(self) -> int:
+        """
+        returns the popularity value
+        """
         if not hasattr(self, '_popularity'):
-            self._popularity = max_popularity
+            self._popularity = MAX_POPULARITY
 
         return self._popularity
 
     @popularity.setter
     def popularity(self, skipping_step: int) -> None:
+        """
+        Updates the Popularity Value
+        :param skipping_step: how much to in-/decrease the Popularity Value
+        :return: updates self.popularity
+        """
         self.popularity += skipping_step
 
     @property
     def blacklisted(self) -> int:
+        """
+        Defines if a Album is currently blacklisted
+        """
         if not hasattr(self, '_blacklisted'):
             self._blacklisted = 0
 
@@ -184,10 +215,19 @@ class Album:
 
     @blacklisted.setter
     def blacklisted(self, new_value: 0 | 1) -> None:
+        """
+        Change the current blacklisted state of the Album
+        :param new_value: 0 for not blacklisted, 1 for blacklisted
+        :return: updates self.blacklisted
+        """
         self._blacklisted = new_value
 
 
 class Artist:
+    """
+    Todo: Docstring
+    :param spotify_artist: JSON response from Spotify API request (e.g. return value of sp.artist)
+    """
     def __init__(self, spotify_artist: dict):
         result = my_app_database.fetch_item('artists', spotify_artist['id'])
 
@@ -198,7 +238,7 @@ class Artist:
             self.artist_url: str = spotify_artist['external_urls']['spotify']
 
             if 'url' not in spotify_artist['images'][0]:
-                self.artist_image: str = file_image_bytes(no_image_path)
+                self.artist_image: str = file_image_bytes(NO_IMAGE_PATH)
             else:
                 self.artist_image: str = spotify_image_bytes(spotify_artist['images'][0]['url'])
 
@@ -230,6 +270,9 @@ class Artist:
 
     @property
     def genre_names(self) -> list[str]:
+        """
+        :return: list of genre names
+        """
         if not hasattr(self, '_genre_names'):
             genres = []
             for genre in self.artist_instance['genres']:
@@ -239,6 +282,9 @@ class Artist:
 
     @property
     def top_tracks_ids(self) -> list[str]:
+        """
+        :return: list of top track ids
+        """
         if not hasattr(self, '_top_tracks_ids'):
             top_tracks = sp.artist_top_tracks(self.artist_id, country="DE")
             top_track_list = []
@@ -262,17 +308,28 @@ class Artist:
 
     @property
     def popularity(self) -> int:
+        """
+        returns the popularity value
+        """
         if not hasattr(self, '_popularity'):
-            self._popularity = max_popularity
+            self._popularity = MAX_POPULARITY
 
         return self._popularity
 
     @popularity.setter
     def popularity(self, skipping_step: int) -> None:
+        """
+        Updates the Popularity Value
+        :param skipping_step: how much to in-/decrease the Popularity Value
+        :return: updates self.popularity
+        """
         self.popularity += skipping_step
 
     @property
     def blacklisted(self) -> int:
+        """
+        Defines if a Artist is currently blacklisted
+        """
         if not hasattr(self, '_blacklisted'):
             self._blacklisted = 0
 
@@ -280,10 +337,20 @@ class Artist:
 
     @blacklisted.setter
     def blacklisted(self, new_value: 0 | 1) -> None:
+        """
+        Change the current blacklisted state of the Artist
+        :param new_value: 0 for not blacklisted, 1 for blacklisted
+        :return: updates self.blacklisted
+        """
         self._blacklisted = new_value
 
 
+# Fixme: somehow a Playlist request contains +2000 items -> 502 Error
 class Playlist:
+    """
+    Todo: Docstring
+    :param spotify_album: JSON response from Spotify API request (e.g. return value of sp.album)
+    """
     def __init__(self, spotify_playlist: dict):
         result = my_app_database.fetch_item('playlists', spotify_playlist['id'])
 
@@ -294,7 +361,7 @@ class Playlist:
             self.playlist_url: str = spotify_playlist['external_urls']['spotify']
 
             if 'url' not in spotify_playlist['images'][0]:
-                self.playlist_image: str = file_image_bytes(no_image_path)
+                self.playlist_image: str = file_image_bytes(NO_IMAGE_PATH)
             else:
                 self.playlist_image: str = spotify_image_bytes(spotify_playlist['images'][0]['url'])
 
@@ -327,6 +394,9 @@ class Playlist:
 
     @property
     def genre_names(self) -> list[str]:
+        """
+        :return: list of genre names
+        """
         if not hasattr(self, '_genre_names'):
             genres = []
 
@@ -337,9 +407,13 @@ class Playlist:
 
     @property
     def track_ids(self) -> list[str]:
+        """
+        Fetches the Track IDs that are currently in the Playlist
+        :return: list of track ids
+        """
         if not hasattr(self, '_track_ids'):
-            def iterate_tracks(limit: int = 100, offset: int = 0) -> None:
-                playlist_items = sp.playlist_items(playlist_id=self.playlist_id, limit=limit, offset=offset, market=market)
+            def iterate_tracks(limit: int = 50, offset: int = 0) -> None:
+                playlist_items = sp.playlist_items(playlist_id=self.playlist_id, limit=limit, offset=offset, market=MARKET)
 
                 for current_track in playlist_items['items']:
                     current_track_id = current_track['track']['id']
@@ -356,13 +430,13 @@ class Playlist:
 
             tracks = []
 
-            # separate request needed because Spotify API requests are limited to 100 items
+            # separate request needed because Spotify API requests are limited to 50 items
             # e.g.: self.track_count = 1743
-            request_iterations = self.track_count // 100  # e.g.: 17 iterations à 100 items
-            last_iteration_limit = self.track_count % 100  # eg.: last 43 items
+            request_iterations = self.track_count // 500  # e.g.: 34 iterations à 50 items
+            last_iteration_limit = self.track_count % 50  # eg.: last 43 items
 
             for i in range(request_iterations):
-                iterate_tracks(100, i*100)  # e.g.: tracks 1-1700
+                iterate_tracks(50, i*50)  # e.g.: tracks 1-1700
 
             if last_iteration_limit > 0:
                 iterate_tracks(last_iteration_limit, self.track_count-last_iteration_limit)  # e.g.: tracks 1701-1743
@@ -372,6 +446,9 @@ class Playlist:
 
     @property
     def total_duration(self) -> int:
+        """
+        :return: Total duration of the Album in milliseconds
+        """
         if not hasattr(self, '_total_duration'):
             duration = 0
             for current_track in self.playlist_instance['tracks']['items']:
@@ -381,17 +458,28 @@ class Playlist:
 
     @property
     def popularity(self) -> int:
+        """
+        returns the popularity value
+        """
         if not hasattr(self, '_popularity'):
-            self._popularity = max_popularity
+            self._popularity = MAX_POPULARITY
 
         return self._popularity
 
     @popularity.setter
     def popularity(self, skipping_step: int) -> None:
+        """
+        Updates the Popularity Value
+        :param skipping_step: how much to in-/decrease the Popularity Value
+        :return: updates self.popularity
+        """
         self.popularity += skipping_step
 
     @property
     def blacklisted(self) -> int:
+        """
+        Defines if a Playlist is currently blacklisted
+        """
         if not hasattr(self, '_blacklisted'):
             self._blacklisted = 0
 
@@ -399,10 +487,19 @@ class Playlist:
 
     @blacklisted.setter
     def blacklisted(self, new_value: 0 | 1) -> None:
+        """
+        Change the current blacklisted state of the Playlist
+        :param new_value: 0 for not blacklisted, 1 for blacklisted
+        :return: updates self.blacklisted
+        """
         self._blacklisted = new_value
 
 
 class Track:
+    """
+    Todo: Docstring
+    :param spotify_album: JSON response from Spotify API request (e.g. return value of sp.album)
+    """
     def __init__(self, spotify_track: dict):
         result = my_app_database.fetch_item('tracks', spotify_track['id'])
 
@@ -415,7 +512,7 @@ class Track:
             if 'images' not in spotify_track:
                 self.track_image: str = spotify_image_bytes(spotify_track['album']['images'][0]['url'])
             else:
-                self.track_image: str = file_image_bytes(no_image_path)
+                self.track_image: str = file_image_bytes(NO_IMAGE_PATH)
 
             # Playlist ID gets added when the Playlist() is instantiated
             self.playlist_ids: list[str] = []
@@ -446,6 +543,9 @@ class Track:
 
     @property
     def genre_names(self) -> list[str]:
+        """
+        :return: list of genre names
+        """
         if not hasattr(self, '_genre_names'):
             genres = []
 
@@ -456,6 +556,9 @@ class Track:
 
     @property
     def artist_ids(self) -> list[str]:
+        """
+        :return: list of artist ids
+        """
         if not hasattr(self, '_artist_ids'):
             artists = []
             for artist in self.track_instance['artists']:
@@ -476,6 +579,9 @@ class Track:
 
     @property
     def album_ids(self) -> list[str]:
+        """
+        :return: list of album ids
+        """
         if not hasattr(self, '_album_ids'):
             self._album_ids = [self.track_instance['album']['id']]
 
@@ -492,17 +598,28 @@ class Track:
 
     @property
     def popularity(self) -> int:
+        """
+        returns the popularity value
+        """
         if not hasattr(self, '_popularity'):
-            self._popularity = max_popularity
+            self._popularity = MAX_POPULARITY
 
         return self._popularity
 
     @popularity.setter
     def popularity(self, skipping_step: int) -> None:
+        """
+        Updates the Popularity Value
+        :param skipping_step: how much to in-/decrease the Popularity Value
+        :return: updates self.popularity
+        """
         self.popularity += skipping_step
 
     @property
     def blacklisted(self) -> int:
+        """
+        Defines if a Track is currently blacklisted
+        """
         if not hasattr(self, '_blacklisted'):
             self._blacklisted = 0
 
@@ -510,10 +627,20 @@ class Track:
 
     @blacklisted.setter
     def blacklisted(self, new_value: 0 | 1) -> None:
+        """
+        Change the current blacklisted state of the Track
+        :param new_value: 0 for not blacklisted, 1 for blacklisted
+        :return: updates self.blacklisted
+        """
+
         self._blacklisted = new_value
 
 
 class User:
+    """
+    Todo: Docstring
+    :param spotify_album: JSON response from Spotify API request (e.g. return value of sp.album)
+    """
     def __init__(self, spotify_user: dict) -> None:
         result = my_app_database.fetch_item(
             table_name='users',
@@ -528,7 +655,7 @@ class User:
             self.user_url: str = spotify_user['external_urls']['spotify']
 
             if 'url' not in spotify_user['images'][0]:
-                self.user_image: str = file_image_bytes(no_image_path)
+                self.user_image: str = file_image_bytes(NO_IMAGE_PATH)
             else:
                 self.user_image: str = spotify_image_bytes(spotify_user['images'][0]['url'])
 
@@ -558,6 +685,9 @@ class User:
 
     @property
     def playlist_ids(self) -> list[str]:
+        """
+        :return: list of playlist ids
+        """
         if not hasattr(self, '_playlist_ids'):
             playlists = []
             user_playlists = sp.current_user_playlists()
@@ -579,6 +709,9 @@ class User:
 
     @property
     def top_tracks_ids(self) -> list[str]:
+        """
+        :return: list of top track ids
+        """
         if not hasattr(self, '_top_tracks_ids'):
             top_tracks = []
             tracks_json = sp.current_user_top_tracks(limit=10)
@@ -589,6 +722,9 @@ class User:
 
     @property
     def top_artists_ids(self) -> list[str]:
+        """
+        :return: list of top artist ids
+        """
         if not hasattr(self, '_top_artists_ids'):
             top_artists = []
             tracks_json = sp.current_user_top_artists(limit=10)
@@ -599,6 +735,9 @@ class User:
 
     @property
     def top_genre_names(self) -> list[str]:
+        """
+        :return: list of top genre names
+        """
         top_genres = []
 
         # TODO: figure out what to do here
@@ -607,17 +746,28 @@ class User:
 
     @property
     def popularity(self) -> int:
+        """
+        returns the popularity value
+        """
         if not hasattr(self, '_popularity'):
-            self._popularity = max_popularity
+            self._popularity = MAX_POPULARITY
 
         return self._popularity
 
     @popularity.setter
     def popularity(self, skipping_step: int) -> None:
+        """
+        Updates the Popularity Value
+        :param skipping_step: how much to in-/decrease the Popularity Value
+        :return: updates self.popularity
+        """
         self.popularity += skipping_step
 
     @property
     def blacklisted(self) -> int:
+        """
+        Defines if a User is currently blacklisted
+        """
         if not hasattr(self, '_blacklisted'):
             self._blacklisted = 0
 
@@ -625,11 +775,20 @@ class User:
 
     @blacklisted.setter
     def blacklisted(self, new_value: 0 | 1) -> None:
+        """
+        Change the current blacklisted state of the User
+        :param new_value: 0 for not blacklisted, 1 for blacklisted
+        :return: updates self.blacklisted
+        """
+
         self._blacklisted = new_value
 
 
 # TODO: figure out what to do here
 class Genre:
+    """
+    Defines what a Genre is.
+    """
     def __init__(
             self,
             genre_name: str,
@@ -724,13 +883,21 @@ class Genre:
 
     @property
     def popularity(self) -> int:
+        """
+        returns the popularity value
+        """
         if not hasattr(self, '_popularity'):
-            self._popularity = max_popularity
+            self._popularity = MAX_POPULARITY
 
         return self._popularity
 
     @popularity.setter
     def popularity(self, skipping_step: int) -> None:
+        """
+        Updates the Popularity Value
+        :param skipping_step: how much to in-/decrease the Popularity Value
+        :return: updates self.popularity
+        """
         self.popularity += skipping_step
         my_app_database.update_item(
             table_name='genres',
@@ -741,6 +908,9 @@ class Genre:
 
     @property
     def blacklisted(self) -> int:
+        """
+        Defines if a Genre is currently blacklisted
+        """
         if not hasattr(self, '_blacklisted'):
             self._blacklisted = 0
 
@@ -748,6 +918,11 @@ class Genre:
 
     @blacklisted.setter
     def blacklisted(self, new_value: 0 | 1) -> None:
+        """
+        Change the current blacklisted state of the Genre
+        :param new_value: 0 for not blacklisted, 1 for blacklisted
+        :return: updates self.blacklisted
+        """
         self._blacklisted = new_value
         my_app_database.update_item(
             table_name='genres',
@@ -758,6 +933,10 @@ class Genre:
 
 
 class TrackAnalysis:
+    """
+    Todo: Docstring
+    :param spotify_track_analysis:
+    """
     def __init__(self, spotify_track_analysis: dict):
         self.track_id = spotify_track_analysis['id']
         result = track_analysis.get_track_analysis(self.track_id)
@@ -810,6 +989,9 @@ class TrackAnalysis:
                 self.track_valence = track_analysis.get_track_analysis(self.track_id)
 
     def get_data_from_dataframe(self):
+        """
+        Extract Data from the Dataframe and update instance attribute values
+        """
         self.track_id, \
             self.track_acousticness, \
             self.track_danceability, \
@@ -826,11 +1008,17 @@ class TrackAnalysis:
 
 
 class Analysis:
+    """
+    Todo: Docstring
+    """
     def __init__(self):
-        self.track_analysis = analysis.TrackAnalysis(track_analysis_tsv_file_path)
+        self.track_analysis = analysis.TrackAnalysis(TRACK_ANALYSIS_TSV_FILE_PATH)
 
     # Fixme: not working
     def analyse_tracks_in_db(self):
+        """
+        Todo: Docstring
+        """
         track_ids = my_app_database.fetch_column('tracks', 'track_id')
         if track_ids:
             try:
@@ -851,22 +1039,39 @@ if __name__ == '__main__':
     my_app_database.reset_database()
 
     try:
-        # Album("4Gfnly5CzMJQqkUFfoHaP3")
-        # Artist("6XyY86QOPPrYVGvF9ch6wz")
-        Track(request_one_item(
+        # Track(request_one_item(
+        #     sp=sp,
+        #     item_type='track',
+        #     spotify_id="60a0Rd6pjrkxjPbaKzXjfq"
+        # ))
+        # Album(request_one_item(
+        #     sp=sp,
+        #     item_type='album',
+        #     spotify_id="4Gfnly5CzMJQqkUFfoHaP3"
+        # ))
+        # Artist(request_one_item(
+        #     sp=sp,
+        #     item_type='artist',
+        #     spotify_id="6XyY86QOPPrYVGvF9ch6wz"
+        # ))
+        Playlist(request_one_item(
             sp=sp,
-            item_type='track',
-            spotify_id="60a0Rd6pjrkxjPbaKzXjfq"
+            item_type='playlist',
+            spotify_id='5kuT9ddlqoiZjW7cgnDv2X'
         ))
-        # Playlist("3ng02xAP0YashD9ZFOyYk7")
-        # Playlist("7bbWOJLSohSS7yOOHzXCAN")
-        # User("simonluca1")
+        # User(request_one_item(
+        #     sp=sp,
+        #     item_type='user',
+        #     spotify_id="simonluca1"
+        # ))
 
     except Exception as e:
         print(e)
 
     finally:
         item_queues.process_all_queues()
+
+
 
     # analysis = Analysis()
     # analysis.analyse_tracks_in_db()

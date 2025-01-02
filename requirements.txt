@@ -1,0 +1,9 @@
+numpy
+requests
+spotipy
+pandas
+pillow
+python-dotenv
+selenium
+pytest
+flask

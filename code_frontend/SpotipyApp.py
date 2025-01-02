@@ -324,9 +324,9 @@ class SpotifyAppWindow:
             query_name = re.sub(query_type, '', query_name)
 
         if query_type == '':
-            results = self.sp.search(q=query_name, market=market, limit=50)
+            results = self.sp.search(q=query_name, market=MARKET, limit=50)
         else:
-            results = self.sp.search(q=query_name, type=query_type, market=market, limit=50)
+            results = self.sp.search(q=query_name, type=query_type, market=MARKET, limit=50)
 
         for current_object in results[next(iter(results.keys()))]['items']:
 

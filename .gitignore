@@ -1,7 +1,7 @@
 # Directories
 *cache*
 __pycache__/
-zz_deprecated
+venv
 
 # Dot Files
 .xml
@@ -9,12 +9,10 @@ zz_deprecated
 */.env
 
 # User Files
-/code_backend/random_stuff.py
-*debugging*
+/code_backend/testing/dev_bench_1.py
 /Structure.ods
 /Databases/main_database.db
-/Databases/CSV_Files/track_analysis.tsv
-*tmp*
+/Databases/JSON_Files/spotify_*.json
 
 # IDE Specific
 .idea

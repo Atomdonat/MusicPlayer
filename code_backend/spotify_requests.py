@@ -1,3 +1,7 @@
+###
+# Note: will be deprecated if `spotify_web_api.py` is finished
+##
+
 import os
 from dotenv import load_dotenv
 import requests

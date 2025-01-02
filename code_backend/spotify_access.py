@@ -1,3 +1,7 @@
+###
+# Note: will be deprecated if `spotify_web_api.py` is finished
+##
+
 import json
 import sys
 
@@ -197,7 +201,7 @@ if __name__ == '__main__':
     # image = image_to_b64(Image.open("/home/simon/git_repos/MusicPlayer/Icons/Spotipy_Logo.png"), 'PNG')
     # if sp is not None:
     #     sp.playlist_upload_cover_image(playlist_id="1TufW5MXE6oDxo7KVw4ACV", image_b64=)
-        # data = sp.album_tracks(_id, market=market)  # sp1.some_method()
+        # data = sp.album_tracks(_id, MARKET=MARKET)  # sp1.some_method()
         # extra = ""  # "_some_detail"
         # with open(f"../Databases/JSON_Files/tmp_data.json", 'w') as f:
         #     json.dump(data, f)

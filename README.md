@@ -7,11 +7,8 @@ switching the main functionality from a GUI based Spotify Player to a (maybe Pla
 
 * Need to have:
   * Spotify Premium
-  * usable Internet Connection (no offline functionalities (yet))
-  * Python Packages:
-    * should be installed: base64, io, json, os, re, subprocess, shlex, typing, time
-    * install with pip: DateTime, dotenv, numpy, PIL, pylint, requests, spotipy, sqlite3, tkinter, urllib3, pandas
-  * DB Browser for SQLite (optional)
+  * usable Internet Connection 
+  * Needed Host Packages: geckodriver
 1) create Spotify App ([https://developer.spotify.com/documentation/web-api/concepts/apps](https://developer.spotify.com/documentation/web-api/concepts/apps))
 2) copy 'Client ID', 'Client secret' and 'Redirect URI'
 3) create '.env'-file in project directory and import correctly in spotify_access.py
@@ -38,44 +35,65 @@ or update only half of the attributes
 * spotipy is a shitty library no documentation -> if it is bad do it yourself but better
 
 ## Code/Comment Highlighting in Pycharm
-- TODO:
-  - Usage: Used to mark tasks that need to be done.
-  - Pattern: `\btodo\b.*`
-  - Main Color (Light Green): `#A4C639`
-  - Darker Version: `#8CAF2D`
-- FIXME:
-  - Usage: Used to highlight code that needs fixing.
-  - Pattern: `\bfixme\b.*`
-  - Main Color (Light Red or Pink): `#FF6F61`
-  - Darker Version: `#E65B4F`
-- BUG:
+- <span style="color:#FF6F61">**BUG:**</span>
   - Usage: Used to mark known bugs in the code.
   - Pattern: `\bbug\b.*`
-  - Main Color (Light Red or Pink): `#FF6F61`
+  - Main Color (Light Red): `#FF6F61`
   - Darker Version: `#E65B4F`
-- IDEA:
-  - Usage: Used to denote an idea or suggestion for the code.
-  - Pattern: `\bidea\b.*`
-  - Main Color (Light Yellow): `#FFD700`
-  - Darker Version: `#E6BE00`
-- NOTE:
-  - Usage: Used to add notes or explanations about the code.
-  - Pattern: `\bnote\b.*`
-  - Main Color (Light Blue): `#ADD8E6`
-  - Darker Version: `#93C2CF`
-- WARNING:
-  - Usage: Used to indicate something that might need attention or could be problematic.
-  - Pattern: `\bwarning\b.*`
+- <span style="color:#FFA500">**DEBUGGING:**</span>
+  - Usage: Used to mark code that is used for debugging purposes.
+  - Pattern: `<--- .*\bdebugging\b --->.*`
   - Main Color (Orange): `#FFA500`
   - Darker Version: `#E69500`
-- HACK:
+- <span style="color:#FF6F61">**FIXME:**</span>
+  - Usage: Used to highlight code that needs fixing.
+  - Pattern: `\bfixme\b.*`
+  - Main Color (Light Red): `#FF6F61`
+  - Darker Version: `#E65B4F`
+- <span style="color:#9370DB">**HACK:**</span>
   - Usage: Used to mark code that is a workaround or temporary solution.
   - Pattern: `\bhack\b.*`
   - Main Color (Purple): `#9370DB`
   - Darker Version: `#7D60BF`
+- <span style="color:#FFD700">**IDEA:**</span>
+  - Usage: Used to denote an idea or suggestion for the code.
+  - Pattern: `\bidea\b.*`
+  - Main Color (Light Yellow): `#FFD700`
+  - Darker Version: `#E6BE00`
+- <span style="color:#FF00FF">**Method Progress Status:**</span>
+  - Usage: Used to mark the development progress of methods (see below)
+  - Pattern: `# \bmps\b.*`
+  - Main Color (Pink): `#FF00FF`
+  - Darker Version: `#E457E4`
+- <span style="color:#ADD8E6">**NOTE:**</span>
+  - Usage: Used to add notes or explanations about the code.
+  - Pattern: `\bnote\b.*`
+  - Main Color (Light Blue): `#ADD8E6`
+  - Darker Version: `#93C2CF`
+- <span style="color:#A4C639">**TODO:**</span>
+  - Usage: Used to mark tasks that need to be done.
+  - Pattern: `\btodo\b.*`
+  - Main Color (Light Green): `#A4C639`
+  - Darker Version: `#8CAF2D`
+- <span style="color:#FFA500">**WARNING:**</span>
+  - Usage: Used to indicate something that might need attention or could be problematic.
+  - Pattern: `\bwarning\b.*`
+  - Main Color (Orange): `#FFA500`
+  - Darker Version: `#E69500`
+
 
 ## Own Terminology/Abbreviations
 - **IR Loop:** infinite recursion loop
+
+### Method Progress Status (M.P.S., or mps)
+- 0 -- planned, not implemented
+- 1 -- implemented, not tested
+- 2 -- in testing/debugging
+- 3 -- finished
+
+### Progress Versioning Semantic
+![](Icons/pride_versioning.png)
+by Niki Tonsky (https://mastodon.online/@nikitonsky/113691789641950263)
 
 ## Known Error messages
 
@@ -89,19 +107,15 @@ or update only half of the attributes
 
 ### Backend related
 
-
-* [ ] switch Spotify API from Spotipy (badly documented) to official Web-API (goodly documented) using [requests](https://docs.python-requests.org/en/latest/index.html) 
+* [ ] switch Spotify API from Spotipy (badly documented) to official Web-API (goodly documented) using [requests](https://docs.python-requests.org/en/latest/index.html)
   * new library in `spotify_web_api.py`
-* [ ] **Error handling ([Spotify API Codes](https://developer.spotify.com/documentation/web-api/concepts/api-calls#response-status-codes))**
-* [ ] finish analysis.py 
-* [ ] finish spotify_web_api.py 
-* [ ] remove spotipy Web API calls and replace with spotify_web_api.py  
-* [x] simplify API calls (instead of 500 requests à 1 item, do (e.g.) 10 requests à 50 items (recommended by Spotify))
-* [x] check if any Spotify API request gets smashed by the API limit of 100 items (split like in Playlist.track_ids())
-* [ ] optimize track search distribution in 'random_playlist_by_genre()' -> implement ML
+  * [ ] finish `spotify_web_api.py`
+  * [ ] remove spotipy Web API calls and replace with spotify_web_api.py  
+* [ ] Error handling
+* [ ] finish analysis.py
+* [ ] optimize track search distribution in 'random_playlist_by_genre()'
 * [ ] connect app with Home Assistant
-* [ ] use Spotify's Audio Features & Analytics (own genres) -> implement ML
-* [ ] create AI based playlists -> implement ML
+* [ ] use Spotify's Audio Features & Analytics
 
 ### Frontend related
 
@@ -124,6 +138,7 @@ or update only half of the attributes
 
 * [Spotify for Developers](https://developer.spotify.com/)
 * [Spotipy](https://spotipy.readthedocs.io/en/2.22.1/)
+* [Chosic.com](https://www.chosic.com/spotify-playlist-analyzer/) (indirectly)
 
 ### Backend 
 

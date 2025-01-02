@@ -1,10 +1,6 @@
 from code_backend.shared_config import *
 
 
-frontend_window_size = [800, 400]
-market = 'DE'
-
-
 def millis_to_minutes(millis: int, to_hours: bool = False) -> str:
     if to_hours:
         return str(timedelta(seconds=millis // 1000))
@@ -148,8 +144,8 @@ def get_tk_image(image: Image, image_size: [int, int]) -> ImageTk:
 
 
 def tk_image_from_file(file_path: str) -> Image:
-    new_image_width = int(0.05*frontend_window_size[0])
-    new_image_height = int(0.07*frontend_window_size[1])
+    new_image_width = int(0.05 * GUI_SIZE[0])
+    new_image_height = int(0.07 * GUI_SIZE[1])
     image = Image.open(file_path)
     image = image.resize((new_image_width, new_image_height), Image.Resampling.LANCZOS)
     image = ImageTk.PhotoImage(image)
@@ -192,6 +188,96 @@ def concat_iterables(iter1: Iterable[T], iter2: Iterable[T]) -> List[T]:
     return [*iter1, *iter2]
 
 
-if __name__ == '__main__':
-    image_pth = '../Icons/Spotipy_if_no_image.png'
+# mps: 3
+def debug_json(jason: dict):
+    with open(ROOT_DIR_PATH + "/code_backend/testing/debugging.json", "w") as json_file:
+        json.dump(jason, json_file, indent=4)
 
+
+# mps: 3
+def check_upper_limit(limit: int, api_max_limit: int = 50) -> None:
+    """
+    Checks if the user limit exceeded the API limit.
+    :param limit: current limit
+    :param api_max_limit: maximum API limit
+    :return: raise Exception if API limit exceeded
+    """
+    if limit > api_max_limit:
+        raise Exception(f"Limit of {limit} exceeded API limit of {api_max_limit} per request")
+
+
+# mps: 3
+def check_lower_limit(limit: int, api_min_limit: int = 1) -> None:
+    """
+    Checks if the user limit subceeded the API limit.
+    :param limit: current limit
+    :param api_min_limit: minimum API limit
+    :return: raise Exception if API limit subceeded
+    """
+    if limit < api_min_limit:
+        raise Exception(f"Limit of {limit} subceeded API limit of {api_min_limit} per request")
+
+
+# mps: 3
+def update_env_key(env_key: str, new_value) -> tuple[str, str]:
+    env_file = find_dotenv()
+    if not env_file:
+        print(
+            f"\n\x1b[31mCould not find .env file\n{TEXTCOLOR}")
+    load_dotenv(env_file)
+
+    old_value = os.getenv(env_key)
+
+    os.environ[env_key] = new_value
+    set_key(env_file, env_key, os.environ[env_key])
+    return old_value, os.environ[env_key]
+
+
+# mps: 3
+def check_token_expired(extended_token: bool = False) -> int:
+    """
+    Checks when the Token expires
+    :param extended_token: Whether to check the regular Token (=False) or the extended one (=True)
+    :return: Time till Token expires (if 0 is returned, the token did expire)
+    """
+    env_file = find_dotenv()
+    if not env_file:
+        print(
+            f"\n\x1b[31mCould not find .env file\n{TEXTCOLOR}")
+    load_dotenv(env_file)
+
+    token_name = "EXTENDED_TOKEN" if extended_token else "REGULAR_TOKEN"
+    token_data = json.loads(os.getenv(token_name))
+
+    expiration_date = token_data["expires"]
+    return 0 if expiration_date - int(time.time()) < 1 else expiration_date - int(time.time())
+
+
+# mps: 3
+def print_error(error_message: str | Exception, more_infos: str = None, exit_code: int = None) -> None:
+    print(f"\n\x1b[31m{error_message}\n{TEXTCOLOR}{more_infos}\n")
+    if exit_code:
+        sys.exit(exit_code)
+
+
+# mps: 3
+def print_http_error_codes(code: int, message: str = None) -> None:
+    """
+    Web API uses the following response status codes, as defined in the RFC 2616 and RFC 6585
+    Official API Documentation: https://developer.spotify.com/documentation/web-api/concepts/api-calls#response-status-codes
+    :param code: HTTP Code of the request response
+    :param message: Message of the error
+    """
+    error_data: dict
+    with open(ROOT_DIR_PATH + "/Databases/JSON_Files/http_errors.json", "r") as e_file:
+        error_data = json.load(e_file)[str(code)]
+    # print(error_data["code"],"-",error_data["name"])
+    print_error(
+        error_message=f"Request returned Code: {error_data["code"]} - {error_data["name"]}\n{error_data["explanation"]}",
+        more_infos=message,
+        exit_code=1
+    )
+
+
+if __name__ == '__main__':
+    """"""
