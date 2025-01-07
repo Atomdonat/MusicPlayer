@@ -54,25 +54,15 @@ def average_file_size(directory_path: str) -> float:
 
 
 def values_from_dict(dictionary: dict) -> list:
-    value_list = []
-    for current_value in dictionary.values():
-        value_list.append(current_value)
-    return value_list
+    list(dictionary.values())
 
 
 def keys_from_dict(dictionary: dict) -> list:
-    keys_list = []
-    for current_key in dictionary.keys():
-        keys_list.append(current_key)
-    return keys_list
+    list(dictionary.keys())
 
 
 def list_from_dict(dictionary: dict) -> list:
-    dict_list = []
-    for key, value in dictionary.items():
-        dict_list.append([key, value])
-
-    return dict_list
+    list(dictionary.items())
 
 
 def format_bytes(input_bytes: int):
@@ -188,13 +178,11 @@ def concat_iterables(iter1: Iterable[T], iter2: Iterable[T]) -> List[T]:
     return [*iter1, *iter2]
 
 
-# mps: 3
 def debug_json(jason: dict):
     with open(ROOT_DIR_PATH + "/code_backend/testing/debugging.json", "w") as json_file:
         json.dump(jason, json_file, indent=4)
 
 
-# mps: 3
 def check_upper_limit(limit: int, api_max_limit: int = 50) -> None:
     """
     Checks if the user limit exceeded the API limit.
@@ -206,7 +194,6 @@ def check_upper_limit(limit: int, api_max_limit: int = 50) -> None:
         raise Exception(f"Limit of {limit} exceeded API limit of {api_max_limit} per request")
 
 
-# mps: 3
 def check_lower_limit(limit: int, api_min_limit: int = 1) -> None:
     """
     Checks if the user limit subceeded the API limit.
@@ -218,7 +205,6 @@ def check_lower_limit(limit: int, api_min_limit: int = 1) -> None:
         raise Exception(f"Limit of {limit} subceeded API limit of {api_min_limit} per request")
 
 
-# mps: 3
 def update_env_key(env_key: str, new_value) -> tuple[str, str]:
     env_file = find_dotenv()
     if not env_file:
@@ -233,7 +219,6 @@ def update_env_key(env_key: str, new_value) -> tuple[str, str]:
     return old_value, os.environ[env_key]
 
 
-# mps: 3
 def check_token_expired(extended_token: bool = False) -> int:
     """
     Checks when the Token expires
@@ -253,14 +238,12 @@ def check_token_expired(extended_token: bool = False) -> int:
     return 0 if expiration_date - int(time.time()) < 1 else expiration_date - int(time.time())
 
 
-# mps: 3
 def print_error(error_message: str | Exception, more_infos: str = None, exit_code: int = None) -> None:
     print(f"\n\x1b[31m{error_message}\n{TEXTCOLOR}{more_infos}\n")
     if exit_code:
         sys.exit(exit_code)
 
 
-# mps: 3
 def print_http_error_codes(code: int, message: str = None) -> None:
     """
     Web API uses the following response status codes, as defined in the RFC 2616 and RFC 6585

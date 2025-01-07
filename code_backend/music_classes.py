@@ -6,13 +6,11 @@ from spotipy import Spotify
 from secondary_methods import *
 from spotify_access import *
 from database_access import MyAppDatabase
-import analysis
 import numpy as np
 
 
 sp = spotify_client()
 my_app_database = MyAppDatabase(MAIN_DATABASE_PATH)
-track_analysis = analysis.TrackAnalysis(TRACK_ANALYSIS_TSV_FILE_PATH)
 
 
 class ItemIdQueues:

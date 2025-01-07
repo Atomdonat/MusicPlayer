@@ -1,9 +1,9 @@
+flask
 numpy
-requests
-spotipy
 pandas
 pillow
-python-dotenv
-selenium
 pytest
-flask
+python-dotenv
+requests
+selenium
+spotipy
