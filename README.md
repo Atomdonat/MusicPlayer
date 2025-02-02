@@ -122,6 +122,7 @@ by Niki Tonsky (https://mastodon.online/@nikitonsky/113691789641950263)
   * [x] migrate from spotipy Web API to spotify_web_api.py 
     * [x] refit ItemQueue  
 * [ ] Error handling
+  * [ ] Error handling if input type mismatched (f.e. wanted int got str)
 * [ ] unify return types/output and print statements
 * [ ] use Spotify's Audio Features & Analytics
 * [ ] optimize track search distribution in 'random_playlist_by_genre()'

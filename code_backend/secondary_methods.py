@@ -47,7 +47,6 @@ def id_to_uri(class_type: Literal['album', 'artist', 'track', 'playlist', 'user'
     return "spotify:" + class_type + ":" + spotify_id
 
 
-# mps: 3
 def uri_to_id(spotify_uri: str, get_type: bool = False) -> tuple[str,str] | str:
     """
     Extract the Spotify ID (and Type) from the Spotify URI in the form of "spotify:${type}:${id}"
@@ -118,6 +117,10 @@ def format_bytes(input_bytes: int):
 
 def value_from_dict(dictio: dict) -> str:
     return next(iter(dictio.values()))
+
+
+def key_from_dict(dictio: dict) -> str:
+    return next(iter(dictio.keys()))
 
 
 def list_from_id_string(id_string: str) -> list[str]:
@@ -359,6 +362,11 @@ def check_token_expired(extended_token: bool = False) -> int:
     token_data = json.loads(os.getenv(token_name))
 
     expiration_date = token_data["expires"]
+
+    # Print time remaining
+    # t = expiration_date - int(time.time())
+    # print(f"Token expires in: {t//60} min {t%60} sec")
+
     return 0 if expiration_date - int(time.time()) < 1 else expiration_date - int(time.time())
 
 def print_debug(content: str) -> None:
@@ -428,7 +436,7 @@ def print_http_error_codes(code: int, message: str = None, causing_query: str | 
         exit_code=1
     )
 
-# mps: 3
+
 def exclude_from_dict(target_dict: dict, exclude_keys: list) -> dict:
     """
     Safely exclude keys from a dictionary
@@ -440,7 +448,7 @@ def exclude_from_dict(target_dict: dict, exclude_keys: list) -> dict:
 
     return target_dict
 
-# mps: 3
+
 def dict_factory(cursor, row) -> dict:
     """
     by Alex Martelli on Stackoverflow (https://stackoverflow.com/a/3300514)
@@ -454,7 +462,6 @@ def dict_factory(cursor, row) -> dict:
     return d
 
 
-# mps: 2
 def get_str_from_json_file(json_path: str) -> str:
     """
     Load a JSON file into a string
@@ -465,7 +472,6 @@ def get_str_from_json_file(json_path: str) -> str:
         return json.dumps(json.load(json_file))
 
 
-# mps: 3
 def load_sql_query(file_path: str) -> str:
     """
     Load a SQL query from a file Using the path from the Repository Root
@@ -476,7 +482,6 @@ def load_sql_query(file_path: str) -> str:
         return query_file.read()
 
 
-# mps: 3
 def absolute_path(path: str) -> str:
     """
     Converts the given path to an absolute path. If the path is absolute nothing happens. If in doubt just call it
@@ -504,7 +509,6 @@ def load_json(path: str) -> dict:
         return json.load(j_file)
 
 
-# mps: 3
 def load_list_from_database(fetched_list: list) -> list:
     """
     Convert a list string into a list (e.g. ["['6O7MpKrY91vlCd4Osi6XKs']", "['2iLpvtffIrQ4bMYrFPRN4x']"] -> [['6O7MpKrY91vlCd4Osi6XKs'], ['2iLpvtffIrQ4bMYrFPRN4x']])
@@ -524,12 +528,11 @@ def load_list_from_database(fetched_list: list) -> list:
         return fetched_list
 
 
-# mps: 3
 def flatten(lst: list) -> list:
     """
     Recursively flatten a list
     :param lst: multidimensional list
-    :return: onedimensional list
+    :return: one-dimensional list
     """
     result = []
     for item in lst:
@@ -541,4 +544,4 @@ def flatten(lst: list) -> list:
 
 if __name__ == '__main__':
     """"""
-    print(load_list_from_database(["['000','111']", "['6O7MpKrY91vlCd4Osi6XKs']", "['2iLpvtffIrQ4bMYrFPRN4x']"]))
+    check_token_expired()

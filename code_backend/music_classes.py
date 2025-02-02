@@ -5,7 +5,8 @@ from code_backend.shared_config import *
 from code_backend.secondary_methods import (
     uri_to_id, print_error, list_from_id_string, file_image_bytes,
     spotify_image_bytes, url_to_uri, exclude_from_dict, id_to_uri,
-    check_token_expired, load_json, debug_json, print_debug
+    check_token_expired, load_json, debug_json, print_debug,
+    load_list_from_database
 )
 import code_backend.spotify_web_api as sp_api
 from code_backend.database_access import MyAppDatabase

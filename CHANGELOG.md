@@ -20,12 +20,6 @@
 [//]: # (#### shared_config.py)
 [//]: # (-)
 
-[//]: # (#### spotify_access.py)
-[//]: # (-)
-
-[//]: # (#### spotify_requests.py)
-[//]: # (-)
-
 [//]: # (#### spotify_web_api.py)
 [//]: # (-)
 
@@ -39,6 +33,40 @@
 
 [//]: # (#### requirements.txt)
 [//]: # (- )
+
+## [1.15.1] - 02.02.2025 - Further API Migration
+[//]: # (#### database_access.py)
+[//]: # (-)
+
+[//]: # (#### main_app.py)
+[//]: # (-)
+
+[//]: # (#### music_classes.py)
+[//]: # (-)
+
+#### organize_playlist.py
+- migrated API
+
+#### secondary_methods.py
+- minor changes
+
+[//]: # (#### shared_config.py)
+[//]: # (-)
+
+#### spotify_web_api.py
+- added refresh access token method according to API Example
+
+[//]: # (### other files)
+
+[//]: # (#### .env.sample)
+[//]: # (-)
+
+[//]: # (#### README.md)
+[//]: # (- )
+
+[//]: # (#### requirements.txt)
+[//]: # (- )
+
 
 ## [1.15.0] - 02.02.2025 - Migrated API
 #### database_access.py

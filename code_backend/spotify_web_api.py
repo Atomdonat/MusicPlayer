@@ -1,6 +1,7 @@
 """
     Implementation of the Spotify Web API to fit project purpose
 """
+import requests
 
 from code_backend.secondary_methods import (
     check_limits, check_token_expired, image_from_url,
@@ -44,7 +45,8 @@ def request_regular_token() -> None:
         auth_url = 'https://accounts.spotify.com/authorize?' + urlencode(query_params)
         return redirect(auth_url)
 
-    @app.route('/')
+    # @app.route('/')
+    @app.route('/callback')
     def callback():
         # Extract the 'code' and 'state' parameters from the URL
         code = request.args.get('code')
@@ -102,9 +104,6 @@ def request_regular_token() -> None:
                 lambda d: d.current_url.startswith("http://localhost:8080/?code=")
             )
 
-            with open(absolute_path("/code_backend/testing/tmp.html"), "w") as file:
-                file.write(driver.page_source)
-
             raw_data_tab = driver.find_element(By.ID, 'rawdata-tab')
             raw_data_tab.click()
 
@@ -120,6 +119,7 @@ def request_regular_token() -> None:
             }
             update_env_key("REGULAR_TOKEN", json.dumps(relevant_data))
             update_env_key("REFRESH_TOKEN", json.dumps({"refresh_token": token_data['refresh_token']}))
+            update_env_key("AUTHORIZED_SCOPES", json.dumps({"scope": token_data['scope']}))
 
         except TimeoutException:
             print_error(
@@ -148,6 +148,86 @@ def request_regular_token() -> None:
 
     # Run Selenium in the main thread
     automated_request_handling(use_credentials=(len(SPOTIFY_USERNAME) > 0 and len(SPOTIFY_PASSWORD) > 0))
+
+# mps: 3
+def refresh_access_token():
+    """
+    A refresh token is a security credential that allows client applications to obtain new access tokens without requiring users to reauthorize the application.
+    Access tokens are intentionally configured to have a limited lifespan (1 hour), at the end of which, new tokens can be obtained by providing the original refresh token acquired during the authorization token request response.
+    Official Documentation: https://developer.spotify.com/documentation/web-api/tutorials/refreshing-tokens
+    :return: update REGULAR_TOKEN (and AUTHORIZED_SCOPES) in .env
+    """
+
+    # Check Scope equality with sets
+    config_scope_set = set(SCOPES.split(" "))
+    env_scope_set = set(json.loads(os.getenv('AUTHORIZED_SCOPES'))["scope"].split(" "))
+
+    if config_scope_set != env_scope_set:
+        print(CORANGE+"Scope changed since the last authorization of an access token.\nReauthorizing access token..."+TEXTCOLOR)
+        return request_regular_token()
+
+    elif os.getenv('REFRESH_TOKEN') is None:
+        print(CORANGE+"Refresh token was not obtained.\nReauthorizing access token..."+TEXTCOLOR)
+        return request_regular_token()
+
+    url = "https://accounts.spotify.com/api/token"
+    headers = {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Authorization": f"Basic {base64.b64encode(f'{CLIENT_ID}:{CLIENT_SECRET}'.encode()).decode()}"
+    }
+    form = {
+        'grant_type': 'refresh_token',
+        'refresh_token': json.loads(os.getenv("REFRESH_TOKEN"))['refresh_token']
+    }
+
+    response = requests.post(
+        url=url,
+        headers=headers,
+        data=form,
+        json=True
+    )
+
+    # Error handling according to Spotify's Error Codes
+    if response.status_code not in [200, 201, 202, 204]:
+        try:
+            return print_http_error_codes(
+                code=response.status_code,
+                message=json.loads(response.text),
+                causing_query=requests.Request(method="POST", url=url, headers=headers, data=form)
+            )
+        except json.decoder.JSONDecodeError:
+            print(CORANGE + "print_http_error_codes() Error:" + TEXTCOLOR)
+            print(f"{CORANGE}Response Code:{TEXTCOLOR} {response.status_code}")
+            print(f"{CORANGE}Response as Bytes:{TEXTCOLOR} {response.content}")
+            print(f"{CORANGE}Response as String:{TEXTCOLOR} {response.text}")
+
+    if len(response.content) == 0:
+        return None
+    else:
+        try:
+            refresh_token_data = response.json()
+
+            # update access token
+            new_regular_token = {
+                "access_token": refresh_token_data.get('access_token', ""),
+                "token_type": "Bearer",
+                "expires": int(time.time()) + refresh_token_data.get('expires_in', 0)
+            }
+            update_env_key('REGULAR_TOKEN', json.dumps(new_regular_token))
+
+            # only update if new Refresh Token is part of Response, When a refresh token is not returned, continue using the existing token
+            if refresh_token_data.get('refresh_token', None):
+                new_refresh_token = {"refresh_token": refresh_token_data.get('refresh_token', None)}
+                update_env_key('REFRESH_TOKEN', json.dumps(new_refresh_token))
+
+            # for debug
+            # return refresh_token_data
+
+        except Exception as error:
+            print(f"{CORANGE}Response Length:{TEXTCOLOR}{len(response.text)}")
+            print(f"{CORANGE}Response Content:\n{TEXTCOLOR}{response.text}")
+            print(f"\n{CRED}{error}\n{TEXTCOLOR}")
+
 
 # mps: 3
 def request_extended_token() -> bool:
@@ -202,7 +282,7 @@ def api_request_data(url: str, request_type: Literal["GET", "POST", "DELETE", "P
     """
 
     if check_token_expired(extended_token=False) == 0:
-        request_regular_token()
+        refresh_access_token()
 
     # HTTP Headers needed for Spotify API requests
     if overwrite_header:
@@ -216,7 +296,6 @@ def api_request_data(url: str, request_type: Literal["GET", "POST", "DELETE", "P
             headers['Content-Type'] = 'application/json'
 
     # print(headers)
-
     match request_type:
         case "GET":
             query = requests.Request(method="GET", url=url, headers=headers, json=json_data)
@@ -259,7 +338,7 @@ def api_request_data(url: str, request_type: Literal["GET", "POST", "DELETE", "P
                 message=json.loads(response.text),
                 causing_query=query
             )
-        except json.decoder.JSONDecodeError:
+        except (json.decoder.JSONDecodeError):
             print(CORANGE+"print_http_error_codes() Error:"+TEXTCOLOR)
             print(f"{CORANGE}Response Code:{TEXTCOLOR} {response.status_code}")
             print(f"{CORANGE}Response as Bytes:{TEXTCOLOR} {response.content}")
@@ -686,7 +765,6 @@ def update_playlist_items(playlist_id: str, uris: list[str]) -> None:
             playlist_id=playlist_id,
             track_uris=list(items.keys())
         )
-
     # Add new items
     add_items_to_playlist(
         playlist_id=playlist_id,
