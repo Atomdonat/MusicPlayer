@@ -1,0 +1,2 @@
+INSERT OR IGNORE INTO albums (album_id, album_name, album_url, album_image, genre_names, total_duration, track_count, artist_ids, track_ids, popularity, blacklisted, album_json)
+VALUES (:album_id, :album_name, :album_url, :album_image, :genre_names, :total_duration, :track_count, :artist_ids, :track_ids, :popularity, :blacklisted, :album_json);

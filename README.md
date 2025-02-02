@@ -22,7 +22,7 @@
 
 * don't overwrite attributes in the initializer with None to declare their type \
 or update only half of the attributes
-* Read Docs
+* **Read Docs**
 * due to CEST and CET the datetime.datetime method can have an offset
 * don't cross-reference anything (e.g. imports, classes) -> Circular Imports  \
 -> big problems (max recursion depth; IDE be like: ╰（‵□′）╯)
@@ -35,9 +35,10 @@ or update only half of the attributes
 * added separate CHANGELOG.md file to better track changes and shorten commit messages
 * do not reset Database before Analyzing anything (No Data in DB -> no Data to analyse)
 * you won't get an error (or smth. similar) if you cross the API request limit (using spotipy; for each request the delay grows exponentially)
-* if current Spotify token is invalid request new one (WIP in `spotify_web_api.py`)
 * spotipy is a shitty library no documentation -> if it is bad do it yourself but better (-> `spotify_web_api.py`)
 * where there is a problem, there is another public repo/service fixing/bypassing it
+* not every error means it's not working
+
 
 ## Code/Comment Highlighting (in Pycharm)
 - <span style="color:#FF6F61">**BUG:**</span>
@@ -47,7 +48,7 @@ or update only half of the attributes
   - Darker Version: `#E65B4F`
 - <span style="color:#FFA500">**DEBUGGING:**</span>
   - Usage: Used to mark code that is used for debugging purposes.
-  - Pattern: `<--- .*\bdebugging\b --->.*`
+  - Pattern: `\bdebugging\b.*`
   - Main Color: `#FFA500`
   - Darker Version: `#E69500`
 - <span style="color:#FF6F61">**FIXME:**</span>
@@ -90,47 +91,58 @@ or update only half of the attributes
 ## Own Terminology/Abbreviations
 - **IR Loop:** infinite recursion loop
 
-### Method Progress Status (M.P.S., or mps)
+### Method/Class Progress Status (mps/cps)
 - 0 -- planned, not implemented
 - 1 -- implemented, not tested
 - 2 -- in testing/debugging
 - 3 -- finished
-- remove after one/two commits after mps=3
+- remove after one/two commits after mps=3, cps=3
 
 ### Progress Versioning Semantic
-![](Icons/pride_versioning.png)
+![](pride_versioning.png)
 by Niki Tonsky (https://mastodon.online/@nikitonsky/113691789641950263)
 
 ## Known Error messages
 
 * requests.exceptions.ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')) -> Just retry
+* requests.status_code == 503 -> wait some time then retry
+
 
 ## ToDo List (prioritized)
 
 * [ ] do ToDo's in Code
 * [ ] test Code
-* [ ] comment Code (including Highlightings) add Docstrings
+* [ ] add Docstrings and comment Code (including Highlightings)
 
 ### Backend related
 
-* [ ] switch Spotify API from Spotipy (badly documented) to official Web-API (goodly documented) using [requests](https://docs.python-requests.org/en/latest/index.html)
+* [x] switch Spotify API from Spotipy (badly documented) to official Web-API (goodly documented) using [requests](https://docs.python-requests.org/en/latest/index.html)
   * new library in `spotify_web_api.py`
-  * [ ] finish `spotify_web_api.py`
-  * [ ] remove spotipy Web API calls and replace with spotify_web_api.py  
+  * [x] finish `spotify_web_api.py`
+  * [x] migrate from spotipy Web API to spotify_web_api.py 
+    * [x] refit ItemQueue  
 * [ ] Error handling
-* [ ] optimize track search distribution in 'random_playlist_by_genre()'
+* [ ] unify return types/output and print statements
 * [ ] use Spotify's Audio Features & Analytics
+* [ ] optimize track search distribution in 'random_playlist_by_genre()'
 
 ### Frontend related
 
 * [ ] fix progressbar
 * [ ] add functionality to searched instance
-* [ ] make possible that the Apps starts though Spotify is neither started nor playing anything \
+* [ ] make possible that the Apps starts though Spotify is neither started nor playing anything
 (Classes->Player->get_instance())
 * [ ] open extra Profile Window for Album, Artist, Playlist, User
 * [ ] too long texts should move automatically
 * [ ] QT GUI/better Frontend
 * [ ] if searched track is already in queue, show/highlighted where (App Window)
+
+## Used Conventions
+### PEP
+- method/function names: "[Function names should be lowercase, with words separated by underscores as necessary to improve readability. Variable names follow the same convention as function names.](https://peps.python.org/pep-0008/#function-and-variable-names)"
+  - non-public: "[Use one leading underscore only for non-public methods and instance variables.](https://peps.python.org/pep-0008/#method-names-and-instance-variables)"
+- constants: "[Constants are usually defined on a module level and written in all capital letters with underscores separating words. Examples include MAX_OVERFLOW and TOTAL.](https://peps.python.org/pep-0008/#constants)"
+- classes: "[Class names should normally use the CapWords convention.](https://peps.python.org/pep-0008/#function-and-variable-names)"
 
 ## Tags
 - Dictionaries / JSON

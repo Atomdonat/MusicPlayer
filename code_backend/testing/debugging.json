@@ -1,1 +1,240 @@
-{"error": {"status": 401, "message": "Valid user authentication required" } }
+{
+    "spotify:playlist:6bRkO7PLCXgmV4EJH52iU4": {
+        "collaborative": false,
+        "description": "",
+        "external_urls": {
+            "spotify": "https://open.spotify.com/playlist/6bRkO7PLCXgmV4EJH52iU4"
+        },
+        "followers": {
+            "href": null,
+            "total": 0
+        },
+        "href": "https://api.spotify.com/v1/playlists/6bRkO7PLCXgmV4EJH52iU4?market=DE",
+        "id": "6bRkO7PLCXgmV4EJH52iU4",
+        "images": [
+            {
+                "height": null,
+                "url": "https://image-cdn-fa.spotifycdn.com/image/ab67706c0000da840fe55ef44d453bf6d504264d",
+                "width": null
+            }
+        ],
+        "name": "SpotipyTest",
+        "owner": {
+            "display_name": "Atomdonat",
+            "external_urls": {
+                "spotify": "https://open.spotify.com/user/simonluca1"
+            },
+            "href": "https://api.spotify.com/v1/users/simonluca1",
+            "id": "simonluca1",
+            "type": "user",
+            "uri": "spotify:user:simonluca1"
+        },
+        "primary_color": null,
+        "public": true,
+        "snapshot_id": "AAAAtzKNlBxlOBrdmOBgUsxfzyJnQXGJ",
+        "tracks": {
+            "href": "https://api.spotify.com/v1/playlists/6bRkO7PLCXgmV4EJH52iU4/tracks?offset=0&limit=100&market=DE",
+            "items": [
+                {
+                    "added_at": "2025-01-10T16:52:36Z",
+                    "added_by": {
+                        "external_urls": {
+                            "spotify": "https://open.spotify.com/user/simonluca1"
+                        },
+                        "href": "https://api.spotify.com/v1/users/simonluca1",
+                        "id": "simonluca1",
+                        "type": "user",
+                        "uri": "spotify:user:simonluca1"
+                    },
+                    "is_local": false,
+                    "primary_color": null,
+                    "track": {
+                        "preview_url": null,
+                        "is_playable": true,
+                        "explicit": true,
+                        "type": "track",
+                        "episode": false,
+                        "track": true,
+                        "album": {
+                            "is_playable": true,
+                            "type": "album",
+                            "album_type": "album",
+                            "href": "https://api.spotify.com/v1/albums/7CI6R1kJLUMfBl4FOKP8nc",
+                            "id": "7CI6R1kJLUMfBl4FOKP8nc",
+                            "images": [
+                                {
+                                    "url": "https://i.scdn.co/image/ab67616d0000b27311ecca6bd4e5576dbf694e6c",
+                                    "width": 640,
+                                    "height": 640
+                                },
+                                {
+                                    "url": "https://i.scdn.co/image/ab67616d00001e0211ecca6bd4e5576dbf694e6c",
+                                    "width": 300,
+                                    "height": 300
+                                },
+                                {
+                                    "url": "https://i.scdn.co/image/ab67616d0000485111ecca6bd4e5576dbf694e6c",
+                                    "width": 64,
+                                    "height": 64
+                                }
+                            ],
+                            "name": "Invincible",
+                            "release_date": "2017-12-01",
+                            "release_date_precision": "day",
+                            "uri": "spotify:album:7CI6R1kJLUMfBl4FOKP8nc",
+                            "artists": [
+                                {
+                                    "external_urls": {
+                                        "spotify": "https://open.spotify.com/artist/2iLpvtffIrQ4bMYrFPRN4x"
+                                    },
+                                    "href": "https://api.spotify.com/v1/artists/2iLpvtffIrQ4bMYrFPRN4x",
+                                    "id": "2iLpvtffIrQ4bMYrFPRN4x",
+                                    "name": "Deuce",
+                                    "type": "artist",
+                                    "uri": "spotify:artist:2iLpvtffIrQ4bMYrFPRN4x"
+                                }
+                            ],
+                            "external_urls": {
+                                "spotify": "https://open.spotify.com/album/7CI6R1kJLUMfBl4FOKP8nc"
+                            },
+                            "total_tracks": 14
+                        },
+                        "artists": [
+                            {
+                                "external_urls": {
+                                    "spotify": "https://open.spotify.com/artist/2iLpvtffIrQ4bMYrFPRN4x"
+                                },
+                                "href": "https://api.spotify.com/v1/artists/2iLpvtffIrQ4bMYrFPRN4x",
+                                "id": "2iLpvtffIrQ4bMYrFPRN4x",
+                                "name": "Deuce",
+                                "type": "artist",
+                                "uri": "spotify:artist:2iLpvtffIrQ4bMYrFPRN4x"
+                            }
+                        ],
+                        "disc_number": 1,
+                        "track_number": 1,
+                        "duration_ms": 184346,
+                        "external_ids": {
+                            "isrc": "USDPK1700182"
+                        },
+                        "external_urls": {
+                            "spotify": "https://open.spotify.com/track/6zrR8itT7IfAdl5aS7YQyt"
+                        },
+                        "href": "https://api.spotify.com/v1/tracks/6zrR8itT7IfAdl5aS7YQyt",
+                        "id": "6zrR8itT7IfAdl5aS7YQyt",
+                        "name": "Here I Come",
+                        "popularity": 35,
+                        "uri": "spotify:track:6zrR8itT7IfAdl5aS7YQyt",
+                        "is_local": false
+                    },
+                    "video_thumbnail": {
+                        "url": null
+                    }
+                },
+                {
+                    "added_at": "2025-01-10T16:52:36Z",
+                    "added_by": {
+                        "external_urls": {
+                            "spotify": "https://open.spotify.com/user/simonluca1"
+                        },
+                        "href": "https://api.spotify.com/v1/users/simonluca1",
+                        "id": "simonluca1",
+                        "type": "user",
+                        "uri": "spotify:user:simonluca1"
+                    },
+                    "is_local": false,
+                    "primary_color": null,
+                    "track": {
+                        "preview_url": null,
+                        "is_playable": true,
+                        "explicit": false,
+                        "type": "track",
+                        "episode": false,
+                        "track": true,
+                        "album": {
+                            "is_playable": true,
+                            "type": "album",
+                            "album_type": "single",
+                            "href": "https://api.spotify.com/v1/albums/6ehXKNVHjv2GYuhhy7ecwG",
+                            "id": "6ehXKNVHjv2GYuhhy7ecwG",
+                            "images": [
+                                {
+                                    "url": "https://i.scdn.co/image/ab67616d0000b273b32d10b54b26a8c0f96d0667",
+                                    "width": 640,
+                                    "height": 640
+                                },
+                                {
+                                    "url": "https://i.scdn.co/image/ab67616d00001e02b32d10b54b26a8c0f96d0667",
+                                    "width": 300,
+                                    "height": 300
+                                },
+                                {
+                                    "url": "https://i.scdn.co/image/ab67616d00004851b32d10b54b26a8c0f96d0667",
+                                    "width": 64,
+                                    "height": 64
+                                }
+                            ],
+                            "name": "Saviour II",
+                            "release_date": "2022-09-06",
+                            "release_date_precision": "day",
+                            "uri": "spotify:album:6ehXKNVHjv2GYuhhy7ecwG",
+                            "artists": [
+                                {
+                                    "external_urls": {
+                                        "spotify": "https://open.spotify.com/artist/6O7MpKrY91vlCd4Osi6XKs"
+                                    },
+                                    "href": "https://api.spotify.com/v1/artists/6O7MpKrY91vlCd4Osi6XKs",
+                                    "id": "6O7MpKrY91vlCd4Osi6XKs",
+                                    "name": "Black Veil Brides",
+                                    "type": "artist",
+                                    "uri": "spotify:artist:6O7MpKrY91vlCd4Osi6XKs"
+                                }
+                            ],
+                            "external_urls": {
+                                "spotify": "https://open.spotify.com/album/6ehXKNVHjv2GYuhhy7ecwG"
+                            },
+                            "total_tracks": 1
+                        },
+                        "artists": [
+                            {
+                                "external_urls": {
+                                    "spotify": "https://open.spotify.com/artist/6O7MpKrY91vlCd4Osi6XKs"
+                                },
+                                "href": "https://api.spotify.com/v1/artists/6O7MpKrY91vlCd4Osi6XKs",
+                                "id": "6O7MpKrY91vlCd4Osi6XKs",
+                                "name": "Black Veil Brides",
+                                "type": "artist",
+                                "uri": "spotify:artist:6O7MpKrY91vlCd4Osi6XKs"
+                            }
+                        ],
+                        "disc_number": 1,
+                        "track_number": 1,
+                        "duration_ms": 200489,
+                        "external_ids": {
+                            "isrc": "USYFZ2288801"
+                        },
+                        "external_urls": {
+                            "spotify": "https://open.spotify.com/track/14FP9BNWHekbC17tqcppOR"
+                        },
+                        "href": "https://api.spotify.com/v1/tracks/14FP9BNWHekbC17tqcppOR",
+                        "id": "14FP9BNWHekbC17tqcppOR",
+                        "name": "Saviour II",
+                        "popularity": 51,
+                        "uri": "spotify:track:14FP9BNWHekbC17tqcppOR",
+                        "is_local": false
+                    },
+                    "video_thumbnail": {
+                        "url": null
+                    }
+                }
+            ],
+            "limit": 100,
+            "next": null,
+            "offset": 0,
+            "previous": null,
+            "total": 2
+        },
+        "type": "playlist",
+        "uri": "spotify:playlist:6bRkO7PLCXgmV4EJH52iU4"
+    }
+}

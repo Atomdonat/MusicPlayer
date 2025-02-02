@@ -50,7 +50,7 @@
   },
   "500": {
     "code": "500",
-    "name": "Internal Server Error. You should never receive this error because our clever coders catch them all ... but if you are unlucky enough to get one, please report it to us through a comment at the bottom of this page."
+    "name": "Internal Server Error. You should never receive this error because our (Spotify's) clever coders catch them all ... but if you are unlucky enough to get one, please report it to us (Spotify) through either:\nCustomer Service: https://support.spotify.com/contact-spotify-support/\nCommunity Forum: https://developer.spotify.com/community"
   },
   "502": {
     "code": "502",

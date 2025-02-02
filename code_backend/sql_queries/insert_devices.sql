@@ -1,0 +1,2 @@
+INSERT OR IGNORE INTO devices (device_id, device_name, device_type, is_active, is_private_session, is_restricted, supports_volume, volume_percent)
+VALUES (:device_id, :device_name, :device_type, :is_active, :is_private_session, :is_restricted, :supports_volume, :volume_percent);

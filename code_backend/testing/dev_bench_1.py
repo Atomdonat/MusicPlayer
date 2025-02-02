@@ -1,3 +1,7 @@
+"""
+File to develop and debug methods, class and more
+"""
+
 import json
 import random
 import sys

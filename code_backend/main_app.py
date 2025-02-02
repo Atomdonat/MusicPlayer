@@ -3,7 +3,7 @@ from music_classes import *
 
 class Device:
     def __init__(self, device_id: str) -> None:
-        result = my_app_database.fetch_item('devices', device_id)
+        result = APP_DATABASE.fetch_item('devices', device_id)
 
         # Create if not in the database
         if result is None:
@@ -159,17 +159,17 @@ class Player:
         if self.dummy_player:
             return
 
-        album_is_blacklisted = my_app_database.fetch_item('albums', self.current_album.album_id)
+        album_is_blacklisted = APP_DATABASE.fetch_item('albums', self.current_album.album_id)
         if isinstance(self.current_collection, Album):
-            collection_is_blacklisted = my_app_database.fetch_item('albums', self.current_collection.album_id)
+            collection_is_blacklisted = APP_DATABASE.fetch_item('albums', self.current_collection.album_id)
         elif isinstance(self.current_collection, Playlist):
-            collection_is_blacklisted = my_app_database.fetch_item('playlists', self.current_collection.playlist_id)
+            collection_is_blacklisted = APP_DATABASE.fetch_item('playlists', self.current_collection.playlist_id)
         else:
             print("How did we get here")
             return
 
-        artist_is_blacklisted = my_app_database.fetch_item('artists', self.current_artist.artist_id)
-        track_is_blacklisted = my_app_database.fetch_item('tracks', self.current_track.track_id)
+        artist_is_blacklisted = APP_DATABASE.fetch_item('artists', self.current_artist.artist_id)
+        track_is_blacklisted = APP_DATABASE.fetch_item('tracks', self.current_track.track_id)
 
         if any([album_is_blacklisted, collection_is_blacklisted, artist_is_blacklisted, track_is_blacklisted]):
             self.next_track()

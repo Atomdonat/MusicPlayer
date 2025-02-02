@@ -67,12 +67,12 @@ if __name__ == "__main__":
     out_file_path = root_dir_path + "/code_backend/testing/spotify_web_api/test_spotify_web_api.json"
     testing_file_path = root_dir_path + "/code_backend/testing/testing.py"
 
-    # methods = create_testing_values(file_path, out_file_path)
+    # regular_api_methods = create_testing_values(file_path, out_file_path)
     #
     # set_testing_values(
     #     test_file_path=out_file_path,
     #     values={
-    #         "album_id": "79fnwKynD56xIXBVWkyaE5",
+    #         "artist_id": "79fnwKynD56xIXBVWkyaE5",
     #         "album_uri": "spotify:album:79fnwKynD56xIXBVWkyaE5",
     #         "album_ids": ["79fnwKynD56xIXBVWkyaE5", "7CI6R1kJLUMfBl4FOKP8nc"],
     #         "artist_id": "6XyY86QOPPrYVGvF9ch6wz",

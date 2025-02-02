@@ -1,11 +1,11 @@
+"""
+    Implementation of the Spotify Web API to fit project purpose
+"""
+
 from code_backend.secondary_methods import (
-    check_lower_limit,
-    check_upper_limit,
-    check_token_expired,
-    image_from_url,
-    print_http_error_codes,
-    print_error,
-    update_env_key
+    check_limits, check_token_expired, image_from_url,
+    print_http_error_codes, print_error, update_env_key,
+    absolute_path
 )
 from code_backend.shared_config import *
 
@@ -13,7 +13,141 @@ from code_backend.shared_config import *
 # Note: Curl-to-... Converter:
 #  https://curlconverter.com/python/
 
-# Todo: add request token
+# Note: some methods can still have bugs depending on usage
+
+# mps: 3
+def request_regular_token() -> None:
+    """
+    Request an access token, using the Authorization Code Flow tutorial and cache it in the .env file. If Spotify credentials are found in .env file, the script runs the login automated. Else User interaction is needed.
+    Official API Documentation: https://developer.spotify.com/documentation/web-api/tutorials/code-flow
+    :return: caches token in .env
+    """
+
+    app = Flask(__name__)
+
+    def generate_random_string(length):
+        """Generate a random string of fixed length."""
+        return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
+
+    @app.route('/login')
+    def login():
+        state = generate_random_string(16)
+
+        query_params = {
+            'response_type': 'code',
+            'client_id': CLIENT_ID,
+            'scope': SCOPES,
+            'redirect_uri': REDIRECT_URI,
+            'state': state
+        }
+
+        auth_url = 'https://accounts.spotify.com/authorize?' + urlencode(query_params)
+        return redirect(auth_url)
+
+    @app.route('/')
+    def callback():
+        # Extract the 'code' and 'state' parameters from the URL
+        code = request.args.get('code')
+        state = request.args.get('state')
+
+        if state is None:
+            error_query = urlencode({'error': 'state_mismatch'})
+            return redirect(f'/#{error_query}')
+
+        # Prepare the request for token exchange
+        token_url = 'https://accounts.spotify.com/api/token'
+        auth_header = base64.b64encode(f"{CLIENT_ID}:{CLIENT_SECRET}".encode()).decode()
+        headers = {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': f'Basic {auth_header}'
+        }
+        data = {
+            'code': code,
+            'redirect_uri': REDIRECT_URI,
+            'grant_type': 'authorization_code'
+        }
+
+        # Exchange the authorization code for an access token
+        response = requests.post(token_url, headers=headers, data=data)
+
+        if response.status_code == 200:
+            return jsonify(response.json())
+        else:
+            return f"Error: {response.text}", response.status_code
+
+    def run_flask_app():
+        """Run Flask app in a separate thread."""
+        app.run(port=8080, debug=True, use_reloader=False)
+
+    def automated_request_handling(use_credentials=False):
+        """
+        Request a new Access Token from spotify
+        :param use_credentials: True: use credentials inside .env file to be logged in automatically; False: log-in manually
+        :return:
+        """
+        wait_timeout = 120 # seconds
+
+        driver = webdriver.Firefox()
+        driver.implicitly_wait(WAIT_TIME)
+        try:
+            driver.get("http://localhost:8080/login")
+            if use_credentials:
+                driver.find_element("id", "login-username").send_keys(SPOTIFY_USERNAME)
+                driver.find_element("id", "login-password").send_keys(SPOTIFY_PASSWORD)
+                driver.find_element("id", "login-button").click()
+
+
+            # else: login manually while script waits up to 2 min
+            WebDriverWait(driver, wait_timeout).until(
+                lambda d: d.current_url.startswith("http://localhost:8080/?code=")
+            )
+
+            with open(absolute_path("/code_backend/testing/tmp.html"), "w") as file:
+                file.write(driver.page_source)
+
+            raw_data_tab = driver.find_element(By.ID, 'rawdata-tab')
+            raw_data_tab.click()
+
+            # Allow time for content to load
+            time.sleep(1)
+
+            # Locate the content within the "Raw Data" panel
+            token_data = json.loads(driver.find_element(By.TAG_NAME, 'pre').text)
+            relevant_data = {
+                'access_token': token_data['access_token'],
+                'token_type': 'Bearer',
+                'expires': int(time.time()) + token_data['expires_in']
+            }
+            update_env_key("REGULAR_TOKEN", json.dumps(relevant_data))
+            update_env_key("REFRESH_TOKEN", json.dumps({"refresh_token": token_data['refresh_token']}))
+
+        except TimeoutException:
+            print_error(
+                error_message="TimeoutException: The timeout occurred while trying to login.",
+                more_infos="Either the credentials are incorrect or the user has not logged in. \n  - Check your credentials in .env (if stored there)\n  - if script aborted before finishing to enter credentials increment wait_timeout",
+                exit_code=1
+            )
+
+        except Exception as error:
+            print_error(
+                error_message=error,
+                more_infos=None,
+                exit_code=1
+            )
+
+        finally:
+            driver.close()
+
+    # Start Flask app in a separate thread
+    flask_thread = threading.Thread(target=run_flask_app)
+    flask_thread.daemon = True
+    flask_thread.start()
+
+    # Give Flask a moment to start
+    time.sleep(1)
+
+    # Run Selenium in the main thread
+    automated_request_handling(use_credentials=(len(SPOTIFY_USERNAME) > 0 and len(SPOTIFY_PASSWORD) > 0))
 
 # mps: 3
 def request_extended_token() -> bool:
@@ -59,7 +193,7 @@ def request_extended_token() -> bool:
 # mps: 3
 def api_request_data(url: str, request_type: Literal["GET", "POST", "DELETE", "PUT"], json_data: dict | str = None, overwrite_header: dict = None) -> dict | list | None:
     """
-    Transferring data from or to a server using Curl commands via [requests](https://docs.python-requests.org/en/latest/index.html). Currently supported HTTP methods are `GET`, `POST`, `PUT` and `DELETE` (This implementation is designed for Spotify API requests)
+    Transferring data from or to a server using Curl commands via [requests](https://docs.python-requests.org/en/latest/index.html). Currently supported HTTP regular_api_methods are `GET`, `POST`, `PUT` and `DELETE` (This implementation is designed for Spotify API requests)
     :param url: url to curl from/to
     :param request_type: HTTP request method
     :param json_data: JSON data to send
@@ -81,16 +215,18 @@ def api_request_data(url: str, request_type: Literal["GET", "POST", "DELETE", "P
         if json_data:
             headers['Content-Type'] = 'application/json'
 
-    print(headers)
+    # print(headers)
 
     match request_type:
         case "GET":
+            query = requests.Request(method="GET", url=url, headers=headers, json=json_data)
             response = requests.get(
                 url=url,
                 headers=headers,
                 json=json_data
             )
         case "POST":
+            query = requests.Request(method="POST", url=url, headers=headers, json=json_data)
             response = requests.post(
                 url=url,
                 headers=headers,
@@ -98,6 +234,7 @@ def api_request_data(url: str, request_type: Literal["GET", "POST", "DELETE", "P
             )
 
         case "DELETE":
+            query = requests.Request(method="DELETE", url=url, headers=headers, json=json_data)
             response = requests.delete(
                 url=url,
                 headers=headers,
@@ -105,20 +242,39 @@ def api_request_data(url: str, request_type: Literal["GET", "POST", "DELETE", "P
             )
 
         case "PUT":
+            query = requests.Request(method="PUT", url=url, headers=headers, json=json_data)
             response = requests.put(
                 url=url,
                 headers=headers,
-                json=json_data
+                data=json_data
             )
 
         case _:
             raise f"{request_type} not supported"
 
-    # Error handling according to Spotify's Error Codes
-    if response.status_code != 200:
-        return print_http_error_codes(response.status_code, json.loads(response.text)["error"]["message"])
+    if response.status_code not in [200, 201, 202, 204]:
+        try:
+            return print_http_error_codes(
+                code=response.status_code,
+                message=json.loads(response.text),
+                causing_query=query
+            )
+        except json.decoder.JSONDecodeError:
+            print(CORANGE+"print_http_error_codes() Error:"+TEXTCOLOR)
+            print(f"{CORANGE}Response Code:{TEXTCOLOR} {response.status_code}")
+            print(f"{CORANGE}Response as Bytes:{TEXTCOLOR} {response.content}")
+            print(f"{CORANGE}Response as String:{TEXTCOLOR} {response.text}")
 
-    return response.json()
+    if len(response.content) == 0:
+        return None
+    else:
+        try:
+            return response.json()
+
+        except Exception as error:
+            print(f"{CORANGE}Response Length:{TEXTCOLOR}{len(response.text)}")
+            print(f"{CORANGE}Response Content:\n{TEXTCOLOR}{response.text}")
+            print(f"\n{CRED}{error}\n{TEXTCOLOR}")
 
 
 # <-- Begin Spotify Album Methods -->
@@ -142,7 +298,7 @@ def get_album(album_id: str) -> dict:
 
 
 # mps: 3
-def get_several_albums(album_ids: list[str]) -> dict:
+def get_several_albums(album_ids: list[str]) -> dict | None:
     """
     Get Spotify catalog information for multiple albums identified by their Spotify IDs.
     Needed Scopes: None
@@ -150,6 +306,9 @@ def get_several_albums(album_ids: list[str]) -> dict:
     :param album_ids: A comma-separated list of the Spotify IDs for the albums.
     :return: Dict containing Spotify Albums, in the form of {album_uri: album}
     """
+
+    if check_limits(limit=len(album_ids)) == 1:
+        return None
 
     albums = {}
     for current_chunk in range(0, len(album_ids), 20):
@@ -166,14 +325,15 @@ def get_several_albums(album_ids: list[str]) -> dict:
     return albums
 
 
-# mps: 2
-def get_album_tracks(album_id: str) -> dict:
+# mps: 3
+def get_album_tracks(album_id: str, get_duration: bool = False) -> dict | tuple[dict, int]:
     """
     Get Spotify catalog information about an album’s tracks. Optional parameters can be used to limit the number of tracks returned.
     Needed Scopes: None
     Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/get-an-albums-tracks
     :param album_id: The Spotify ID of the album.
-    :return: Dict containing Spotify Tracks, in the form of {track_uri: track}
+    :param get_duration: If to get the Playlist duration in seconds. Default: False.
+    :return: Dict containing Spotify Tracks, in the form of {track_uri: track} (and optional the duration as second param)
     """
 
     track_dicts = {}
@@ -203,10 +363,14 @@ def get_album_tracks(album_id: str) -> dict:
 
         current_offset += 50
 
+    if get_duration:
+        duration = sum([int(current_track["duration_ms"]) for current_track in track_dicts.values()])
+        return track_dicts, duration
+
     return track_dicts
 
 
-# mps: 2
+# mps: 3
 def get_users_saved_albums() -> dict | None:
     """
     Get a list of the albums saved in the current Spotify user's 'Your Music' library.
@@ -245,15 +409,18 @@ def get_users_saved_albums() -> dict | None:
     return albums
 
 
-# mps: 2
-def check_users_saved_albums(album_ids: list[str]) -> dict:
+# mps: 3
+def check_users_saved_albums(album_ids: list[str]) -> dict | None:
     """
     Check if one or more albums is already saved in the current Spotify user's 'Your Music' library.
     Needed Scopes: user-library-read
     Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/check-users-saved-albums
     :param album_ids: A comma-separated list of the Spotify IDs for the albums. Maximum: 20 IDs.
-    :return: Dict containing Saved Spotify Albums, in the form of {album_uri: exists?}
+    :return: Dict containing if Spotify Albums are saved by User, in the form of {album_uri: exists?}
     """
+
+    if check_limits(limit=len(album_ids)) == 1:
+        return None
 
     albums = {}
     for current_chunk in range(0, len(album_ids), 50):
@@ -300,6 +467,9 @@ def get_several_artists(artist_ids: list[str]) -> dict | None:
     :return: Dict containing Spotify Artists, in the form of {artist_uri: artist}
     """
 
+    if check_limits(limit=len(artist_ids)) == 1:
+        return None
+
     artists = {}
     for current_chunk in range(0, len(artist_ids), 50):
         encoded_chunk = quote(",".join(artist_ids[current_chunk: current_chunk + 50]))
@@ -315,27 +485,25 @@ def get_several_artists(artist_ids: list[str]) -> dict | None:
     return artists
 
 
-# mps: 2
-def get_artists_albums(album_id: str, limit: int = 20) -> dict:
+# mps: 3
+def get_artists_albums(artist_id: str, limit: int = 20) -> dict | None:
     """
     Get Spotify catalog information about an artist's albums.
     Needed Scopes: None
     Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/get-an-artists-albums
-    :param album_id: The Spotify ID of the album.
+    :param artist_id: The Spotify ID of the artist.
     :param limit: The maximum number of items to return.
     :return: Dict containing Spotify Albums, in the form of {album_uri: album}
     """
 
-    check_lower_limit(
-        limit=limit,
-        api_min_limit=1
-    )
+    if check_limits(limit=limit) == 1:
+        return None
 
     albums = {}
 
     # Get first (up to) 50 artists
     response = api_request_data(
-        url=f"https://api.spotify.com/v1/artists/{album_id}/albums?market={MARKET}&limit={min(50, limit)}&offset=0",
+        url=f"https://api.spotify.com/v1/artists/{artist_id}/albums?market={MARKET}&limit={min(50, limit)}&offset=0",
         request_type="GET",
         json_data=None
     )
@@ -348,7 +516,7 @@ def get_artists_albums(album_id: str, limit: int = 20) -> dict:
 
     for current_offset in range(50, min(total_albums, limit), 50):
         response = api_request_data(
-            url=f"https://api.spotify.com/v1/artists/{album_id}/albums?market={MARKET}&limit=50&offset={current_offset}",
+            url=f"https://api.spotify.com/v1/artists/{artist_id}/albums?market={MARKET}&limit=50&offset={current_offset}",
             request_type="GET",
             json_data=None
         )
@@ -360,13 +528,13 @@ def get_artists_albums(album_id: str, limit: int = 20) -> dict:
 
 
 # mps: 3
-def get_artists_top_tracks(artist_id: str) -> dict:
+def get_artists_top_tracks(artist_id: str) -> dict | None:
     """
     Get Spotify catalog information about an artist's top tracks by country.
     Needed Scopes: None
     Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/get-an-artists-top-tracks
     :param artist_id: The Spotify ID of the artist.
-    :return: Dict containing Spotify Artists, in the form of {artist_uri: artist}
+    :return: Dict containing Spotify Tracks, in the form of {track_uri: track}
     """
 
     response = api_request_data(
@@ -379,8 +547,8 @@ def get_artists_top_tracks(artist_id: str) -> dict:
 
 
 # <-- Begin Spotify Playlist Methods -->
-# mps: 2
-def get_playlist(playlist_id: str) -> dict:
+# mps: 3
+def get_playlist(playlist_id: str) -> dict | None:
     """
     Get a playlist owned by a Spotify user.
     Needed Scopes: None
@@ -388,6 +556,7 @@ def get_playlist(playlist_id: str) -> dict:
     :param playlist_id: The Spotify ID of the playlist.
     :return: Dict containing Spotify Playlists, in the form of {playlist_id: playlist}
     """
+    # Note: it could be that private playlists create errors
 
     response = api_request_data(
         url=f"https://api.spotify.com/v1/playlists/{playlist_id}?market={MARKET}",
@@ -397,7 +566,30 @@ def get_playlist(playlist_id: str) -> dict:
     return {response["uri"]: response}
 
 
-# mps: 2
+# mps: 3
+def get_several_playlists(playlist_ids: list) -> dict | None:
+    """
+    Get Spotify catalog information for multiple playlists based on their Spotify IDs.
+    Needed Scopes: None
+    Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/get-several-tracks
+    :param playlist_ids: A list of the Spotify IDs to be checked.
+    :return: Dict containing Spotify Tracks, in the form of {track_uri: track}
+    """
+
+    if check_limits(limit=len(playlist_ids)) == 1:
+        return None
+
+    playlists = {}
+    # Warning: Does not use API optimization, because there is no Web API method for this by Spotify
+    #   If HTTP Error 429 occurs multiple times set time.sleep(X) between the iterations
+    for current_playlist_id in playlist_ids:
+        current_playlist = get_playlist(playlist_id=current_playlist_id)
+        playlists.update(current_playlist)
+        # time.sleep(X)
+
+    return playlists
+
+# mps: 3
 def change_playlist_details(playlist_id: str, name: str, public: bool, collaborative: bool, description: str) -> None:
     """
     Change a playlist's name and public/private state. (The user must, of course, own the playlist.)
@@ -426,13 +618,14 @@ def change_playlist_details(playlist_id: str, name: str, public: bool, collabora
 
 
 # mps: 3
-def get_playlist_items(playlist_id:str) -> dict:
+def get_playlist_items(playlist_id: str, get_duration: bool = False) -> dict | tuple[dict, int] | None:
     """
     Get full details of the items of a playlist owned by a Spotify user.
     Needed Scopes: playlist-read-private
     Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/get-playlists-tracks
     :param playlist_id: The Spotify ID of the playlist.
-    :return: Dict containing Spotify Tracks, in the form of {track_uri: track}
+    :param get_duration: If to get the Playlist duration in seconds. Default: False.
+    :return: Dict containing Spotify Tracks, in the form of {track_uri: track} (and optional the duration as second param)
     """
     tracks = {}
 
@@ -462,14 +655,18 @@ def get_playlist_items(playlist_id:str) -> dict:
     if len(tracks) != total_tracks:
         print_error(
             error_message=f"Could not fetch all Playlist {playlist_id} items",
-            more_infos=f"Tracks fetched: {len(tracks)}, Tracks in Playlist: {total_tracks}",
+            more_infos=f"Tracks fetched: {len(tracks)}, Tracks in Playlist: {total_tracks}; This can be due to duplicates in the Playlist.",
             exit_code=None
         )
+
+    if get_duration:
+        duration = sum([int(current_track["duration_ms"]) for current_track in tracks.values()])
+        return tracks, duration
 
     return tracks
 
 
-# mps: 2
+# mps: 3
 def update_playlist_items(playlist_id: str, uris: list[str]) -> None:
     """
     Own implementation to update a Playlist
@@ -479,13 +676,16 @@ def update_playlist_items(playlist_id: str, uris: list[str]) -> None:
     :return: Updates Playlist in App
     """
 
+    if check_limits(limit=len(uris)) == 1:
+        return None
+
     # Fetch and remove current Tracks
     items = get_playlist_items(playlist_id=playlist_id)
-
-    remove_playlist_items(
-        playlist_id=playlist_id,
-        track_uris=list(items.keys())
-    )
+    if len(items) > 0:
+        remove_playlist_items(
+            playlist_id=playlist_id,
+            track_uris=list(items.keys())
+        )
 
     # Add new items
     add_items_to_playlist(
@@ -494,7 +694,7 @@ def update_playlist_items(playlist_id: str, uris: list[str]) -> None:
     )
 
 
-# mps: 2
+# mps: 3
 def add_items_to_playlist(playlist_id: str, uris: list[str]) -> None:
     """
     Append one or more items to a user's playlist.
@@ -502,12 +702,11 @@ def add_items_to_playlist(playlist_id: str, uris: list[str]) -> None:
     Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/add-tracks-to-playlist
     :param playlist_id: The Spotify ID of the playlist.
     :param uris: A list of Spotify URIs to add, can be track or episode URIs.
+    :return: Updates Playlist in App
     """
 
-    check_lower_limit(
-        limit=len(uris),
-        api_min_limit=1
-    )
+    if check_limits(limit=len(uris)) == 1:
+        return None
 
     # Note: The position [...] If omitted, the items will be appended to the playlist. [...]
     #  -> no position should work. Otherwise or if position is needed uncomment and update value
@@ -528,7 +727,7 @@ def add_items_to_playlist(playlist_id: str, uris: list[str]) -> None:
         )
 
 
-# mps: 2
+# mps: 3
 def remove_playlist_items(playlist_id: str, track_uris: list[str]) -> None:
     """
     Remove one or more items from a user's playlist (all appearances with these URIs/all Duplicates).
@@ -536,12 +735,11 @@ def remove_playlist_items(playlist_id: str, track_uris: list[str]) -> None:
     Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/remove-tracks-playlist
     :param playlist_id: The Spotify ID of the playlist.
     :param track_uris: An array of objects containing Spotify URIs of the tracks or episodes to remove.
+    :return: Updates Playlist in App
     """
 
-    check_lower_limit(
-        limit=len(track_uris),
-        api_min_limit=1
-    )
+    if check_limits(limit=len(track_uris)) == 1:
+        return None
 
     track_dict = [{"uri": item} for item in track_uris]
 
@@ -556,7 +754,7 @@ def remove_playlist_items(playlist_id: str, track_uris: list[str]) -> None:
         )
 
 
-# mps: 2
+# mps: 3
 def get_current_users_playlists(limit: int = 20) -> dict | None:
     """
     Get a list of the playlists owned or followed by the current Spotify user.
@@ -566,10 +764,8 @@ def get_current_users_playlists(limit: int = 20) -> dict | None:
     :return: Dict containing Spotify Playlists, in the form of {playlist_uri: playlist}
     """
 
-    check_lower_limit(
-        limit=limit,
-        api_min_limit=1
-    )
+    if check_limits(limit=limit) == 1:
+        return None
 
     playlists = {}
 
@@ -596,11 +792,12 @@ def get_current_users_playlists(limit: int = 20) -> dict | None:
         tmp = {item["uri"]: item for item in response["items"]}
         playlists.update(tmp)
 
+
     return playlists
 
 
 # mps: 3
-def get_users_playlists(user_id: str, limit: int = 20) -> dict | None:
+def get_users_playlists(user_id: str, limit: int | None = 20) -> dict | None:
     """
     Get a list of the playlists owned or followed by a Spotify user.
     Needed Scopes: playlist-read-private, playlist-read-collaborative
@@ -610,10 +807,11 @@ def get_users_playlists(user_id: str, limit: int = 20) -> dict | None:
     :return: Dict containing Spotify Playlists, in the form of {playlist_uri: playlist}
     """
 
-    check_lower_limit(
-        limit=limit,
-        api_min_limit=1
-    )
+    if limit is None:
+        limit = 51
+
+    if check_limits(limit=limit) == 1:
+        return None
 
     playlists = {}
 
@@ -643,7 +841,7 @@ def get_users_playlists(user_id: str, limit: int = 20) -> dict | None:
     return playlists
 
 
-# mps: 2
+# mps: 3
 def create_playlist(user_id: str, name: str, public: bool = True, collaborative: bool = False, description: str = None) -> dict | None:
     """
     Create a playlist for a Spotify user. (The playlist will be empty until you add tracks.) Each user is generally limited to a maximum of 11000 playlists.
@@ -689,7 +887,7 @@ def get_playlist_cover_image(playlist_id: str) -> Image:
     return image_from_url(response[0]["url"])
 
 
-# mps: 2
+# mps: 3
 def add_custom_playlist_cover_image(playlist_id: str, b64_image: str) -> None:
     """
     Replace the image used to represent a specific playlist.
@@ -699,6 +897,7 @@ def add_custom_playlist_cover_image(playlist_id: str, b64_image: str) -> None:
     :param b64_image: Base64 encoded JPEG image data, maximum payload size is 256 KB.
     :return: Updates Playlist in App
     """
+    # Todo: continue here
     if check_token_expired(extended_token=False) == 0:
         request_regular_token()
 
@@ -735,7 +934,7 @@ def get_track(track_id: str) -> dict:
 
 
 # mps: 3
-def get_several_tracks(track_ids: list[str]):
+def get_several_tracks(track_ids: list[str]) -> dict | None:
     """
     Get Spotify catalog information for multiple tracks based on their Spotify IDs.
     Needed Scopes: None
@@ -743,6 +942,9 @@ def get_several_tracks(track_ids: list[str]):
     :param track_ids: A list of the Spotify IDs to be checked.
     :return: Dict containing Spotify Tracks, in the form of {track_uri: track}
     """
+
+    if check_limits(limit=len(track_ids)) == 1:
+        return None
 
     tracks = {}
 
@@ -761,8 +963,8 @@ def get_several_tracks(track_ids: list[str]):
     return tracks
 
 
-# mps: 2
-def get_users_saved_tracks(limit: int = 20) -> dict:
+# mps: 3
+def get_users_saved_tracks(limit: int = 20) -> dict | None:
     """
     Get a list of the songs saved in the current Spotify user's 'Your Music' library.
     Needed Scopes: user-library-read
@@ -771,10 +973,8 @@ def get_users_saved_tracks(limit: int = 20) -> dict:
     :return: Dict containing Saved Spotify Tracks, in the form of {track_uri: track}
     """
 
-    check_lower_limit(
-        limit=limit,
-        api_min_limit=1
-    )
+    if check_limits(limit=limit) == 1:
+        return None
 
     tracks = {}
 
@@ -785,7 +985,7 @@ def get_users_saved_tracks(limit: int = 20) -> dict:
         json_data=None
     )
 
-    tmp = {item["uri"]: item for item in response["items"]}
+    tmp = {item["track"]["uri"]: item["track"] for item in response["items"]}
     tracks.update(tmp)
 
     # If there are more than 50 albums:
@@ -804,8 +1004,8 @@ def get_users_saved_tracks(limit: int = 20) -> dict:
     return tracks
 
 
-# mps: 2
-def check_users_saved_tracks(check_ids: list[str]) -> dict:
+# mps: 3
+def check_users_saved_tracks(check_ids: list[str]) -> dict | None:
     """
     Check if one or more tracks is already saved in the current Spotify user's 'Your Music' library.
     Needed Scopes: user-library-read
@@ -813,6 +1013,10 @@ def check_users_saved_tracks(check_ids: list[str]) -> dict:
     :param check_ids: A list of the Spotify IDs to be checked.
     :return: Dict containing Saved Spotify Tracks, in the form of {track_uri: bool}
     """
+
+    if check_limits(limit=len(check_ids)) == 1:
+        return None
+
 
     tracks = {}
 
@@ -850,7 +1054,7 @@ def get_tracks_audio_features(track_id: str):
 
 
 # mps: 3
-def get_several_tracks_audio_features(track_ids: list[str]) -> dict:
+def get_several_tracks_audio_features(track_ids: list[str]) -> dict | None:
     """
     Get audio features for multiple tracks based on their Spotify IDs.
     Needed Scopes: None
@@ -858,6 +1062,11 @@ def get_several_tracks_audio_features(track_ids: list[str]) -> dict:
     :param track_ids: A comma-separated list of the Spotify IDs for the tracks.
     :return: Dict containing Audio Features, in the form of {track_uri: audio_features}
     """
+
+    if check_limits(limit=len(track_ids)) == 1:
+        return None
+
+
     header = {'Authorization': "Bearer " + json.loads(os.getenv("EXTENDED_TOKEN"))["access_token"]}
     audio_features = {}
 
@@ -876,9 +1085,10 @@ def get_several_tracks_audio_features(track_ids: list[str]) -> dict:
 
     return audio_features
 
+
 # <-- Begin Spotify User Methods -->
-# mps: 2
-def get_current_users_profile():
+# mps: 3
+def get_current_users_profile() -> dict:
     """
     Get detailed profile information about the current user (including the current user's username).
     Needed Scopes: user-read-private, user-read-email
@@ -894,12 +1104,12 @@ def get_current_users_profile():
     return {response["uri"]: response}
 
 
-# mps: 2
+# mps: 3
 def get_users_top_items(
-        item_type: Literal["artist", "tracks"],
+        item_type: Literal["artists", "tracks"],
         time_range: Literal["short_term", "medium_term", "long_term"] = "medium_term",
         limit: int = 20
-) -> dict:
+) -> dict | None:
     """
     Get the current user's top artists or tracks based on calculated affinity.
     Needed Scopes: user-top-read
@@ -907,13 +1117,11 @@ def get_users_top_items(
     :param item_type: The type of entity to return. Valid values: "artists" or "tracks"
     :param time_range: Over what time frame the affinities are computed. Valid values: "long_term" (calculated from ~1 year of data and including all new data as it becomes available), "medium_term" (approximately last 6 months), "short_term" (approximately last 4 weeks). Default: medium_term
     :param limit: The maximum number of items to return. If `limit=None` **all** Top Tracks get returned. Default: 20. Minimum: 1.
-    :return: Dict containing Spotify Tracks, in the form of {track_uri: track}
+    :return: Dict containing Spotify Tracks, in the form of {user_uri: user}
     """
 
-    check_lower_limit(
-        limit=limit,
-        api_min_limit=1
-    )
+    if check_limits(limit=limit) == 1:
+        return None
 
     tracks = {}
 
@@ -944,7 +1152,7 @@ def get_users_top_items(
 
 
 # mps: 3
-def get_users_profile(user_id: str):
+def get_users_profile(user_id: str) -> dict:
     """
     Get public profile information about a Spotify user.
     Needed Scopes: None
@@ -961,8 +1169,32 @@ def get_users_profile(user_id: str):
     return {response["uri"]: response}
 
 
-# mps: 2
-def get_followed_artists(get_type: str = "artist"):
+# mps: 3
+def get_several_users(user_ids: list) -> dict | None:
+    """
+    Get Spotify catalog information for multiple user based on their Spotify IDs.
+    Needed Scopes: None
+    :param user_ids: A list of the Spotify IDs to be checked.
+    :return: Dict containing Spotify User, in the form of {user_uri: user}
+    """
+
+    if check_limits(limit=len(user_ids)) == 1:
+        return None
+
+    users = {}
+
+    # Warning: Does not use API optimization, because there is no Web API method for this by Spotify
+    #   If HTTP Error 429 occurs multiple times set time.sleep(X) between the iterations
+    for current_user_id in user_ids:
+        current_playlist = get_users_profile(user_id=current_user_id)
+        users.update(current_playlist)
+        # time.sleep(X)
+
+    return users
+
+
+# mps: 3
+def get_followed_artists(get_type: str = "artist") -> dict | None:
     """
     Get the current user's followed artists.
     Needed Scopes: user-follow-read
@@ -970,6 +1202,11 @@ def get_followed_artists(get_type: str = "artist"):
     :param get_type: The ID type: currently only artist is supported.
     :return: Dict containing Spotify Artists, in the form of {artist_uri: artist}
     """
+
+    if get_type != "artist":
+        return print_error(
+            error_message="The ID type: currently only artist is supported."
+        )
 
     artists = {}
 
@@ -1000,8 +1237,5 @@ def get_followed_artists(get_type: str = "artist"):
     return artists
 
 
-
 if __name__ == '__main__':
-    request_regular_token()
-    # request_extended_token()
-    # renew_regular_token()
+    """"""

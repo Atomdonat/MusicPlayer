@@ -158,7 +158,7 @@ class SpotifyAppWindow:
 
         master.mainloop()
 
-    # Primary methods:
+    # Primary regular_api_methods:
     def organize_elements(self):
         label_width = 0.075
         entry_width = 0.15
@@ -247,7 +247,7 @@ class SpotifyAppWindow:
         # Schedule the next update after the track changes
         self.mainframe.after(current_track_time - current_progress, self.update_labels)
 
-    # Search related methods:
+    # Search related regular_api_methods:
     def search_object(self, event):
         self.instance_options_buttons()
 
@@ -437,7 +437,7 @@ class SpotifyAppWindow:
     def add_track_to_blacklist(self, track: Track):
         track.is_blacklisted = 1
 
-    # Player related methods:
+    # Player related regular_api_methods:
     def bind_entries(self):
         # Bind the Return/Enter key to the process_command function
         self.progress_entry.bind("<Return>", self.update_progress)

@@ -186,7 +186,7 @@ def check_spotify_id(
     # try:
     #     match id_type:
     #         case 'album':
-    #             sp.album(album_id=spotify_id, market=market)
+    #             sp.album(artist_id=spotify_id, market=market)
     #         case 'artist':
     #             sp.artist(artist_id=spotify_id)
     #         case 'playlist':

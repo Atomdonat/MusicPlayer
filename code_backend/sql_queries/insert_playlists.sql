@@ -1,0 +1,2 @@
+INSERT OR IGNORE INTO playlists (playlist_id, playlist_name, playlist_url, playlist_image, genre_names, total_duration, track_count, owner_id, track_ids, popularity, blacklisted, playlist_json)
+VALUES (:playlist_id, :playlist_name, :playlist_url, :playlist_image, :genre_names, :total_duration, :track_count, :owner_id, :track_ids, :popularity, :blacklisted, :playlist_json);

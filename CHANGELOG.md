@@ -40,42 +40,64 @@
 [//]: # (#### requirements.txt)
 [//]: # (- )
 
-[//]: # (#### Changelog)
-[//]: # (- )
-
-## [1.14.2] - 07.01.2025 - retrofitting the changelog
-[//]: # (#### database_access.py)
-[//]: # (-)
+## [1.15.0] - 02.02.2025 - Migrated API
+#### database_access.py
+- optimized `add_xy_to_tableXy()` -> merged into one method using `**kwargs`
+  - avoiding circular import Error or Class XY not defined Error, etc.
+- outsourced longer SQLite queries to ./code_backend/sql_queries/
+  - therefore, changes in many methods
+- updated sql query/script executions 
+  - can now execute multiple queries per call using `split_queries()`
 
 [//]: # (#### main_app.py)
 [//]: # (-)
 
-[//]: # (#### music_classes.py)
-[//]: # (-)
+#### music_classes.py
+- rewrote classes -> now only for initial fetching
+  - removed redundancy of methods with Superclass
+  - removed redundancy of Instance and Database
+  - implemented new API
+- finished ItemQueue to process items not in the DB yet
+  - does only one iteration per call, instead of looping and maybe halting while new items found
 
 [//]: # (#### organize_playlist.py)
 [//]: # (-)
 
-[//]: # (#### secondary_methods.py)
-[//]: # (-)
+#### secondary_methods.py
+- added new methods
+- added Docstrings for every method
+- minor changes
 
-[//]: # (#### shared_config.py)
-[//]: # (-)
+#### shared_config.py
+- updated imports and scope
+- removed dataclasses (no longer needed)
 
-[//]: # (#### spotify_access.py)
-[//]: # (-)
+#### spotify_access.py)
+- deprecated due to finishing spotify_web_api.py
 
-[//]: # (#### spotify_requests.py)
-[//]: # (-)
+#### spotify_requests.py
+- deprecated due to finishing spotify_web_api.py
 
-[//]: # (#### spotify_web_api.py)
-[//]: # (-)
+#### spotify_web_api.py
+- finished testing
+- added limit checking for passed lists
 
-### other files
+[//]: # (### other files)
+
 
 [//]: # (#### .env.sample)
 [//]: # (-)
 
+
+[//]: # (#### README.md)
+[//]: # (- )
+
+
+[//]: # (#### requirements.txt)
+[//]: # (- )
+
+## [1.14.2] - 07.01.2025 - retrofitting the changelog
+### other files
 #### README.md
 - regular update
 
@@ -87,32 +109,8 @@
 
 
 ## [1.14.1] - 03.01.2025 - 
-[//]: # (#### database_access.py)
-[//]: # (-)
-
-[//]: # (#### main_app.py)
-[//]: # (-)
-
-[//]: # (#### music_classes.py)
-[//]: # (- )
-
-[//]: # (#### organize_playlist.py)
-[//]: # (-)
-
-[//]: # (#### secondary_methods.py)
-[//]: # (-)
-
 #### shared_config.py
 - updated config
-
-[//]: # (#### spotify_access.py)
-[//]: # (-)
-
-[//]: # (#### spotify_requests.py)
-[//]: # (-)
-
-[//]: # (#### spotify_web_api.py)
-[//]: # (-)
 
 ### other files
 #### README.md
@@ -582,7 +580,7 @@ moving from private Repo to public one
 - create spotifyAccessManager.py (including Hardcoded API Key (－‸ლ) oops.)
 - update .gitignore
 
-### [0.0.0] - 28.12.2023 - Initial commit
+## [0.0.0] - 28.12.2023 - Initial commit
 
 - add README 
 - add .gitignore
