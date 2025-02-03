@@ -20,3 +20,4 @@ venv
 .obsidian
 
 /Databases/test.db
+/code_backend/__init__.py

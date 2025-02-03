@@ -6,7 +6,7 @@ import requests
 from code_backend.secondary_methods import (
     check_limits, check_token_expired, image_from_url,
     print_http_error_codes, print_error, update_env_key,
-    absolute_path
+    absolute_path, remove_key_recursively
 )
 from code_backend.shared_config import *
 
@@ -271,13 +271,20 @@ def request_extended_token() -> bool:
 
 
 # mps: 3
-def api_request_data(url: str, request_type: Literal["GET", "POST", "DELETE", "PUT"], json_data: dict | str = None, overwrite_header: dict = None) -> dict | list | None:
+def api_request_data(
+        url: str,
+        request_type: Literal["GET", "POST", "DELETE", "PUT"],
+        json_data: dict | str = None,
+        overwrite_header: dict = None,
+        json_as_data: bool = False,
+) -> dict | list | None:
     """
     Transferring data from or to a server using Curl commands via [requests](https://docs.python-requests.org/en/latest/index.html). Currently supported HTTP regular_api_methods are `GET`, `POST`, `PUT` and `DELETE` (This implementation is designed for Spotify API requests)
     :param url: url to curl from/to
     :param request_type: HTTP request method
     :param json_data: JSON data to send
     :param overwrite_header: Specific headers to overwrite default headers
+    :param json_as_data: True: data=json_data, False: json=json_data (Whether to send json_data as data or json)
     :return: JSON data fetched from Spotify API
     """
 
@@ -297,6 +304,7 @@ def api_request_data(url: str, request_type: Literal["GET", "POST", "DELETE", "P
 
     # print(headers)
     match request_type:
+        # Note: there can be errors depending on whether 'json=' or 'data=' was used, modify cases if needed
         case "GET":
             query = requests.Request(method="GET", url=url, headers=headers, json=json_data)
             response = requests.get(
@@ -321,12 +329,20 @@ def api_request_data(url: str, request_type: Literal["GET", "POST", "DELETE", "P
             )
 
         case "PUT":
-            query = requests.Request(method="PUT", url=url, headers=headers, json=json_data)
-            response = requests.put(
-                url=url,
-                headers=headers,
-                data=json_data
-            )
+            if json_as_data:
+                query = requests.Request(method="PUT", url=url, headers=headers, data=json_data)
+                response = requests.put(
+                    url=url,
+                    headers=headers,
+                    data=json_data
+                )
+            else:
+                query = requests.Request(method="PUT", url=url, headers=headers, json=json_data)
+                response = requests.put(
+                    url=url,
+                    headers=headers,
+                    json=json_data
+                )
 
         case _:
             raise f"{request_type} not supported"
@@ -350,10 +366,14 @@ def api_request_data(url: str, request_type: Literal["GET", "POST", "DELETE", "P
         try:
             return response.json()
 
-        except Exception as error:
-            print(f"{CORANGE}Response Length:{TEXTCOLOR}{len(response.text)}")
-            print(f"{CORANGE}Response Content:\n{TEXTCOLOR}{response.text}")
-            print(f"\n{CRED}{error}\n{TEXTCOLOR}")
+        except requests.exceptions.JSONDecodeError:
+            try:
+                return response.text
+
+            except Exception as error:
+                print(f"{CORANGE}Response Length:{TEXTCOLOR}{len(response.text)}")
+                print(f"{CORANGE}Response Content:\n{TEXTCOLOR}{response.text}")
+                print_error(error_message=error, more_infos=None, exit_code=None)
 
 
 # <-- Begin Spotify Album Methods -->
@@ -625,6 +645,341 @@ def get_artists_top_tracks(artist_id: str) -> dict | None:
     return {item["uri"]: item for item in response["tracks"]}
 
 
+# <-- Begin Spotify Player Methods -->
+# mps: 3
+def get_playback_state() -> dict:
+    """
+    Get information about the user’s current playback state, including track or episode, progress, and active device.
+    Needed Scopes: ['user-read-playback-state']
+    Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/get-information-about-the-users-current-playback
+    :return: Dict containing information about playback
+    """
+    response = api_request_data(
+        url=f"https://api.spotify.com/v1/me/player?market={MARKET}",
+        request_type="GET"
+    )
+
+    return response
+
+
+# mps: 3
+def transfer_playback(new_device_id: str, playback_state: bool = False) -> None:
+    """
+    Transfer playback to a new device and optionally begin playback. This API only works for users who have Spotify Premium. The order of execution is not guaranteed when you use this API with other Player API endpoints.
+    Needed Scopes: ['user-modify-playback-state']
+    Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/transfer-a-users-playback
+    :param new_device_id: Spotify device ID
+    :param playback_state: True: ensure playback happens on new device; False: keep the current playback state.
+    """
+    request_body = {
+        "device_ids": [new_device_id],
+        "play": playback_state
+    }
+
+    api_request_data(
+        url=f"https://api.spotify.com/v1/me/player",
+        request_type="PUT",
+        json_data=request_body,
+        json_as_data=False
+    )
+
+
+# mps: 3
+def get_available_devices():
+    """
+    Get information about a user’s available Spotify Connect devices. Some device models are not supported and will not be listed in the API response.
+    Needed Scopes: ['user-read-playback-state']
+    Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/get-a-users-available-devices
+    :return: Dict containing information about available devices, in the form of {device_id: device}
+    """
+    response = api_request_data(
+        url=f"https://api.spotify.com/v1/me/player/devices",
+        request_type="GET"
+    )
+
+    return {current_device['id']: current_device for current_device in response["devices"]}
+
+
+# mps: 3
+def get_currently_playing_track() -> dict:
+    """
+    Get the object currently being played on the user's Spotify account.
+    Needed Scopes: ['user-read-currently-playing']
+    Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/get-the-users-currently-playing-track
+    return: Dict containing information about currently playing track
+    """
+    response = api_request_data(
+        url=f"https://api.spotify.com/v1/me/player/currently-playing?market={MARKET}",
+        request_type="GET"
+    )
+
+    return response
+
+
+# mps: 3
+def start_or_resume_playback(target_device_id: str = None) -> None:
+    """
+    Start a new context or resume current playback on the user's active device. This API only works for users who have Spotify Premium. The order of execution is not guaranteed when you use this API with other Player API endpoints.
+    Needed Scopes: ['user-modify-playback-state']
+    Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/start-a-users-playback
+    Note: raises Error if Spotify is currently playing
+    :param target_device_id: Spotify Device ID (If not supplied, the user's currently active device is the target)
+    """
+    # Note: Currently switching device results in 403 error with no clue why
+    #   Spotify switches device and stops/aborts playback with "Error"
+    target_device_id = None
+
+    api_request_data(
+        url=f"https://api.spotify.com/v1/me/player/play{"?device_id=" + target_device_id if target_device_id else ""}",
+        request_type="PUT"
+    )
+
+
+# mps: 3
+def pause_playback() -> None:
+    """
+    Pause playback on the user's account. This API only works for users who have Spotify Premium. The order of execution is not guaranteed when you use this API with other Player API endpoints.
+    Needed Scopes: ['user-modify-playback-state']
+    Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/pause-a-users-playback
+    """
+    api_request_data(
+        url=f"https://api.spotify.com/v1/me/player/pause",
+        request_type="PUT"
+    )
+
+
+# mps: 3
+def skip_to_next(target_device_id: str = None) -> None:
+    """
+    Skips to next track in the user’s queue. This API only works for users who have Spotify Premium. The order of execution is not guaranteed when you use this API with other Player API endpoints.
+    Needed Scopes: ['user-modify-playback-state']
+    Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/skip-users-playback-to-next-track
+    :param target_device_id: Spotify Device ID (If not supplied, the user's currently active device is the target)
+    """
+    # Note: Currently switching device results in 403 error with no clue why
+    #   Spotify switches device and stops/aborts playback with "Error"
+    target_device_id = None
+
+    api_request_data(
+        url=f"https://api.spotify.com/v1/me/player/next{"?device_id=" + target_device_id if target_device_id else ""}",
+        request_type="POST",
+        json_data="",
+        overwrite_header=False,
+    )
+
+
+# mps: 3
+def skip_to_previous(target_device_id: str = None) -> None:
+    """
+    Skips to previous track in the user’s queue. This API only works for users who have Spotify Premium. The order of execution is not guaranteed when you use this API with other Player API endpoints.
+    Needed Scopes: ['user-modify-playback-state']
+    Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/skip-users-playback-to-previous-track
+    :param target_device_id: Spotify Device ID (If not supplied, the user's currently active device is the target)
+    """
+    # Note: Currently switching device results in 403 error with no clue why
+    #   Spotify switches device and stops/aborts playback with "Error"
+    target_device_id = None
+
+    api_request_data(
+        url=f"https://api.spotify.com/v1/me/player/previous{"?device_id=" + target_device_id if target_device_id else ""}",
+        request_type="POST"
+    )
+
+
+# mps: 3
+def seek_to_position(position_ms: int, target_device_id: str = None):
+    """
+    Seeks to the given position in the user’s currently playing track. This API only works for users who have Spotify Premium. The order of execution is not guaranteed when you use this API with other Player API endpoints.
+    Needed Scopes: ['user-modify-playback-state']
+    Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/seek-to-position-in-currently-playing-track
+    :param position_ms: The position in milliseconds to seek to. Must be a positive number. Passing in a position that is greater than the length of the track will cause the player to start playing the next song.
+    :param target_device_id: Spotify Device ID (If not supplied, the user's currently active device is the target)
+    """
+    # Note: Currently switching device results in 403 error with no clue why
+    #   Spotify switches device and stops/aborts playback with "Error"
+    target_device_id = None
+
+    if position_ms < 0:
+        print_error(
+            error_message="position_ms must be a positive number",
+            more_infos=f"Entered position: {position_ms}",
+            exit_code=None
+        )
+        return
+
+    api_request_data(
+        url=f"https://api.spotify.com/v1/me/player/seek?position_ms={position_ms}{"&device_id=" + target_device_id if target_device_id else ""}",
+        request_type="PUT"
+    )
+
+
+# mps: 3
+def set_repeat_mode(new_repeat_mode: Literal["track", "context", "off"], target_device_id: str = None) -> None:
+    """
+    Set the repeat mode for the user's playback. This API only works for users who have Spotify Premium. The order of execution is not guaranteed when you use this API with other Player API endpoints.
+    Needed Scopes: ['user-modify-playback-state']
+    Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/set-repeat-mode-on-users-playback
+    :param new_repeat_mode: track: will repeat the current track; context: will repeat the current context; off: will turn repeat off.
+    :param target_device_id: Spotify Device ID (If not supplied, the user's currently active device is the target)
+    """
+    # Note: Currently switching device results in 403 error with no clue why
+    #   Spotify switches device and stops/aborts playback with "Error"
+    target_device_id = None
+
+    if new_repeat_mode not in ["track", "context", "off"]:
+        print_error(
+            error_message="new_repeat_mode must be one of 'track', 'context', 'off'",
+            more_infos=f"Entered invalid repeat mode: '{new_repeat_mode}'",
+            exit_code=None
+        )
+        return
+
+    api_request_data(
+        url=f"https://api.spotify.com/v1/me/player/repeat?state={new_repeat_mode}{"&device_id=" + target_device_id if target_device_id else ""}",
+        request_type="PUT"
+    )
+
+
+# mps: 3
+def set_playback_volume(new_volume: int, target_device_id: str = None) -> None:
+    """
+    Set the volume for the user’s current playback device. This API only works for users who have Spotify Premium. The order of execution is not guaranteed when you use this API with other Player API endpoints.
+    Needed Scopes: ['user-modify-playback-state']
+    Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/set-volume-for-users-playback
+    :param new_volume: The volume to set. Must be a value from 0 to 100 inclusive.
+    :param target_device_id: Spotify Device ID (If not supplied, the user's currently active device is the target)
+    """
+    # Note: Currently switching device results in 403 error with no clue why
+    #   Spotify switches device and stops/aborts playback with "Error"
+    target_device_id = None
+
+    if 0 > new_volume > 100:
+        print_error(
+            error_message="new_volume must be a value from 0 to 100 inclusive",
+            more_infos=f"Entered new volume: {new_volume}",
+            exit_code=None
+        )
+        return
+
+    api_request_data(
+        url=f"https://api.spotify.com/v1/me/player/volume?volume_percent={new_volume}{"&device_id=" + target_device_id if target_device_id else ""}",
+        request_type="PUT"
+    )
+
+
+# mps: 3
+def toggle_playback_shuffle(new_state: bool, target_device_id: str = None) -> None:
+    """
+    Toggle shuffle on or off for user’s playback. This API only works for users who have Spotify Premium. The order of execution is not guaranteed when you use this API with other Player API endpoints.
+    Needed Scopes: ['user-modify-playback-state']
+    Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/toggle-shuffle-for-users-playback
+    :param new_state: True: Shuffle user's playback; False: Do not shuffle user's playback.
+    :param target_device_id: Spotify Device ID (If not supplied, the user's currently active device is the target)
+    """
+    # Note: Currently switching device results in 403 error with no clue why
+    #   Spotify switches device and stops/aborts playback with "Error"
+    target_device_id = None
+
+    api_request_data(
+        url=f"https://api.spotify.com/v1/me/player/shuffle?state={new_state}{"&device_id=" + target_device_id if target_device_id else ""}",
+        request_type="PUT"
+    )
+
+
+# mps: 3
+def get_recently_played_tracks(limit: int, after: int = None, before: int = None) -> dict:
+    """
+    Get tracks from the current user's recently played tracks. Note: Currently doesn't support podcast episodes.
+    Needed Scopes: ['user-read-recently-played']
+    Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/get-recently-played
+    :param limit: The maximum number of items to return. Default: 20. Minimum: 1. Maximum: 50.
+    :param after: A Unix timestamp in milliseconds. Returns all items after (but not including) this cursor position. If after is specified, before must not be specified.
+    :param before: A Unix timestamp in milliseconds. Returns all items before (but not including) this cursor position. If before is specified, after must not be specified.
+    :return: Dict containing Spotify Tracks, in the form of {track_uri: track}
+    """
+    if after:
+        url = f"https://api.spotify.com/v1/me/player/recently-played?limit={limit}&after={after}"
+        if before:
+            print(f"{CORANGE}ignoring parameter before", TEXTCOLOR)
+    elif before:
+        url = f"https://api.spotify.com/v1/me/player/recently-played?limit={limit}&before={before}"
+    else:
+        print_error(
+            error_message="Either after or before must be specified",
+            more_infos=f"after={after}; before={before}",
+            exit_code=None
+        )
+        return
+
+    check_limits(limit=limit, max_limit=50)
+
+    response = api_request_data(
+        url=url,
+        request_type="GET"
+    )
+
+    return {current_item["track"]["uri"]: current_item["track"] for current_item in response["items"]}
+
+
+# mps: 3
+def get_the_users_queue() -> dict:
+    """
+    Get the list of objects that make up the user's queue.
+    Needed Scopes: ['user-read-currently-playing', 'user-read-playback-state']
+    Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/get-queue
+    :return: ordered Dict containing Spotify queued Tracks, in the form of {track_uri: track}
+    """
+    response = api_request_data(
+        url="https://api.spotify.com/v1/me/player/queue",
+        request_type="GET"
+    )
+
+    queue = {response["currently_playing"]["uri"]: response["currently_playing"]}
+    queue.update({current_item["uri"]: current_item for current_item in response["queue"]})
+
+    queue = remove_key_recursively(queue, "available_markets")
+
+    return queue
+
+
+# mps: 3
+def add_item_to_playback_queue(track_uri: str, target_device_id: str = None) -> None:
+    """
+    Add an item to the end of the user's current playback queue. This API only works for users who have Spotify Premium. The order of execution is not guaranteed when you use this API with other Player API endpoints.
+    Needed Scopes: ['user-modify-playback-state']
+    Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/add-to-queue
+    :param track_uri: The Spotify Track URIs to be queued.
+    :param target_device_id: Spotify Device ID (If not supplied, the user's currently active device is the target)
+    """
+    # Note: Currently switching device results in 403 error with no clue why
+    #   Spotify switches device and stops/aborts playback with "Error"
+    target_device_id = None
+
+    encoded_uri = quote(track_uri)
+    api_request_data(
+        url=f"https://api.spotify.com/v1/me/player/queue?uri={encoded_uri}{"&device_id=" + target_device_id if target_device_id else ""}",
+        request_type="POST"
+    )
+
+
+# mps: 3
+def add_several_items_to_playback_queue(track_uris: list[str], target_device_id: str = None) -> None:
+    """
+    Add multiple items to the end of the user's current playback queue. This API only works for users who have Spotify Premium. The order of execution is not guaranteed when you use this API with other Player API endpoints.
+    :param track_uris: A list of the Spotify Track URIs to be queued.
+    :param target_device_id: Spotify Device ID (If not supplied, the user's currently active device is the target)
+    """
+    # Note: Currently switching device results in 403 error with no clue why
+    #   Spotify switches device and stops/aborts playback with "Error"
+    target_device_id = None
+
+    # Warning: Does not use API optimization, because there is no Web API method for this by Spotify
+    #   If HTTP Error 429 occurs multiple times set time.sleep(X) between the iterations
+    for current_uri in track_uris:
+        add_item_to_playback_queue(current_uri, target_device_id=target_device_id)
+        # time.sleep(X)
+
+
 # <-- Begin Spotify Playlist Methods -->
 # mps: 3
 def get_playlist(playlist_id: str) -> dict | None:
@@ -880,7 +1235,7 @@ def get_users_playlists(user_id: str, limit: int | None = 20) -> dict | None:
     Get a list of the playlists owned or followed by a Spotify user.
     Needed Scopes: playlist-read-private, playlist-read-collaborative
     Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/get-list-users-playlists
-    :param user_id: The user's Spotify user ID.
+    :param user_id: The user's Spotify ID.
     :param limit: The maximum number of items to return.  If `limit=None` **all** Top Playlists get returned. Default: 20. Minimum: 1.
     :return: Dict containing Spotify Playlists, in the form of {playlist_uri: playlist}
     """
@@ -925,7 +1280,7 @@ def create_playlist(user_id: str, name: str, public: bool = True, collaborative:
     Create a playlist for a Spotify user. (The playlist will be empty until you add tracks.) Each user is generally limited to a maximum of 11000 playlists.
     Needed Scopes: playlist-modify-public, playlist-modify-private
     Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/create-playlist
-    :param user_id: The user's Spotify user ID.
+    :param user_id: The user's Spotify ID.
     :param name: The name for the new playlist, for example "Your Coolest Playlist". This name does not need to be unique; a user may have several playlists with the same name.
     :param public: Defaults to true. The playlist's public/private status (if it should be added to the user's profile or not): true the playlist will be public, false the playlist will be private. To be able to create private playlists, the user must have granted the "playlist-modify-private" scope. For more about public/private status, see Working with Playlists
     :param collaborative: Defaults to false. If true the playlist will be collaborative. Note: to create a collaborative playlist you must also set public to false. To create collaborative playlists you must have granted "playlist-modify-private" and "playlist-modify-public" scopes.
@@ -975,7 +1330,6 @@ def add_custom_playlist_cover_image(playlist_id: str, b64_image: str) -> None:
     :param b64_image: Base64 encoded JPEG image data, maximum payload size is 256 KB.
     :return: Updates Playlist in App
     """
-    # Todo: continue here
     if check_token_expired(extended_token=False) == 0:
         request_regular_token()
 
@@ -988,8 +1342,55 @@ def add_custom_playlist_cover_image(playlist_id: str, b64_image: str) -> None:
         url=f"https://api.spotify.com/v1/playlists/{playlist_id}/images",
         request_type="PUT",
         json_data=b64_image,
-        overwrite_header=header
+        overwrite_header=header,
+        json_as_data=True
     )
+
+# <-- Begin Spotify Search Methods -->
+# mps: 3
+def search_for_item(
+        search_query: str,
+        item_type: list[Literal["album", "artist", "playlist", "track"]],
+        limit: int = 20,
+        offset: int = 0
+) -> dict | None:
+    """
+    Get Spotify catalog information about albums, artists, playlists, tracks, shows, episodes or audiobooks that match a keyword string.
+    Needed Scopes: None
+    Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/search
+    :param search_query: Your search query.
+        You can narrow down your search using field filters. The available filters are album, artist, track, year, upc, tag:hipster, tag:new, isrc, and genre. Each field filter only applies to certain result types.
+        The artist and year filters can be used while searching albums, artists and tracks. You can filter on a single year or a range (e.g. 1955-1960).
+        The album filter can be used while searching albums and tracks.
+        The genre filter can be used while searching artists and tracks.
+        The isrc and track filters can be used while searching tracks.
+        The upc, tag:new and tag:hipster filters can only be used while searching albums. The tag:new filter will return albums released in the past two weeks and tag:hipster can be used to return only albums with the lowest 10% popularity.
+    :param item_type: A comma-separated list of item types to search across. Search results include hits from all the specified item types. For example: 'q=abacab&type=album,track' returns both albums and tracks matching "abacab".
+    :param limit: The maximum number of results to return in each item type. Default: 20. Minimum: 1. Maximum: 50.
+    :param offset: The index of the first result to return. Use with limit to get the next page of search results. Default: 0. Minimum: 0. Maximum: 1000-limit.
+    :return: Dict containing the Search response, in the form of {item_uri: item}
+    """
+
+    check_limits(limit, min_limit=1, max_limit=50)
+    check_limits(offset, min_limit=0, max_limit=1000 - limit)
+
+    if set(item_type) - {"album", "artist", "playlist", "track"}:
+        print_error(
+            error_message=f"Invalid item types found: '{', '.join(set(item_type) - {"album", "artist", "playlist", "track"})}'",
+            more_infos="Valid item types are: 'album', 'artist', 'playlist', 'track'",
+        )
+        return None
+
+    response = api_request_data(
+        url=f"https://api.spotify.com/v1/search?q={search_query}{"&type=" + ','.join(item_type)}&market={MARKET}&limit={limit}&offset={offset}",
+        request_type="GET"
+    )
+
+    output = {}
+    for item_type in response.keys():
+        output.update({current_item["uri"]: current_item for current_item in response[f"{item_type}"]["items"]})
+
+    return output
 
 
 # <-- Begin Spotify Track Methods -->
@@ -1018,6 +1419,7 @@ def get_several_tracks(track_ids: list[str]) -> dict | None:
     Needed Scopes: None
     Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/get-several-tracks
     :param track_ids: A list of the Spotify IDs to be checked.
+    :return: Dict containing Spotify Tracks, in the form of {track_uri: track}
     :return: Dict containing Spotify Tracks, in the form of {track_uri: track}
     """
 
@@ -1317,3 +1719,6 @@ def get_followed_artists(get_type: str = "artist") -> dict | None:
 
 if __name__ == '__main__':
     """"""
+    from code_backend.secondary_methods import image_to_b64, image_from_file
+    image = image_to_b64(image_from_file("Icons/Spotipy_Logo.png"), image_format="PNG")
+    add_custom_playlist_cover_image(playlist_id="1BBkq3U5pR34vtI6tN4DBr", b64_image=image)

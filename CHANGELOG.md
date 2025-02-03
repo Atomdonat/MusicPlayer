@@ -34,7 +34,7 @@
 [//]: # (#### requirements.txt)
 [//]: # (- )
 
-## [1.15.1] - 02.02.2025 - Further API Migration
+## [1.15.2] - 03.02.2025 - Extended API with Player and Search
 [//]: # (#### database_access.py)
 [//]: # (-)
 
@@ -44,8 +44,8 @@
 [//]: # (#### music_classes.py)
 [//]: # (-)
 
-#### organize_playlist.py
-- migrated API
+[//]: # (#### organize_playlist.py)
+[//]: # (-)
 
 #### secondary_methods.py
 - minor changes
@@ -54,9 +54,11 @@
 [//]: # (-)
 
 #### spotify_web_api.py
-- added refresh access token method according to API Example
+- added Player API methods
+- added Search API method
 
-[//]: # (### other files)
+### other files
+- renamed files
 
 [//]: # (#### .env.sample)
 [//]: # (-)
@@ -68,6 +70,16 @@
 [//]: # (- )
 
 
+## [1.15.1] - 02.02.2025 - Further API Migration
+#### organize_playlist.py
+- migrated API
+
+#### secondary_methods.py
+- minor changes
+
+#### spotify_web_api.py
+- added refresh access token method according to API Example
+
 ## [1.15.0] - 02.02.2025 - Migrated API
 #### database_access.py
 - optimized `add_xy_to_tableXy()` -> merged into one method using `**kwargs`
@@ -77,9 +89,6 @@
 - updated sql query/script executions 
   - can now execute multiple queries per call using `split_queries()`
 
-[//]: # (#### main_app.py)
-[//]: # (-)
-
 #### music_classes.py
 - rewrote classes -> now only for initial fetching
   - removed redundancy of methods with Superclass
@@ -87,9 +96,6 @@
   - implemented new API
 - finished ItemQueue to process items not in the DB yet
   - does only one iteration per call, instead of looping and maybe halting while new items found
-
-[//]: # (#### organize_playlist.py)
-[//]: # (-)
 
 #### secondary_methods.py
 - added new methods
@@ -109,20 +115,6 @@
 #### spotify_web_api.py
 - finished testing
 - added limit checking for passed lists
-
-[//]: # (### other files)
-
-
-[//]: # (#### .env.sample)
-[//]: # (-)
-
-
-[//]: # (#### README.md)
-[//]: # (- )
-
-
-[//]: # (#### requirements.txt)
-[//]: # (- )
 
 ## [1.14.2] - 07.01.2025 - retrofitting the changelog
 ### other files

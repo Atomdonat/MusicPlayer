@@ -38,6 +38,7 @@ or update only half of the attributes
 * spotipy is a shitty library no documentation -> if it is bad do it yourself but better (-> `spotify_web_api.py`)
 * where there is a problem, there is another public repo/service fixing/bypassing it
 * not every error means it's not working
+* Whether the requests body is send with `data` or `json` can cause an error or not (Though, the documentations cURL request always says `data`)
 
 
 ## Code/Comment Highlighting (in Pycharm)

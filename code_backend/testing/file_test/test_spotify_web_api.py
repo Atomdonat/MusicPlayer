@@ -14,7 +14,7 @@ test_track_uri = "spotify:track:14FP9BNWHekbC17tqcppOR"
 test_track_uris = ["spotify:track:6zrR8itT7IfAdl5aS7YQyt", "spotify:track:14FP9BNWHekbC17tqcppOR"]
 test_track_ids = ["6zrR8itT7IfAdl5aS7YQyt", "14FP9BNWHekbC17tqcppOR"]
 test_user_id = "simonluca1"
-test_b64_image = image_to_b64(image_from_file(NO_IMAGE_PATH), image_format="PNG")
+test_b64_image = image_to_b64(image_from_file("Icons/Spotipy_Logo.png"), image_format="PNG")
 test_limit = 2
 test_offset = 0
 new_order = ["spotify:track:14FP9BNWHekbC17tqcppOR", "spotify:track:6zrR8itT7IfAdl5aS7YQyt"]
@@ -330,12 +330,12 @@ def test_extended_methods():
 if __name__ == '__main__':
     """Test manually or automated with pytest"""
     if check_token_expired(extended_token=False) == 0:
-        request_regular_token()
+        refresh_access_token()
 
-    if check_token_expired(extended_token=True) == 0:
-        request_extended_token()
+    # if check_token_expired(extended_token=True) == 0:
+    #     request_extended_token()
 
 
-    test_regular_methods()
+    # test_regular_methods()
     test_playlist_modifier()
-    test_extended_methods()
+    # test_extended_methods()

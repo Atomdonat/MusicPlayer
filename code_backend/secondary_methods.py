@@ -319,13 +319,15 @@ def check_lower_limit(limit: int, api_min_limit: int = 1) -> int:
     return 0
 
 
-def check_limits(limit: int) -> int:
+def check_limits(limit: int, min_limit: int = 1, max_limit: int = MAX_REQUESTS_PER_CALL) -> int:
     """
     Checks if the limit is in range of the API.
     :param limit: current limit (1 <= limit <= MAX_REQUESTS_PER_CALL)
+    :param min_limit: minimum API limit
+    :param max_limit: maximum API limit
     :return: 0: limit okay; 1: limit out of API range, print error message; 2: API limit both subceeded and exceeded, print error message
     """
-    return check_lower_limit(limit, 1) + check_upper_limit(limit, MAX_REQUESTS_PER_CALL)
+    return check_lower_limit(limit, min_limit) + check_upper_limit(limit, max_limit)
 
 
 def update_env_key(env_key: str, new_value) -> tuple[str, str]:
@@ -407,9 +409,9 @@ def print_http_error_codes(code: int, message: str = None, causing_query: str | 
     :param message: Message of the error
     :param causing_query: Query parameter that caused the error
     """
-    def pretty_print_POST(req: requests.Request):
+    def pretty_print_post(req: requests.Request):
         """
-        by: AntonioHerraizS (https://stackoverflow.com/a/23816211)
+        original by: AntonioHerraizS (https://stackoverflow.com/a/23816211)
         At this point it is completely built and ready
         to be fired; it is "prepared".
 
@@ -418,10 +420,11 @@ def print_http_error_codes(code: int, message: str = None, causing_query: str | 
         printed and may differ from the actual request.
         """
         req = req.prepare()
-        return "{}\n{}\n{}\n\n{}\n{}".format(
+        return "{}\n{}\n{}\n\n{}\n{}\n{}".format(
             f'{CORANGE}-----------START-----------',
             req.method + ' ' + req.url,
             '\r\n'.join('{}: {}'.format(k, v) for k, v in req.headers.items()),
+            'Request Body:',
             req.body if req.body else '',
             f'------------END------------{TEXTCOLOR}\n'
         )
@@ -431,9 +434,9 @@ def print_http_error_codes(code: int, message: str = None, causing_query: str | 
         error_data = json.load(e_file)[str(code)]
     # print(error_data["code"],"-",error_data["name"])
     print_error(
-        error_message=f"Request returned Code: {error_data["code"]} - {error_data["name"]}\n{error_data["explanation"]}\n{TEXTCOLOR}Responsible Query:\n{pretty_print_POST(causing_query) if causing_query else "---"}",
+        error_message=f"Request returned Code: {error_data["code"]} - {error_data["name"]}\n{error_data["explanation"]}\n{TEXTCOLOR}Responsible Query:\n{pretty_print_post(causing_query) if causing_query else "---"}",
         more_infos=message,
-        exit_code=1
+        exit_code=None
     )
 
 
@@ -541,6 +544,19 @@ def flatten(lst: list) -> list:
         else:
             result.append(item)
     return result
+
+
+def remove_key_recursively(d, key_to_remove):
+    if isinstance(d, dict):  # If it's a dictionary, iterate through its keys
+        return {
+            k: remove_key_recursively(v, key_to_remove)
+            for k, v in d.items() if k != key_to_remove
+        }
+    elif isinstance(d, list):  # If it's a list, iterate through its elements
+        return [remove_key_recursively(item, key_to_remove) for item in d]
+    else:  # Base case: return value as is
+        return d
+
 
 if __name__ == '__main__':
     """"""

@@ -1,7 +1,7 @@
 import json
 
 from code_backend.shared_config import *
-from code_backend.testing.dev_bench_2 import Album, Artist, Playlist, Track, User, ItemQueues
+from code_backend.music_classes import Album, Artist, Playlist, Track, User, ItemQueues
 from code_backend.secondary_methods import check_token_expired,print_error
 import code_backend.spotify_web_api as sp_api
 from code_backend.music_classes import APP_DATABASE
@@ -81,24 +81,6 @@ def test_Track():
 
 def test_User():
     test_class_framework("user")
-
-
-def test_Itemqueue():
-    def test_Itemqueue_fe():
-        queue_map = [
-            album_queue,
-            artist_queue,
-            playlist_queue,
-            track_queue,
-            user_queue
-        ]
-
-        for i in queue_map: print(i)
-
-        item_queues = ItemQueues()
-        item_queues.fetch_new_unknown_items()
-
-        for i in queue_map: print(i)
 
 if __name__ == '__main__':
     """"""
