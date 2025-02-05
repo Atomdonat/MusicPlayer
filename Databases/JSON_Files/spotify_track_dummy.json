@@ -1,0 +1,72 @@
+{
+    "album": {
+        "album_type": "${album_album_type}",
+        "artists": [
+            {
+                "external_urls": {
+                    "spotify": "${album_artists_1_external_urls_spotify}"
+                },
+                "href": "${album_artists_1_href}",
+                "id": "0000000000000000000000",
+                "name": "${album_artists_1_name}",
+                "type": "${album_artists_1_type}",
+                "uri": "${album_artists_1_uri}"
+            }
+        ],
+        "external_urls": {
+            "spotify": "${album_external_urls_spotify}"
+        },
+        "href": "${album_href}",
+        "id": "0000000000000000000000",
+        "images": [
+            {
+                "height": "${album_images_1_height}",
+                "url": "https://i.scdn.co/image/ab67706c0000da840fe55ef44d453bf6d504264d",
+                "width": "${album_images_1_width}"
+            },
+            {
+                "height": "${album_images_2_height}",
+                "url": "https://i.scdn.co/image/ab67706c0000da840fe55ef44d453bf6d504264d",
+                "width": "${album_images_2_width}"
+            }
+        ],
+        "is_playable": "${album_is_playable}",
+        "name": "${album_name}",
+        "release_date": "${album_release_date}",
+        "release_date_precision": "${album_release_date_precision}",
+        "total_tracks": "${album_total_tracks}",
+        "type": "${album_type}",
+        "uri": "${album_uri}"
+    },
+    "artists": [
+        {
+            "external_urls": {
+                "spotify": "${artists_1_external_urls_spotify}"
+            },
+            "href": "${artists_1_href}",
+            "id": "0000000000000000000000",
+            "name": "${artists_1_name}",
+            "type": "${artists_1_type}",
+            "uri": "${artists_1_uri}"
+        }
+    ],
+    "disc_number": "${disc_number}",
+    "duration_ms": "${duration_ms}",
+    "explicit": "${explicit}",
+    "external_ids": {
+        "isrc": "${external_ids_isrc}"
+    },
+    "external_urls": {
+        "spotify": "${external_urls_spotify}"
+    },
+    "href": "${href}",
+    "id": "0000000000000000000000",
+    "is_local": "${is_local}",
+    "is_playable": "${is_playable}",
+    "name": "${name}",
+    "popularity": "${popularity}",
+    "preview_url": "${preview_url}",
+    "track_number": "${track_number}",
+    "type": "${type}",
+    "uri": "${uri}"
+}

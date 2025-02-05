@@ -1,0 +1,228 @@
+{
+    "collaborative": "${collaborative}",
+    "external_urls": {
+        "spotify": "${external_urls_spotify}"
+    },
+    "followers": {
+        "href": "${followers_href}",
+        "total": "${followers_total}"
+    },
+    "href": "${href}",
+    "id": "0000000000000000000000",
+    "images": [
+        {
+            "url": "https://i.scdn.co/image/ab67706c0000da840fe55ef44d453bf6d504264d",
+            "height": "${images_1_height}",
+            "width": "${images_1_width}"
+        }
+    ],
+    "primary_color": "${primary_color}",
+    "name": "${name}",
+    "description": "${description}",
+    "type": "${type}",
+    "uri": "${uri}",
+    "owner": {
+        "href": "${owner_href}",
+        "id": "0000000000000000000000",
+        "type": "${owner_type}",
+        "uri": "${owner_uri}",
+        "display_name": "${owner_display_name}",
+        "external_urls": {
+            "spotify": "${owner_external_urls_spotify}"
+        }
+    },
+    "public": "${public}",
+    "snapshot_id": "0000000000000000000000",
+    "tracks": {
+        "limit": "${tracks_limit}",
+        "next": "${tracks_next}",
+        "offset": "${tracks_offset}",
+        "previous": "${tracks_previous}",
+        "href": "${tracks_href}",
+        "total": "${tracks_total}",
+        "items": [
+            {
+                "added_at": "${tracks_items_1_added_at}",
+                "primary_color": "${tracks_items_1_primary_color}",
+                "video_thumbnail": {
+                    "url": "${tracks_items_1_video_thumbnail_url}"
+                },
+                "is_local": "${tracks_items_1_is_local}",
+                "added_by": {
+                    "external_urls": {
+                        "spotify": "${tracks_items_1_added_by_external_urls_spotify}"
+                    },
+                    "id": "0000000000000000000000",
+                    "type": "${tracks_items_1_added_by_type}",
+                    "uri": "${tracks_items_1_added_by_uri}",
+                    "href": "${tracks_items_1_added_by_href}"
+                },
+                "track": {
+                    "preview_url": "${tracks_items_1_track_preview_url}",
+                    "is_playable": "${tracks_items_1_track_is_playable}",
+                    "explicit": "${tracks_items_1_track_explicit}",
+                    "type": "${tracks_items_1_track_type}",
+                    "episode": "${tracks_items_1_track_episode}",
+                    "track": "${tracks_items_1_track_track}",
+                    "album": {
+                        "is_playable": "${tracks_items_1_track_album_is_playable}",
+                        "type": "${tracks_items_1_track_album_type}",
+                        "album_type": "${tracks_items_1_track_album_album_type}",
+                        "href": "${tracks_items_1_track_album_href}",
+                        "id": "0000000000000000000000",
+                        "images": [
+                            {
+                                "url": "https://i.scdn.co/image/ab67706c0000da840fe55ef44d453bf6d504264d",
+                                "width": "${tracks_items_1_track_album_images_1_width}",
+                                "height": "${tracks_items_1_track_album_images_1_height}"
+                            },
+                            {
+                                "url": "https://i.scdn.co/image/ab67706c0000da840fe55ef44d453bf6d504264d",
+                                "width": "${tracks_items_1_track_album_images_2_width}",
+                                "height": "${tracks_items_1_track_album_images_2_height}"
+                            }
+                        ],
+                        "name": "${tracks_items_1_track_album_name}",
+                        "release_date": "${tracks_items_1_track_album_release_date}",
+                        "release_date_precision": "${tracks_items_1_track_album_release_date_precision}",
+                        "uri": "${tracks_items_1_track_album_uri}",
+                        "artists": [
+                            {
+                                "external_urls": {
+                                    "spotify": "${tracks_items_1_track_album_artists_1_external_urls_spotify}"
+                                },
+                                "href": "${tracks_items_1_track_album_artists_1_href}",
+                                "id": "0000000000000000000000",
+                                "name": "${tracks_items_1_track_album_artists_1_name}",
+                                "type": "${tracks_items_1_track_album_artists_1_type}",
+                                "uri": "${tracks_items_1_track_album_artists_1_uri}"
+                            }
+                        ],
+                        "external_urls": {
+                            "spotify": "${tracks_items_1_track_album_external_urls_spotify}"
+                        },
+                        "total_tracks": "${tracks_items_1_track_album_total_tracks}"
+                    },
+                    "artists": [
+                        {
+                            "external_urls": {
+                                "spotify": "${tracks_items_1_track_artists_1_external_urls_spotify}"
+                            },
+                            "href": "${tracks_items_1_track_artists_1_href}",
+                            "id": "0000000000000000000000",
+                            "name": "${tracks_items_1_track_artists_1_name}",
+                            "type": "${tracks_items_1_track_artists_1_type}",
+                            "uri": "${tracks_items_1_track_artists_1_uri}"
+                        }
+                    ],
+                    "disc_number": "${tracks_items_1_track_disc_number}",
+                    "track_number": "${tracks_items_1_track_track_number}",
+                    "duration_ms": "${tracks_items_1_track_duration_ms}",
+                    "external_ids": {
+                        "isrc": "${tracks_items_1_track_external_ids_isrc}"
+                    },
+                    "external_urls": {
+                        "spotify": "${tracks_items_1_track_external_urls_spotify}"
+                    },
+                    "href": "${tracks_items_1_track_href}",
+                    "id": "0000000000000000000000",
+                    "name": "${tracks_items_1_track_name}",
+                    "popularity": "${tracks_items_1_track_popularity}",
+                    "uri": "${tracks_items_1_track_uri}",
+                    "is_local": "${tracks_items_1_track_is_local}"
+                }
+            },
+            {
+                "added_at": "${tracks_items_2_added_at}",
+                "primary_color": "${tracks_items_2_primary_color}",
+                "video_thumbnail": {
+                    "url": "${tracks_items_2_video_thumbnail_url}"
+                },
+                "is_local": "${tracks_items_2_is_local}",
+                "added_by": {
+                    "external_urls": {
+                        "spotify": "${tracks_items_2_added_by_external_urls_spotify}"
+                    },
+                    "id": "0000000000000000000000",
+                    "type": "${tracks_items_2_added_by_type}",
+                    "uri": "${tracks_items_2_added_by_uri}",
+                    "href": "${tracks_items_2_added_by_href}"
+                },
+                "track": {
+                    "preview_url": "${tracks_items_2_track_preview_url}",
+                    "is_playable": "${tracks_items_2_track_is_playable}",
+                    "explicit": "${tracks_items_2_track_explicit}",
+                    "type": "${tracks_items_2_track_type}",
+                    "episode": "${tracks_items_2_track_episode}",
+                    "track": "${tracks_items_2_track_track}",
+                    "album": {
+                        "is_playable": "${tracks_items_2_track_album_is_playable}",
+                        "type": "${tracks_items_2_track_album_type}",
+                        "album_type": "${tracks_items_2_track_album_album_type}",
+                        "href": "${tracks_items_2_track_album_href}",
+                        "id": "0000000000000000000000",
+                        "images": [
+                            {
+                                "url": "https://i.scdn.co/image/ab67706c0000da840fe55ef44d453bf6d504264d",
+                                "width": "${tracks_items_2_track_album_images_1_width}",
+                                "height": "${tracks_items_2_track_album_images_1_height}"
+                            },
+                            {
+                                "url": "https://i.scdn.co/image/ab67706c0000da840fe55ef44d453bf6d504264d",
+                                "width": "${tracks_items_2_track_album_images_2_width}",
+                                "height": "${tracks_items_2_track_album_images_2_height}"
+                            }
+                        ],
+                        "name": "${tracks_items_2_track_album_name}",
+                        "release_date": "${tracks_items_2_track_album_release_date}",
+                        "release_date_precision": "${tracks_items_2_track_album_release_date_precision}",
+                        "uri": "${tracks_items_2_track_album_uri}",
+                        "artists": [
+                            {
+                                "external_urls": {
+                                    "spotify": "${tracks_items_2_track_album_artists_1_external_urls_spotify}"
+                                },
+                                "href": "${tracks_items_2_track_album_artists_1_href}",
+                                "id": "0000000000000000000000",
+                                "name": "${tracks_items_2_track_album_artists_1_name}",
+                                "type": "${tracks_items_2_track_album_artists_1_type}",
+                                "uri": "${tracks_items_2_track_album_artists_1_uri}"
+                            }
+                        ],
+                        "external_urls": {
+                            "spotify": "${tracks_items_2_track_album_external_urls_spotify}"
+                        },
+                        "total_tracks": "${tracks_items_2_track_album_total_tracks}"
+                    },
+                    "artists": [
+                        {
+                            "external_urls": {
+                                "spotify": "${tracks_items_2_track_artists_1_external_urls_spotify}"
+                            },
+                            "href": "${tracks_items_2_track_artists_1_href}",
+                            "id": "0000000000000000000000",
+                            "name": "${tracks_items_2_track_artists_1_name}",
+                            "type": "${tracks_items_2_track_artists_1_type}",
+                            "uri": "${tracks_items_2_track_artists_1_uri}"
+                        }
+                    ],
+                    "disc_number": "${tracks_items_2_track_disc_number}",
+                    "track_number": "${tracks_items_2_track_track_number}",
+                    "duration_ms": "${tracks_items_2_track_duration_ms}",
+                    "external_ids": {
+                        "isrc": "${tracks_items_2_track_external_ids_isrc}"
+                    },
+                    "external_urls": {
+                        "spotify": "${tracks_items_2_track_external_urls_spotify}"
+                    },
+                    "href": "${tracks_items_2_track_href}",
+                    "id": "0000000000000000000000",
+                    "name": "${tracks_items_2_track_name}",
+                    "popularity": "${tracks_items_2_track_popularity}",
+                    "uri": "${tracks_items_2_track_uri}",
+                    "is_local": "${tracks_items_2_track_is_local}"
+                }
+            }
+        ]
+    }
+}

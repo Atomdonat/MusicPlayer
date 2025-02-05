@@ -1,0 +1,31 @@
+{
+    "external_urls": {
+        "spotify": "${external_urls_spotify}"
+    },
+    "followers": {
+        "href": "${followers_href}",
+        "total": "${followers_total}"
+    },
+    "genres": [
+        "${genres_1}",
+        "${genres_2}"
+    ],
+    "href": "${href}",
+    "id": "0000000000000000000000",
+    "images": [
+        {
+            "url": "https://i.scdn.co/image/ab67706c0000da840fe55ef44d453bf6d504264d",
+            "height": "${images_1_height}",
+            "width": "${images_1_width}"
+        },
+        {
+            "url": "https://i.scdn.co/image/ab67706c0000da840fe55ef44d453bf6d504264d",
+            "height": "${images_2_height}",
+            "width": "${images_2_width}"
+        }
+    ],
+    "name": "${name}",
+    "popularity": "${popularity}",
+    "type": "${type}",
+    "uri": "${uri}"
+}

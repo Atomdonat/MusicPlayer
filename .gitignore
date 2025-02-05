@@ -9,15 +9,16 @@ venv
 */.env
 
 # User Files
-/Structure.ods
-/Untitled_1.ods
-/Databases/main_database.db
-/Databases/JSON_Files/spotify_*.json
+Structure.ods
+Untitled_1.ods
+Databases/main_database.db
+Databases/JSON_Files/spotify_*.json
+!Databases/JSON_Files/spotify_*_dummy.json
 
 # IDE Specific
 .idea
 .code-workspace
 .obsidian
 
-/Databases/test.db
-/code_backend/__init__.py
+Databases/test.db
+code_backend/__init__.py

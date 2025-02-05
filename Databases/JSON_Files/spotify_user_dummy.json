@@ -1,0 +1,26 @@
+{
+    "display_name": "${display_name}",
+    "external_urls": {
+        "spotify": "${external_urls_spotify}"
+    },
+    "href": "${href}",
+    "id": "0000000000000000000000",
+    "images": [
+        {
+            "url": "https://i.scdn.co/image/ab67706c0000da840fe55ef44d453bf6d504264d",
+            "height": "${images_1_height}",
+            "width": "${images_1_width}"
+        },
+        {
+            "url": "https://i.scdn.co/image/ab67706c0000da840fe55ef44d453bf6d504264d",
+            "height": "${images_2_height}",
+            "width": "${images_2_width}"
+        }
+    ],
+    "type": "${type}",
+    "uri": "${uri}",
+    "followers": {
+        "href": "${followers_href}",
+        "total": "${followers_total}"
+    }
+}

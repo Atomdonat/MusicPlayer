@@ -2,6 +2,7 @@
 
 [//]: # (Template:)
 [//]: # (## [new Version] - Date - Title)
+[//]: # (### Changes in Backend Code)
 [//]: # (#### database_access.py)
 [//]: # (-)
 
@@ -23,6 +24,8 @@
 [//]: # (#### spotify_web_api.py)
 [//]: # (-)
 
+[//]: # (### Changes in Frontend Code)
+
 [//]: # (### other files)
 
 [//]: # (#### .env.sample)
@@ -34,24 +37,19 @@
 [//]: # (#### requirements.txt)
 [//]: # (- )
 
+## [1.15.3] - 05.02.2025 - Added DB Dummies
+### Changes in Backend Code
+### other files
+- added dummy json files used to initialize the database ('Databases/JSON_Files/spotify_..._dummy.json')
+- removed dummies from .gitignore
+
+#### CHANGELOG.md
+- fixed (missing) Headlines
+
 ## [1.15.2] - 03.02.2025 - Extended API with Player and Search
-[//]: # (#### database_access.py)
-[//]: # (-)
-
-[//]: # (#### main_app.py)
-[//]: # (-)
-
-[//]: # (#### music_classes.py)
-[//]: # (-)
-
-[//]: # (#### organize_playlist.py)
-[//]: # (-)
-
+### Changes in Backend Code
 #### secondary_methods.py
 - minor changes
-
-[//]: # (#### shared_config.py)
-[//]: # (-)
 
 #### spotify_web_api.py
 - added Player API methods
@@ -60,17 +58,8 @@
 ### other files
 - renamed files
 
-[//]: # (#### .env.sample)
-[//]: # (-)
-
-[//]: # (#### README.md)
-[//]: # (- )
-
-[//]: # (#### requirements.txt)
-[//]: # (- )
-
-
 ## [1.15.1] - 02.02.2025 - Further API Migration
+### Changes in Backend Code
 #### organize_playlist.py
 - migrated API
 
@@ -81,6 +70,7 @@
 - added refresh access token method according to API Example
 
 ## [1.15.0] - 02.02.2025 - Migrated API
+### Changes in Backend Code
 #### database_access.py
 - optimized `add_xy_to_tableXy()` -> merged into one method using `**kwargs`
   - avoiding circular import Error or Class XY not defined Error, etc.
@@ -124,11 +114,12 @@
 #### requirements.txt
 - sorted imports
 
-#### Changelog
+#### CHANGELOG.md
 - moved from the "changes-per-commit" style to a complete Changelog
 
 
-## [1.14.1] - 03.01.2025 - 
+## [1.14.1] - 03.01.2025 - Updated Repo Structure
+### Changes in Backend Code
 #### shared_config.py
 - updated config
 

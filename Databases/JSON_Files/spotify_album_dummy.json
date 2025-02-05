@@ -1,0 +1,123 @@
+{
+    "album_type": "${album_type}",
+    "artists": [
+        {
+            "external_urls": {
+                "spotify": "${artists_1_external_urls_spotify}"
+            },
+            "href": "${artists_1_href}",
+            "id": "0000000000000000000000",
+            "name": "${artists_1_name}",
+            "type": "${artists_1_type}",
+            "uri": "${artists_1_uri}"
+        }
+    ],
+    "copyrights": [
+        {
+            "text": "${copyrights_1_text}",
+            "type": "${copyrights_1_type}"
+        },
+        {
+            "text": "${copyrights_2_text}",
+            "type": "${copyrights_2_type}"
+        }
+    ],
+    "external_ids": {
+        "upc": "${external_ids_upc}"
+    },
+    "external_urls": {
+        "spotify": "${external_urls_spotify}"
+    },
+    "genres": [],
+    "href": "${href}",
+    "id": "0000000000000000000000",
+    "images": [
+        {
+            "height": "${images_1_height}",
+            "url": "https://i.scdn.co/image/ab67706c0000da840fe55ef44d453bf6d504264d",
+            "width": "${images_1_width}"
+        },
+        {
+            "height": "${images_2_height}",
+            "url": "https://i.scdn.co/image/ab67706c0000da840fe55ef44d453bf6d504264d",
+            "width": "${images_2_width}"
+        }
+    ],
+    "is_playable": "${is_playable}",
+    "label": "${label}",
+    "name": "${name}",
+    "popularity": "${popularity}",
+    "release_date": "${release_date}",
+    "release_date_precision": "${release_date_precision}",
+    "total_tracks": "${total_tracks}",
+    "tracks": {
+        "href": "${tracks_href}",
+        "items": [
+            {
+                "artists": [
+                    {
+                        "external_urls": {
+                            "spotify": "${tracks_items_1_artists_1_external_urls_spotify}"
+                        },
+                        "href": "${tracks_items_1_artists_1_href}",
+                        "id": "0000000000000000000000",
+                        "name": "${tracks_items_1_artists_1_name}",
+                        "type": "${tracks_items_1_artists_1_type}",
+                        "uri": "${tracks_items_1_artists_1_uri}"
+                    }
+                ],
+                "disc_number": "${tracks_items_1_disc_number}",
+                "duration_ms": "${tracks_items_1_duration_ms}",
+                "explicit": "${tracks_items_1_explicit}",
+                "external_urls": {
+                    "spotify": "${tracks_items_1_external_urls_spotify}"
+                },
+                "href": "${tracks_items_1_href}",
+                "id": "0000000000000000000000",
+                "is_local": "${tracks_items_1_is_local}",
+                "is_playable": "${tracks_items_1_is_playable}",
+                "name": "${tracks_items_1_name}",
+                "preview_url": "${tracks_items_1_preview_url}",
+                "track_number": "${tracks_items_1_track_number}",
+                "type": "${tracks_items_1_type}",
+                "uri": "${tracks_items_1_uri}"
+            },
+            {
+                "artists": [
+                    {
+                        "external_urls": {
+                            "spotify": "${tracks_items_2_artists_1_external_urls_spotify}"
+                        },
+                        "href": "${tracks_items_2_artists_1_href}",
+                        "id": "0000000000000000000000",
+                        "name": "${tracks_items_2_artists_1_name}",
+                        "type": "${tracks_items_2_artists_1_type}",
+                        "uri": "${tracks_items_2_artists_1_uri}"
+                    }
+                ],
+                "disc_number": "${tracks_items_2_disc_number}",
+                "duration_ms": "${tracks_items_2_duration_ms}",
+                "explicit": "${tracks_items_2_explicit}",
+                "external_urls": {
+                    "spotify": "${tracks_items_2_external_urls_spotify}"
+                },
+                "href": "${tracks_items_2_href}",
+                "id": "0000000000000000000000",
+                "is_local": "${tracks_items_2_is_local}",
+                "is_playable": "${tracks_items_2_is_playable}",
+                "name": "${tracks_items_2_name}",
+                "preview_url": "${tracks_items_2_preview_url}",
+                "track_number": "${tracks_items_2_track_number}",
+                "type": "${tracks_items_2_type}",
+                "uri": "${tracks_items_2_uri}"
+            }
+        ],
+        "limit": "${tracks_limit}",
+        "next": "${tracks_next}",
+        "offset": "${tracks_offset}",
+        "previous": "${tracks_previous}",
+        "total": "${tracks_total}"
+    },
+    "type": "${type}",
+    "uri": "${uri}"
+}
