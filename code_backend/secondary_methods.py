@@ -278,7 +278,7 @@ def concat_iterables(iter1: Iterable[T], iter2: Iterable[T]) -> List[T]:
 
 def debug_json(jason: dict):
     """
-    Dump a dict into a .json file.
+    Dump a dict into '/code_backend/testing/debugging.json'.
     :param jason: what dict to dump
     """
     with open(absolute_path("/code_backend/testing/debugging.json"), "w") as json_file:
@@ -379,12 +379,12 @@ def print_debug(content: str) -> None:
     print(f"{CORANGE}\n<----- Begin Debugging ----->\n\n{content}\n\n<------ End Debugging ------>\n{TEXTCOLOR}")
 
 
-def print_error(error_message: str | Exception, more_infos: str = None, exit_code: int = None) -> None:
+def print_error(error_message: str | Exception, more_infos: str = None, raise_exception: bool = False) -> None:
     """
     Give more information on error
     :param error_message: either an Exception or a custom error message
     :param more_infos: more infos e.g. what could have lead to the error
-    :param exit_code: if to exit the program with code X (None: minor error, program can continue)
+    :param raise_exception: if to raise an exception
     :return: print detailed error message
     """
     print(f"\n{CORANGE}<===== Begin Error =====>{CRED}\n")
@@ -397,48 +397,96 @@ def print_error(error_message: str | Exception, more_infos: str = None, exit_cod
         print("Traceback:")
         print(traceback.format_exc())
     print(f"{CORANGE}<===== End Error =====>{TEXTCOLOR}\n")
-    if exit_code:
-        sys.exit(exit_code)
+    if raise_exception:
+        if isinstance(error_message, Exception):
+            raise error_message
+        else:
+            raise Exception(error_message)
 
 
-def print_http_error_codes(code: int, message: str = None, causing_query: str | requests.Request = None) -> None:
+class DatabaseException(Exception):
+    """Base exception for errors related to the Database."""
+    def __init__(self, message: str) -> None:
+        super().__init__(message)
+
+
+class SpotifyApiException(Exception):
+    """Base exception for errors related to Spotify API requests."""
+    def __init__(self, message: str) -> None:
+        super().__init__(message)
+
+
+class HttpException(SpotifyApiException):
     """
+    Exception raised for HTTP errors when interacting with the Spotify Web API.
+
     Web API uses the following response status codes, as defined in the RFC 2616 and RFC 6585
     Official API Documentation: https://developer.spotify.com/documentation/web-api/concepts/api-calls#response-status-codes
-    :param code: HTTP Code of the request response
-    :param message: Message of the error
-    :param causing_query: Query parameter that caused the error
     """
-    def pretty_print_post(req: requests.Request):
+    def __init__(self, error_code, request_query: requests.Request, response_text: str):
         """
-        original by: AntonioHerraizS (https://stackoverflow.com/a/23816211)
-        At this point it is completely built and ready
-        to be fired; it is "prepared".
+        :param error_code: The HTTP status code returned by the server.
+        :param request_query: The original HTTP request that triggered the error.
+        :param response_text: The response body received from the server.
+        """
+        http_errors = load_json("Databases/JSON_Files/http_errors.json")
 
-        However pay attention at the formatting used in
-        this function because it is programmed to be pretty
-        printed and may differ from the actual request.
-        """
-        req = req.prepare()
-        return "{}\n{}\n{}\n\n{}\n{}\n{}".format(
-            f'{CORANGE}-----------START-----------',
-            req.method + ' ' + req.url,
-            '\r\n'.join('{}: {}'.format(k, v) for k, v in req.headers.items()),
-            'Request Body:',
-            req.body if req.body else '',
-            f'------------END------------{TEXTCOLOR}\n'
+        assert str(error_code) in http_errors.keys(), f"Invalid HTTP error code encountered '{error_code}'"
+
+        http_error_details = http_errors[str(error_code)]
+
+        self.error_code = error_code
+        self.error_name = http_error_details["name"]
+        self.error_description = http_error_details["explanation"]
+        self.request_query = request_query
+        self.response_text = response_text
+
+        super().__init__(self.__str__())
+
+    def __str__(self):
+        return (
+            "<===== Begin Error =====>\n\n"
+            f"Request returned Code: {self.error_code} - {self.error_name}\n"
+            f"{self.error_description}\n"
+            "Responsible Query:\n"
+            f"{CORANGE}-----------START-----------\n"
+            f"{self.request_query.method} {self.request_query.url}\n"
+            + "\n".join(f"{key}: {value}" for key, value in self.request_query.headers.items()) + "\n"
+            "Request Body:\n"
+            f"{self.request_query.body if self.request_query.body else '---'}\n"
+            f"------------END------------{TEXTCOLOR}\n"
+            f"More infos: {self.response_text}\n"
         )
 
-    error_data: dict
-    with open(absolute_path("Databases/JSON_Files/http_errors.json"), "r") as e_file:
-        error_data = json.load(e_file)[str(code)]
-    # print(error_data["code"],"-",error_data["name"])
-    print_error(
-        error_message=f"Request returned Code: {error_data["code"]} - {error_data["name"]}\n{error_data["explanation"]}\n{TEXTCOLOR}Responsible Query:\n{pretty_print_post(causing_query) if causing_query else "---"}",
-        more_infos=message,
-        exit_code=None
-    )
 
+class RequestException(Exception):
+    """
+    Exception raised while using requests
+    """
+
+    def __init__(self, error: Exception, request_query: requests.Request) -> None:
+        self.error = error
+        self.request_query = request_query
+        super().__init__(self.__str__())
+        print(f"\n{CORANGE}<===== End Error =====>{TEXTCOLOR}\n")
+
+    def __str__(self):
+        return (
+            "<===== Begin Error =====>\n\n"
+            f"{CCYAN}Request returned:{CORANGE} {self.error.args}\n"
+            f"{CCYAN}Responsible Query:\n"
+            f"{CORANGE}-----------START-----------\n"
+            f"{self.request_query.method} {self.request_query.url}\n"
+            + "\n".join(f"{key}: {value}" for key, value in self.request_query.headers.items()) + "\n"
+            f"Request Body:\n"
+            f"{self.request_query.body if self.request_query.body else '---'}\n"
+            f"------------END------------{TEXTCOLOR}\n\n"
+            f"{CCYAN}Traceback: {CRED}\n{traceback.format_exc()}{TEXTCOLOR}"
+        )
+
+class CustomException(Exception):
+    def __init__(self, error: Exception) -> None:
+        super().__init__(error)
 
 def exclude_from_dict(target_dict: dict, exclude_keys: list) -> dict:
     """

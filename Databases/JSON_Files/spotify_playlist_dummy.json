@@ -20,7 +20,7 @@
     "name": "${name}",
     "description": "${description}",
     "type": "${type}",
-    "uri": "${uri}",
+    "uri": "spotify:playlist:0000000000000000000000",
     "owner": {
         "href": "${owner_href}",
         "id": "0000000000000000000000",

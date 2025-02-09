@@ -18,7 +18,7 @@
         }
     ],
     "type": "${type}",
-    "uri": "${uri}",
+    "uri": "spotify:user:0000000000000000000000",
     "followers": {
         "href": "${followers_href}",
         "total": "${followers_total}"

@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS albums (
     album_id TEXT PRIMARY KEY,
     album_name TEXT,
+    album_uri TEXT,
     album_url TEXT,
     album_image TEXT,
     genre_names TEXT,
@@ -16,6 +17,7 @@ CREATE TABLE IF NOT EXISTS albums (
 CREATE TABLE IF NOT EXISTS artists (
     artist_id TEXT PRIMARY KEY,
     artist_name TEXT,
+    artist_uri TEXT,
     artist_url TEXT,
     artist_image TEXT,
     genre_names TEXT,
@@ -73,6 +75,7 @@ CREATE TABLE IF NOT EXISTS  genres (
 CREATE TABLE IF NOT EXISTS playlists(
     playlist_id TEXT PRIMARY KEY,
     playlist_name TEXT,
+    playlist_uri TEXT,
     playlist_url TEXT,
     playlist_image TEXT,
     genre_names TEXT,
@@ -88,6 +91,7 @@ CREATE TABLE IF NOT EXISTS playlists(
 CREATE TABLE IF NOT EXISTS tracks (
     track_id TEXT PRIMARY KEY,
     track_name TEXT,
+    track_uri TEXT,
     track_url TEXT,
     track_image TEXT,
     genre_names TEXT,
@@ -103,6 +107,7 @@ CREATE TABLE IF NOT EXISTS tracks (
 CREATE TABLE IF NOT EXISTS users (
     user_id TEXT PRIMARY KEY,
     user_name TEXT,
+    user_uri TEXT,
     user_url TEXT,
     user_image TEXT,
     top_genre_names TEXT,

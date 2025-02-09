@@ -1,7 +1,7 @@
 import json
 
 from code_backend.shared_config import *
-from code_backend.music_classes import Album, Artist, Playlist, Track, User, ItemQueues
+from code_backend.music_classes import NewAlbum, NewArtist, NewPlaylist, NewTrack, NewUser, ItemQueues
 from code_backend.secondary_methods import check_token_expired,print_error
 import code_backend.spotify_web_api as sp_api
 from code_backend.music_classes import APP_DATABASE
@@ -31,11 +31,11 @@ def ensure_valid_token():
 @pytest.mark.skip(reason="Framework for tests; no test worthy content here")
 def test_class_framework(class_type: str):
     class_map = {
-        'album': Album,
-        'artist': Artist,
-        'playlist': Playlist,
-        'track': Track,
-        'user': User,
+        'album': NewAlbum,
+        'artist': NewArtist,
+        'playlist': NewPlaylist,
+        'track': NewTrack,
+        'user': NewUser,
     }
     id_map = {
         "album": _TEST_ALBUM_ID,
@@ -53,7 +53,7 @@ def test_class_framework(class_type: str):
     }
 
     print(f"\n{TEXTCOLOR}====================== {TEXTCOLOR}\n")
-    if APP_DATABASE.fetch_item(table_name=f"{class_type}s", item_id=id_map[class_type]):
+    if APP_DATABASE.fetch_row(table_name=f"{class_type}s", item_id=id_map[class_type]):
         APP_DATABASE.remove_specific_item(table_name=f"{class_type}s", item_id=id_map[class_type])
 
     try:

@@ -4,8 +4,9 @@
 ¯\(°_o)/¯
 ### Ideas
 - Initial Project Idea: one unified App for Spotify, YT-Music, etc.
-- tailored Playlists: compensate for own crappy? taste
-  - additionally, Spotify's "Made for you" Playlists (by genre) are not good 
+- tailored Playlists
+  - compensate for own crappy? taste
+  - Spotify's "Made for you" Playlists (by genre) are not good 
 
 ## Installation
 
@@ -117,27 +118,33 @@ by Niki Tonsky (https://mastodon.online/@nikitonsky/113691789641950263)
 
 ### Backend related
 
-* [x] switch Spotify API from Spotipy (badly documented) to official Web-API (goodly documented) using [requests](https://docs.python-requests.org/en/latest/index.html)
-  * new library in `spotify_web_api.py`
-  * [x] finish `spotify_web_api.py`
-  * [x] migrate from spotipy Web API to spotify_web_api.py 
-    * [x] refit ItemQueue  
 * [ ] Error handling
-  * [ ] Error handling if input type mismatched (f.e. wanted int got str)
+  * [ ] Error handling if input type mismatched (assert)
+  * [ ] what should terminate and what not 
+    * use custom Exceptions and try except
+* [x] add item_uri to Database table columns
+* [x] Migrate `main_app.py` to new API
+* [ ] add CLI interaction for `main_app.py`
+  * headless App (e.g. for servers 24/7 app access)
+  * [ ] method to print docstrings as manpage
 * [ ] unify return types/output and print statements
 * [ ] use Spotify's Audio Features & Analytics
+* [ ] clean up imports
+* [ ] clean up code
 * [ ] optimize track search distribution in 'random_playlist_by_genre()'
 
 ### Frontend related
 
-* [ ] fix progressbar
-* [ ] add functionality to searched instance
-* [ ] make possible that the Apps starts though Spotify is neither started nor playing anything
-(Classes->Player->get_instance())
-* [ ] open extra Profile Window for Album, Artist, Playlist, User
-* [ ] too long texts should move automatically
-* [ ] QT GUI/better Frontend
-* [ ] if searched track is already in queue, show/highlighted where (App Window)
+* [ ] migrate to new API
+* [ ] overhaul GUI
+  * [ ] fix progressbar
+  * [ ] add functionality to searched instance
+  * [ ] make possible that the Apps starts though Spotify is neither started nor playing anything
+  (Classes->Player->get_instance())
+  * [ ] open extra Profile Window for Album, Artist, Playlist, User
+  * [ ] too long texts should move automatically
+  * [ ] QT GUI/better Frontend
+  * [ ] if searched track is already in queue, show/highlighted where (App Window)
 
 ## Used Conventions
 ### PEP
@@ -145,6 +152,7 @@ by Niki Tonsky (https://mastodon.online/@nikitonsky/113691789641950263)
   - non-public: "[Use one leading underscore only for non-public methods and instance variables.](https://peps.python.org/pep-0008/#method-names-and-instance-variables)"
 - constants: "[Constants are usually defined on a module level and written in all capital letters with underscores separating words. Examples include MAX_OVERFLOW and TOTAL.](https://peps.python.org/pep-0008/#constants)"
 - classes: "[Class names should normally use the CapWords convention.](https://peps.python.org/pep-0008/#function-and-variable-names)"
+- docstrings: "[reStructuredText Docstring Format](https://peps.python.org/pep-0287/)"
 
 ## Tags
 - Dictionaries / JSON

@@ -1,10 +1,7 @@
 from code_backend.shared_config import *
 from code_backend.secondary_methods import (
-    dict_factory,
-    print_error,
-    get_str_from_json_file,
-    load_sql_query,
-    absolute_path
+    dict_factory, print_error, get_str_from_json_file,
+    load_sql_query, absolute_path, DatabaseException
 )
 
 
@@ -19,9 +16,7 @@ class MyAppDatabase:
         """
         database_file = absolute_path(database_file)
         if not os.path.isfile(database_file):
-            raise FileNotFoundError(database_file)
-            # with open(database_file, 'w') as file:
-            #     pass
+            raise DatabaseException("Database file not found")
 
         try:
             self.database = sqlite3.connect(database_file)
@@ -46,7 +41,8 @@ class MyAppDatabase:
                     return self.cursor.fetchall()
 
             except Exception as e:
-                if type(parameters) is dict:
+                # Replaces image byte strings with '...' (shortens output immensely)
+                if isinstance(parameters, dict):
                     pop_type = list(parameters.keys())[0][:-3]
                     parameters[f"{pop_type}_image"] = parameters[f"{pop_type}_image"][:4] + "..."
                 print_error(
@@ -108,6 +104,7 @@ class MyAppDatabase:
         params = {
             "album_json": get_str_from_json_file(absolute_path("/Databases/JSON_Files/spotify_album_dummy.json")),
             "artist_json": get_str_from_json_file(absolute_path("/Databases/JSON_Files/spotify_artist_dummy.json")),
+            "device_json": get_str_from_json_file(absolute_path("/Databases/JSON_Files/spotify_device_dummy.json")),
             "playlist_json": get_str_from_json_file(absolute_path("/Databases/JSON_Files/spotify_playlist_dummy.json")),
             "track_json": get_str_from_json_file(absolute_path("/Databases/JSON_Files/spotify_track_dummy.json")),
             "user_json": get_str_from_json_file(absolute_path("/Databases/JSON_Files/spotify_user_dummy.json"))
@@ -131,7 +128,7 @@ class MyAppDatabase:
             **kwargs
     ) -> None:
         """
-        Adds item to table. If not all required keys are passed, an error is raised with exit code 1.
+        Adds item to table if it does not exist, otherwise, the insert will be ignored. If not all required keys are passed, an error is raised with exit code 1.
         :param table_name: Which table to add
         :param kwargs: which arguments are passed to database
         :return:
@@ -140,6 +137,7 @@ class MyAppDatabase:
             "albums": [
                 "album_id",
                 "album_name",
+                "album_uri",
                 "album_url",
                 "album_image",
                 "genre_names",
@@ -154,6 +152,7 @@ class MyAppDatabase:
             "artists": [
                 "artist_id",
                 "artist_name",
+                "artist_uri",
                 "artist_url",
                 "artist_image",
                 "genre_names",
@@ -206,6 +205,7 @@ class MyAppDatabase:
             "playlists": [
                 "playlist_id",
                 "playlist_name",
+                "playlist_uri",
                 "playlist_url",
                 "playlist_image",
                 "genre_names",
@@ -220,6 +220,7 @@ class MyAppDatabase:
             "tracks": [
                 "track_id",
                 "track_name",
+                "track_uri",
                 "track_url",
                 "track_image",
                 "genre_names",
@@ -234,6 +235,7 @@ class MyAppDatabase:
             "users": [
                 "user_id",
                 "user_name",
+                "user_uri",
                 "user_url",
                 "user_image",
                 "follower",
@@ -304,7 +306,7 @@ class MyAppDatabase:
             self.database.commit()
             self.initialize_tables()
 
-    def fetch_item(
+    def fetch_row(
             self,
             table_name: Literal['albums', 'artists', 'tracks', 'playlists', 'users', 'genres', 'devices'],
             item_id: str,
@@ -342,8 +344,7 @@ class MyAppDatabase:
         except Exception as exc:
             print_error(
                 error_message=exc,
-                more_infos=f"Error occurred while fetching column '{table_column}' from Database table '{table_name}'",
-                exit_code=1
+                more_infos=f"Error occurred while fetching column '{table_column}' from Database table '{table_name}'"
             )
 
 
@@ -371,8 +372,7 @@ class MyAppDatabase:
         except Exception as exc:
             print_error(
                 error_message=exc,
-                more_infos=f"Error occurred while fetching rows from table {table_name}, where '{target_column}' == '{target_value}';`",
-                exit_code=0
+                more_infos=f"Error occurred while fetching rows from table {table_name}, where '{target_column}' == '{target_value}';`"
             )
 
 
@@ -398,7 +398,10 @@ class MyAppDatabase:
         self.execute_query(sql_command, (str(new_value), item_id,), False)
 
 
+
+APP_DATABASE = MyAppDatabase(MAIN_DATABASE_PATH)
+
 if __name__ == '__main__':
-    database = MyAppDatabase(MAIN_DATABASE_PATH)
-    database.reset_database()
-    # database.initialize_tables()
+    APP_DATABASE.reset_database()
+    # APP_DATABASE.initialize_tables()
+

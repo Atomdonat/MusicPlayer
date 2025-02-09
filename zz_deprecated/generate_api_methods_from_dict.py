@@ -7,13 +7,12 @@ methods = [
     #     "request_type": ""
     # }
     {
-        "name": "Search for Item",
-        "url": "https://developer.spotify.com/documentation/web-api/reference/search",
-        "desc": "Get Spotify catalog information about albums, artists, playlists, tracks, shows, episodes or audiobooks that match a keyword string. Audiobooks are only available within the US, UK, Canada, Ireland, New Zealand and Australia markets.",
+        "name": "Get Available Markets",
+        "url": "https://developer.spotify.com/documentation/web-api/reference/get-available-markets",
+        "desc": "Get the list of markets where Spotify is available.",
         "scopes": [""],
         "request_type": "GET"
     }
-
 ]
 
 # with open("spotify_web_api.py", "w") as file:
@@ -21,7 +20,7 @@ methods = [
 for current_method in methods:
     current_name = current_method["name"].lower().replace(" ", "_").replace("'", "")
     method = f"""\
-# mps: 0
+# mps: 1
 def {current_name}():
     \"\"\"
     {current_method["desc"]}

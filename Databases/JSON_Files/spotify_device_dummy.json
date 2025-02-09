@@ -1,0 +1,12 @@
+{
+  "spotify:device:0000000000000000000000000000000000000000": {
+    "id": "0000000000000000000000000000000000000000",
+    "is_active": false,
+    "is_private_session": false,
+    "is_restricted": false,
+    "name": "dummy",
+    "supports_volume": false,
+    "type": "dummy",
+    "volume_percent": 0
+  }
+}

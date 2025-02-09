@@ -68,5 +68,5 @@
     "preview_url": "${preview_url}",
     "track_number": "${track_number}",
     "type": "${type}",
-    "uri": "${uri}"
+    "uri": "spotify:track:0000000000000000000000"
 }

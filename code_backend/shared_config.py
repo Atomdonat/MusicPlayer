@@ -29,7 +29,6 @@ from urllib.parse import quote, urlencode
 # Third-party library imports
 import numpy
 import requests
-import spotipy
 from dotenv import find_dotenv, load_dotenv, set_key
 from PIL import Image, ImageTk
 from requests import PreparedRequest
@@ -39,7 +38,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
-from spotipy import SpotifyException, SpotifyOAuth
 from flask import Flask, jsonify, redirect, request
 
 

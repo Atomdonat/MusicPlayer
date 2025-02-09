@@ -27,5 +27,5 @@
     "name": "${name}",
     "popularity": "${popularity}",
     "type": "${type}",
-    "uri": "${uri}"
+    "uri": "spotify:artist:0000000000000000000000"
 }

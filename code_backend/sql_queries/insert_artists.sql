@@ -1,2 +1,2 @@
-INSERT OR IGNORE INTO artists (artist_id, artist_name, artist_url, artist_image, genre_names, follower, album_ids, playlist_ids, top_track_ids, popularity, blacklisted, artist_json)
-VALUES (:artist_id, :artist_name, :artist_url, :artist_image, :genre_names, :follower, :album_ids, :playlist_ids, :top_track_ids, :popularity, :blacklisted, :artist_json);
+INSERT OR IGNORE INTO artists (artist_id, artist_name, artist_uri, artist_url, artist_image, genre_names, follower, album_ids, playlist_ids, top_track_ids, popularity, blacklisted, artist_json)
+VALUES (:artist_id, :artist_name, :artist_uri, :artist_url, :artist_image, :genre_names, :follower, :album_ids, :playlist_ids, :top_track_ids, :popularity, :blacklisted, :artist_json);

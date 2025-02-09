@@ -1,0 +1,11 @@
+{
+  "current_album_id": "0000000000000000000000",
+  "current_artist_id": "0000000000000000000000",
+  "current_collection_id":  "0000000000000000000000",
+  "current_device_id": "0000000000000000000000000000000000000000",
+  "current_track_id":  "0000000000000000000000",
+  "progress": 0,
+  "is_playing":  false,
+  "repeat_state": "off",
+  "shuffle_state": false
+}

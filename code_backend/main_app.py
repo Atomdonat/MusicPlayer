@@ -1,351 +1,309 @@
-from music_classes import *
+from spotipy import SpotifyException
+
+from code_backend.shared_config import *
+from code_backend.music_classes import Album, Artist, Device, Playlist, Track, User
+from code_backend.database_access import APP_DATABASE
+from code_backend.secondary_methods import (
+    uri_to_id, load_json, url_to_uri,
+    SpotifyApiException, HttpException, print_error, debug_json,
+    key_from_dict
+)
+import code_backend.spotify_web_api as spotify
+import code_backend.organize_playlist as organize
 
 
-class Device:
-    def __init__(self, device_id: str) -> None:
-        result = APP_DATABASE.fetch_item('devices', device_id)
-
-        # Create if not in the database
-        if result is None:
-            self.instance = sp.devices()
-            if not self.get_specific_device(device_id):
-                raise Exception("Invalid Device ID")
-
-            self.device_id: str = self.instance['id']
-            self.device_name: str = self.instance['name']
-            self.device_type: str = self.instance['type']
-            self.is_active: bool = bool(self.instance['is_active'])
-            self.is_private_session: bool = bool(self.instance['is_private_session'])
-            self.is_restricted: bool = bool(self.instance['is_restricted'])
-            self.supports_volume: bool = bool(self.instance['supports_volume'])
-            self.volume_percent: int = int(self.instance['volume_percent'])
-
-        else:
-            self.device_id, \
-                self.device_name, \
-                self.device_type, \
-                self.is_active, \
-                self.is_private_session, \
-                self.is_restricted, \
-                self.supports_volume, \
-                self.volume_percent = result
-
-    def get_specific_device(self, device_id: str) -> ValueError | Any:
-        for current_device in self.instance['devices']:
-
-            if current_device['id'] == device_id:
-                return current_device
-
-        valid_device_ids = []
-        for current_device in self.instance['devices']:
-            valid_device_ids.append(current_device['id'])
-
-        return ValueError(f'The device named {device_id} was not found \n Valid Names are: {valid_device_ids}')
-
-
+# cps: 3
 class Player:
-
     def __init__(self) -> None:
-        self.instance = sp.current_playback(market=MARKET)
-        if self.instance:
-            if self.instance['context']['type'] == 'album':
-                self.current_collection = Album(uri_to_id(self.instance['context']['uri']))
-            elif self.instance['context']['type'] == 'playlist':
-                self.current_collection = Playlist(uri_to_id(self.instance['context']['uri']))
+        self.player = spotify.get_playback_state()
+        if self.player is not None:
+            match self.player['context']['type']:
+                case 'album':
+                    self.current_collection = Album(uri_to_id(self.player['context']['uri']))
+                case 'artist':
+                    self.current_collection = Artist(uri_to_id(self.player['context']['uri']))
+                case 'playlist':
+                    self.current_collection = Playlist(uri_to_id(self.player['context']['uri']))
+                case 'track':
+                    self.current_collection = Track(uri_to_id(self.player['context']['uri']))
+                case 'user':
+                    self.current_collection = User(uri_to_id(self.player['context']['uri']))
 
-            self.current_album = Album(self.instance['item']['album']['id'])
-            self.current_artist = Artist(self.instance['item']['artists'][0]['id'])
-            self.current_track = Track(self.instance['item']['id'])
+            self.current_album = Album(album_id=self.player['item']['album']['id'])
+            self.current_artist = Artist(artist_id=self.player['item']['artists'][0]['id'])
+            self.current_track = Track(track_id=self.player['item']['id'])
+            self.current_device = Device(self.player['device']['id'])
+            self.dummy_player = bool(self.current_device.device_id == "0000000000000000000000000000000000000000")
 
-            self.device = Device(self.instance['device']['name'])
-            self.is_playing = bool(self.instance['is_playing'])
-            self.progress = int(self.instance['progress_ms'])
-            self.repeat_state = self.instance['repeat_state']  # no = 'off', on = 'context', once = 'track',
-            self.shuffle_state = bool(self.instance['shuffle_state'])
+            self.is_playing = bool(self.player['is_playing'])
+            self.repeat_state = self.player['repeat_state']
+            self.shuffle_state = bool(self.player['shuffle_state'])
 
         else:
-            self.current_collection = Playlist("0000000000000000000000")  # Dummy
-            self.current_album = Album("0000000000000000000000")  # Dummy
-            self.current_artist = Artist("0000000000000000000000")  # Dummy
-            self.current_track = Track("0000000000000000000000")  # Dummy
-            self.device = Device("0000000000000000000000")  # Dummy
-            self.is_playing = False
-            self.repeat_state = "Null"
-            self.shuffle_state = "Null"
+            self.player = load_json("Databases/JSON_Files/spotify_player_dummy.json")
+            self.current_album = Album(self.player["current_album_id"])
+            self.current_artist = Artist(self.player["current_artist_id"])
+            self.current_collection = Playlist(self.player["current_collection_id"])
+            self.current_device = Device(self.player["current_device_id"])
+            self.dummy_player = bool(self.current_device.device_id == "0000000000000000000000000000000000000000")
+            self.current_track = Track(self.player["current_track_id"])
+            self.is_playing = bool(self.player["is_playing"])
+            self.repeat_state = self.player["repeat_state"]
+            self.shuffle_state = bool(self.player["shuffle_state"])
 
-        self.dummy_player = (self.device.device_id == "0000000000000000000000")
-
-    # JSON Files:
-    def initialize_player(self):
-        try:
-            self.instance = sp.current_playback(market=MARKET)
-        except SpotifyException as e:
-            print(f'\x1b[31mNo Spotify instance found:\n{e}\n\nPlease start Spotify and retry')
-            sys.exit(1)
-
-        if self.instance:
-            if self.instance['context']['type'] == 'album':
-                self.current_collection = Album(uri_to_id(self.instance['context']['uri']))
-            elif self.instance['context']['type'] == 'playlist':
-                self.current_collection = Playlist(uri_to_id(self.instance['context']['uri']))
-
-            self.current_album = Album(self.instance['item']['album']['id'])
-            self.current_artist = Artist(self.instance['item']['artists'][0]['id'])
-            self.current_track = Track(self.instance['item']['id'])
-
-            self.device = Device(self.instance['device']['name'])
-            self.is_playing = bool(self.instance['is_playing'])
-            self.repeat_state = self.instance['repeat_state']  # no = 'off', on = 'context', once = 'track',
-            self.shuffle_state = bool(self.instance['shuffle_state'])
-
-        self.dummy_player = (self.device.device_id == "0000000000000000000000")
         self.skip_blacklisted_items()
 
     def change_playing_state(self):
+        """
+        Switch the current playing state of Spotify Player
+        :return:
+        """
         if not self.dummy_player:
-            # HACK: abusing error to know if Spotify is playing
-            try:
-                sp.pause_playback(self.device.device_id)
-            except:
-                # if it is not supposed to work, why does it? xD
-                sp.start_playback(self.device.device_id)
+            if self.is_playing:
+                try:
+                    spotify.pause_playback()
+                    # returns Error 403 if playback is already paused
+                    self.is_playing = False
+
+                except HttpException:
+                    spotify.start_or_resume_playback(target_device_id=self.current_device.device_id)
+                    self.is_playing = True
+
+            else:
+                spotify.start_or_resume_playback(target_device_id=self.current_device.device_id)
+                self.is_playing = True
+
+    def initialize_player(self):
+        """
+        Get Information of the current Player state of Spotify (updates attributes)
+        """
+        if spotify.get_playback_state() is None:
+            raise SpotifyApiException(f"No Spotify instance found\n{CCYAN}Please start Spotify and retry{TEXTCOLOR}")
+        self.__init__()
 
     @property
     def progress(self) -> int:
+        """
+        Get the current progress of the playing track or episode
+        :return: progress in milliseconds
+        """
         if not self.dummy_player:
-            playback_data = sp.current_user_playing_track()
+            playback_data = spotify.get_currently_playing_track()
             if playback_data:
                 return playback_data["progress_ms"]
         else:
             return -1
 
     @progress.setter
-    def progress(self, time_in_ms: int):
+    def progress(self, position_ms: int):
         if not self.dummy_player:
-            sp.seek_track(time_in_ms, self.device.device_id)
-            self.progress = time_in_ms
+            spotify.seek_to_position(position_ms=position_ms)
+            self.progress = position_ms
         else:
             self.progress = -1
 
     def change_repeat_state(self, new_state: Literal['context', 'track', 'off']):
+        """
+        Change the current playing state of Spotify Player
+        :param new_state: 'off': off, 'context': on, 'track': only repeat current track
+        """
         if not self.dummy_player:
-            if new_state == "context":
-                sp.repeat('context', self.device.device_id)
-            elif new_state == "track":
-                sp.repeat('track', self.device.device_id)
-            elif new_state == "off":
-                sp.repeat('off', self.device.device_id)
+            if new_state not in ['context', 'track', 'off']:
+                raise SpotifyApiException(
+                    f"Unknown state: {new_state}\n"
+                    f"{CCYAN}Valid states are 'context', 'track' and 'off'{TEXTCOLOR}"
+                )
+            spotify.set_repeat_mode(new_repeat_mode=new_state)
+            self.repeat_state = new_state
 
     def next_track(self):
+        """
+        Skips current track
+        """
         if not self.dummy_player:
-            sp.next_track(self.device.device_id)
+            spotify.skip_to_next()
+            self.__init__()
 
     def prev_track(self):
+        """
+        Go to previous track (progress=0) or track start (progress>0)
+        """
         if not self.dummy_player:
-            sp.previous_track(self.device.device_id)
+            spotify.skip_to_previous()
+            self.__init__()
 
     def change_shuffle_state(self):
         if not self.dummy_player:
             self.shuffle_state = not self.shuffle_state
-            sp.shuffle(self.shuffle_state, self.device.device_id)
+            spotify.toggle_playback_shuffle(new_state=self.shuffle_state)
 
     def set_volume(self, new_volume: int):
         if not (0 <= new_volume <= 100):
-            raise ValueError("Volume must be in the range from 0 to 100.")
+            raise SpotifyApiException(
+                f"Invalid volume: {new_volume}\n"
+                "Volume must be in the range from 0 to 100."
+            )
         if not self.dummy_player:
-            sp.volume(new_volume, self.device.device_id)
+            spotify.set_playback_volume(new_volume=new_volume)
 
     def skip_blacklisted_items(self):
+        """
+        Skip Item if it is blacklisted in the Database
+        """
         if self.dummy_player:
             return
 
-        album_is_blacklisted = APP_DATABASE.fetch_item('albums', self.current_album.album_id)
-        if isinstance(self.current_collection, Album):
-            collection_is_blacklisted = APP_DATABASE.fetch_item('albums', self.current_collection.album_id)
-        elif isinstance(self.current_collection, Playlist):
-            collection_is_blacklisted = APP_DATABASE.fetch_item('playlists', self.current_collection.playlist_id)
-        else:
-            print("How did we get here")
-            return
-
-        artist_is_blacklisted = APP_DATABASE.fetch_item('artists', self.current_artist.artist_id)
-        track_is_blacklisted = APP_DATABASE.fetch_item('tracks', self.current_track.track_id)
+        collection_id, collection_type = uri_to_id(self.player['context']['uri'], get_type=True)
+        collection_is_blacklisted = APP_DATABASE.fetch_row(
+            table_name=f"{collection_type}s",
+            item_id=collection_id,
+            table_column="blacklisted"
+        )[0]
+        album_is_blacklisted = APP_DATABASE.fetch_row(
+            table_name='albums',
+            item_id=self.current_album.album_id,
+            table_column="blacklisted"
+        )[0]
+        artist_is_blacklisted = APP_DATABASE.fetch_row(
+            table_name='artists',
+            item_id=self.current_artist.artist_id,
+            table_column="blacklisted"
+        )[0]
+        track_is_blacklisted = APP_DATABASE.fetch_row(
+            table_name='tracks',
+            item_id=self.current_track.track_id,
+            table_column="blacklisted"
+        )[0]
 
         if any([album_is_blacklisted, collection_is_blacklisted, artist_is_blacklisted, track_is_blacklisted]):
             self.next_track()
 
 
+# cps: 3
 class SpotifyApp:
     def __init__(self) -> None:
-        available_markets = sp.available_markets()
-        if MARKET not in available_markets["markets"]:
-            raise Exception(f"Market not available\nAvailable markets: {available_markets["markets"]}")
+        available_markets = spotify.get_available_markets()
+        if MARKET not in available_markets:
+            raise SpotifyApiException(f"Market '{MARKET}' not available\n{CCYAN}Available markets: {available_markets}{TEXTCOLOR}")
 
-        self.market = MARKET
-        self.client = spotify_client()
-        self.user = self.client.current_user()
+        self.player = Player()
 
-    @property
-    def current_queue(self):
-        return self.client.queue()
+    # mps: 3
+    @staticmethod
+    def find_object(
+        search_query: str,
+        item_type: list[Literal["album", "artist", "playlist", "track"]],
+        select_correct: bool = False,
+        limit: int = 20,
+        offset: int = 0,
+    ) -> dict | None:
+        """
+        Get Spotify catalog information about albums, artists, playlists, tracks, shows, episodes or audiobooks that match a keyword string.
+        :param search_query: Your search query.
+            You can narrow down your search using field filters. The available filters are album, artist, track, year, upc, tag:hipster, tag:new, isrc, and genre. Each field filter only applies to certain result types.
+            The artist and year filters can be used while searching albums, artists and tracks. You can filter on a single year or a range (e.g. 1955-1960).
+            The album filter can be used while searching albums and tracks.
+            The genre filter can be used while searching artists and tracks.
+            The isrc and track filters can be used while searching tracks.
+            The upc, tag:new and tag:hipster filters can only be used while searching albums. The tag:new filter will return albums released in the past two weeks and tag:hipster can be used to return only albums with the lowest 10% popularity.
+        :param item_type: A comma-separated list of item types to search across. Search results include hits from all the specified item types. For example: 'q=abacab&type=album,track' returns both albums and tracks matching "abacab".
+        :param select_correct: True: Select correct item with CLI; False: return all items.
+        :param limit: The maximum number of results to return in each item type. Default: 20. Minimum: 1. Maximum: 50.
+        :param offset: The index of the first result to return. Use with limit to get the next page of search results. Default: 0. Minimum: 0. Maximum: 1000-limit.
+        :return: Dict containing the Search response, in the form of {item_uri: item}
+        """
 
-    def add_to_queue(self, track: Track):
-        return self.client.add_to_queue(track.track_id)
-
-    def find_object(self,
-                    object_name: str,
-                    object_type: Literal['album', 'artist', 'playlist', 'track', 'user'] | None
-                    ) -> Album | Artist | Playlist | Track:
-
-        # relevant for GUI
-        if object_type is None:
-            if re.search('album', object_name, re.IGNORECASE) is not None:
-                search_type = 'album'
-            elif re.search('artist', object_name, re.IGNORECASE) is not None:
-                search_type = 'artist'
-            elif re.search('playlist', object_name, re.IGNORECASE) is not None:
-                search_type = 'playlist'
-            elif re.search('track', object_name, re.IGNORECASE) is not None:
-                search_type = 'track'
-            elif re.search('user', object_name, re.IGNORECASE) is not None:
-                search_type = 'user'
-            else:
-                search_type = ''
-
-            object_name = re.sub(search_type, '', object_name)
-
-            results = self.client.search(q=object_name, type=search_type, market=self.market, limit=50)
-
-        else:
-            results = self.client.search(q=object_name, type=object_type, market=self.market, limit=50)
+        results = spotify.search_for_item(
+            search_query=search_query,
+            item_type=[item_type],
+            limit=limit,
+            offset=offset
+        )
 
         # Choose right one
-        print(f"\n These {next(iter(results.keys()))} are found by {object_name}:\n")
-        for current_object in results[next(iter(results.keys()))]['items']:
-            by_artist = ''
-            if re.search("artist", next(iter(results.keys())), re.IGNORECASE) is None:
-                if re.search("playlist", next(iter(results.keys())), re.IGNORECASE) is not None:
-                    by_artist = f'by \'{current_object['owner']['display_name']}\''
-                else:
-                    by_artist = f'by \'{current_object['artists'][0]['name']}\''
+        if select_correct:
+            print(f"\n{TEXTCOLOR}These items are found by your search {search_query}:")
+            item_counter = 0
+            for item_uri, item in results.items():
+                _, item_type = uri_to_id(spotify_uri=item_uri, get_type=True)
+                match item_type:
+                    case "album":
+                        print(f"\t{str(item_counter).zfill(len(str(limit)))} Album: {item['name']} by {', '.join([current_artist['name'] for current_artist in item['artists']])}")
+                    case "artist":
+                        print(f"\t{str(item_counter).zfill(len(str(limit)))} Artist: {item['name']}")
+                    case 'playlist':
+                        print(f"\t{str(item_counter).zfill(len(str(limit)))} Playlist: {item['name']} by {item['owner']['name']}")
+                    case "track":
+                        print(f"\t{str(item_counter).zfill(len(str(limit)))} Track: {item['name']} ({item['album']['name']}) by {', '.join([current_artist['name'] for current_artist in item['artists']])}")
 
-            current_input = input(f"\n Do you mean \'{current_object['name']}\' {by_artist} (Y/n): ")
-            if current_input != 'n':
-                if re.search("album", next(iter(results.keys())), re.IGNORECASE) is not None:
-                    return Album(current_object['id'])
+                item_counter += 1
+            item_index = int(input(f"\nEnter the index of the item to return [0-{limit-1}]: "))
+            correct_item_uri = list(results.keys())[item_index]
+            return {correct_item_uri: results[correct_item_uri]}
 
-                elif re.search("artist", next(iter(results.keys())), re.IGNORECASE) is not None:
-                    return Artist(current_object['id'])
+        return results
 
-                elif re.search("playlist", next(iter(results.keys())), re.IGNORECASE) is not None:
-                    return Playlist(current_object['id'])
 
-                elif re.search("track", next(iter(results.keys())), re.IGNORECASE) is not None:
-                    return Track(current_object['id'])
-
-                # elif re.search("genre", next(iter(results.keys())), re.IGNORECASE) is not None:
-                #     return Genre(current_object['id'])
-
-        raise ValueError(f"\n Cannot find {next(iter(results.keys()))}: \'{object_name}\'.\n")
-
-    def random_tracks_by_genre(self, genre_name: str, track_count: int = 10) -> dict | None:
-        random_tracks = {}
-
-        def get_random_tracks(number_of_tracks: int):
-            random_offset = random.randint(0, 990)
-            results = self.client.search(q=f'genre:{genre_name}', type='track', limit=number_of_tracks, market=self.market,
-                                         offset=random_offset)
-
-            for current_track in results['tracks']['items']:
-                if current_track['id'] not in random_tracks:
-                    random_tracks[current_track['id']] = current_track['name']
-            print(f'{round(len(random_tracks)/track_count*100, 2)}%')
+    # mps: 3
+    @staticmethod
+    def random_tracks_by_genre(genre_name: str, track_count: int = 10, create_playlist: bool = False) -> dict | None:
+        """
+        Get random tracks by genre and either return them as a dict or create a new playlist with them.
+        :param genre_name: what genre to search for
+        :param track_count: how many tracks to return
+        :param create_playlist: whether to create a new playlist
+        :return: Dict containing Spotify Tracks, in the form of {track_uri: track} or (playlist_id, playlist_name)
+        """
+        random_tracks = set()
 
         anti_loop = track_count
+        tracks_per_request = min(10, track_count)
         while anti_loop > 0 and len(random_tracks) < track_count:
-            get_random_tracks(10)
+            random_offset = random.randint(0, 1000-tracks_per_request)
+            results = spotify.search_for_item(
+                search_query=f"genre:{genre_name}",
+                item_type=["track"],
+                limit=tracks_per_request,
+                offset=random_offset
+            )
+
+            if results is None:
+                raise SpotifyApiException(f"Error occurred while searching for tracks in genre: {genre_name}")
+
+            for current_track_uri in results.keys():
+                if current_track_uri not in random_tracks:
+                    random_tracks.add(current_track_uri)
+
             anti_loop -= 1
 
         if len(random_tracks) > 0:
-            return random_tracks
+            if create_playlist:
+                current_user_uri = key_from_dict(spotify.get_current_users_profile())
+                current_user = User(uri_to_id(spotify_uri=current_user_uri, get_type=False))
+                new_playlist = spotify.create_playlist(
+                    user_id=current_user.user_id,
+                    name=genre_name,
+                    public=False,
+                    collaborative=False,
+                    description=f"{track_count} randomly selected tracks within the genre '{genre_name}'"
+                )
+                playlist_id = uri_to_id(key_from_dict(new_playlist))
+                spotify.add_items_to_playlist(
+                    playlist_id=playlist_id,
+                    uris=list(random_tracks),
+                )
+
+                # Todo: add custom genre image
+
+                return playlist_id, f"genre:{genre_name}"
+
+
+            else:
+                return random_tracks,
         else:
             print("No tracks found")
             return None
 
-    def random_playlist_shuffle(self, playlist: Playlist, shuffle_mode: Literal['random', 'all']):
-        """
-        :param: playlist: Playlist object
-        :param: shuffle_mode: shuffle all tracks (random: duplicates possible; all: no duplicates)
-        """
-
-        iteration = True
-
-        def random_shuffle():
-            while iteration:
-                if input("\nContinue (Y/n):") != 'n':
-                    random_position = random.randint(0, playlist.track_count-1)
-                    current_track_id = playlist.track_ids[random_position]
-                    self.client.add_to_queue(current_track_id)
-                else:
-                    break
-
-        def all_shuffle() -> None:
-            shuffle_track_ids = playlist.track_ids
-            while iteration and len(shuffle_track_ids) > 0:
-                if input("\nContinue (Y/n):") != 'n':
-                    random_position = random.randint(0, len(shuffle_track_ids) - 1)
-                    current_track_id = shuffle_track_ids[random_position]
-                    self.client.add_to_queue(current_track_id)
-                    shuffle_track_ids.pop(random_position)
-                else:
-                    break
-
-        match shuffle_mode:
-            case 'random':
-                random_shuffle()
-            case 'all':
-                all_shuffle()
-
-    def add_to_playlist(self, playlist: Playlist, track: Track):
-        try:
-            id_playlist = playlist.playlist_id
-            uri_track = id_to_uri('track', track.track_id)
-            self.client.playlist_add_items(id_playlist, [uri_track])
-
-        except Exception as e:
-            print(e)
-
-        finally:
-            return self.client.playlist_items(playlist_id=playlist.playlist_id, limit=100, market=self.market)
-
-    def create_playlist(self, name: str, public: bool = False, collaborative: bool = False, description: str = '') -> Playlist:
-        new_playlist_json = self.client.user_playlist_create(user=self.user['id'], name=name, public=public, collaborative=collaborative, description=description)
-        new_playlist = Playlist(new_playlist_json['id'])
-
-        b64_image = image_to_b64(new_playlist.playlist_image, 'PNG')
-        self.client.playlist_upload_cover_image(playlist_id=new_playlist.playlist_id, image_b64=b64_image)
-
-        return new_playlist
-
-    def new_playlist_by_random_genre(self, genre: str, length_min: int) -> Playlist:
-        track_count = int(length_min/3)
-
-        tracks = self.random_tracks_by_genre(genre_name=genre, track_count=track_count)
-        playlist = self.create_playlist(name=genre, public=False, collaborative=False, description=f'{track_count} randomly selected tracks within the genre \'{genre}\'')
-
-        track_ids = keys_from_dict(tracks)
-        for track in track_ids:
-            self.add_to_playlist(playlist=playlist, track=Track(track))
-
-        return playlist
-
-    @property
-    def player(self) -> Player:
-        return Player()
-
 
 if __name__ == '__main__':
-    app = SpotifyApp()
-    # sp.mar
-    playlist_id = url_to_uri("https://open.spotify.com/playlist/0hGzj1fOgiXaOIOaHA2Deo?si=b218716371d04c5f", to_id=True)
-    app.random_playlist_shuffle()
+    """"""

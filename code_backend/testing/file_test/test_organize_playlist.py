@@ -31,9 +31,9 @@ def revert_tests():
         'spotify:track:650OeHTLxZAQmb4aEbGmaA', 'spotify:track:697M5JB8FDIyRXEXgl1pBZ', 'spotify:track:104buTcnP2AsxqB7U1FIZ4', 'spotify:track:6015DaBwB49tXWlmNPo64w', 'spotify:track:6aCBjSb87RizdH8lVBIRW7']
 
     # Revert 'SpotipyTest':
-    sp_api.update_playlist_items(playlist_id="6bRkO7PLCXgmV4EJH52iU4", uris=test_track_uris)
+    spotify.update_playlist_items(playlist_id="6bRkO7PLCXgmV4EJH52iU4", uris=test_track_uris)
     # Revert 'Linkin Park Only (Shuffled)':
-    sp_api.update_playlist_items(playlist_id="1TufW5MXE6oDxo7KVw4ACV", uris=prod_track_uris)
+    spotify.update_playlist_items(playlist_id="1TufW5MXE6oDxo7KVw4ACV", uris=prod_track_uris)
 
 
 def test_shuffle():

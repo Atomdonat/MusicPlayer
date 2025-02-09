@@ -119,5 +119,5 @@
         "total": "${tracks_total}"
     },
     "type": "${type}",
-    "uri": "${uri}"
+    "uri": "spotify:album:0000000000000000000000"
 }

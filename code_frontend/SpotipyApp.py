@@ -1,5 +1,5 @@
 # import libraries
-from code_backend.music_classes import Album, Artist, Device, Genre, Player, Playlist, Track, TrackAnalysis, User
+from code_backend.music_classes import NewAlbum, NewArtist, Device, Genre, Player, NewPlaylist, NewTrack, TrackAnalysis, NewUser
 from code_backend.secondary_methods import *
 from shared_config import *
 
@@ -296,18 +296,18 @@ class SpotifyAppWindow:
             else:
                 return False
 
-        def current_object_instance() -> Union[Album, Artist, Playlist, Track]:
+        def current_object_instance() -> Union[NewAlbum, NewArtist, NewPlaylist, NewTrack]:
             if re.search("album", next(iter(results.keys())), re.IGNORECASE) is not None:
-                return Album(current_object['id'])
+                return NewAlbum(current_object['id'])
 
             elif re.search("artist", next(iter(results.keys())), re.IGNORECASE) is not None:
-                return Artist(current_object['id'])
+                return NewArtist(current_object['id'])
 
             elif re.search("playlist", next(iter(results.keys())), re.IGNORECASE) is not None:
-                return Playlist(current_object['id'])
+                return NewPlaylist(current_object['id'])
 
             elif re.search("track", next(iter(results.keys())), re.IGNORECASE) is not None:
-                return Track(current_object['id'])
+                return NewTrack(current_object['id'])
 
         if query_type == '':
             if re.search('album', query_name, re.IGNORECASE) is not None:
@@ -410,13 +410,13 @@ class SpotifyAppWindow:
             self.instance_option_4.config(text='hate', command=lambda: self.add_track_to_blacklist(new_instance))
             self.instance_option_5.config(text='', command=lambda: self.not_implemented())
 
-        if isinstance(new_instance, Album):
+        if isinstance(new_instance, NewAlbum):
             searched_album_options()
-        elif isinstance(new_instance, Artist):
+        elif isinstance(new_instance, NewArtist):
             searched_artist_options()
-        elif isinstance(new_instance, Playlist):
+        elif isinstance(new_instance, NewPlaylist):
             searched_playlist_options()
-        elif isinstance(new_instance, Track):
+        elif isinstance(new_instance, NewTrack):
             searched_track_options()
 
         self.instance_options_buttons(new_instance)

@@ -5,8 +5,9 @@ import requests
 
 from code_backend.secondary_methods import (
     check_limits, check_token_expired, image_from_url,
-    print_http_error_codes, print_error, update_env_key,
-    absolute_path, remove_key_recursively
+    print_error, update_env_key,
+    absolute_path, remove_key_recursively, json_to_file,
+    HttpException, RequestException, CustomException
 )
 from code_backend.shared_config import *
 
@@ -16,7 +17,7 @@ from code_backend.shared_config import *
 
 # Note: some methods can still have bugs depending on usage
 
-# mps: 3
+
 def request_regular_token() -> None:
     """
     Request an access token, using the Authorization Code Flow tutorial and cache it in the .env file. If Spotify credentials are found in .env file, the script runs the login automated. Else User interaction is needed.
@@ -124,15 +125,13 @@ def request_regular_token() -> None:
         except TimeoutException:
             print_error(
                 error_message="TimeoutException: The timeout occurred while trying to login.",
-                more_infos="Either the credentials are incorrect or the user has not logged in. \n  - Check your credentials in .env (if stored there)\n  - if script aborted before finishing to enter credentials increment wait_timeout",
-                exit_code=1
+                more_infos="Either the credentials are incorrect or the user has not logged in. \n  - Check your credentials in .env (if stored there)\n  - if script aborted before finishing to enter credentials increment wait_timeout"
             )
 
         except Exception as error:
             print_error(
                 error_message=error,
-                more_infos=None,
-                exit_code=1
+                more_infos=None
             )
 
         finally:
@@ -149,7 +148,7 @@ def request_regular_token() -> None:
     # Run Selenium in the main thread
     automated_request_handling(use_credentials=(len(SPOTIFY_USERNAME) > 0 and len(SPOTIFY_PASSWORD) > 0))
 
-# mps: 3
+
 def refresh_access_token():
     """
     A refresh token is a security credential that allows client applications to obtain new access tokens without requiring users to reauthorize the application.
@@ -190,13 +189,13 @@ def refresh_access_token():
     # Error handling according to Spotify's Error Codes
     if response.status_code not in [200, 201, 202, 204]:
         try:
-            return print_http_error_codes(
-                code=response.status_code,
-                message=json.loads(response.text),
-                causing_query=requests.Request(method="POST", url=url, headers=headers, data=form)
+            raise HttpException(
+                error_code=response.status_code,
+                request_query=requests.Request(method="POST", url=url, headers=headers, data=form),
+                response_text=json.loads(response.text)
             )
         except json.decoder.JSONDecodeError:
-            print(CORANGE + "print_http_error_codes() Error:" + TEXTCOLOR)
+            print(CORANGE + "HttpException() JSONDecodeError:" + TEXTCOLOR)
             print(f"{CORANGE}Response Code:{TEXTCOLOR} {response.status_code}")
             print(f"{CORANGE}Response as Bytes:{TEXTCOLOR} {response.content}")
             print(f"{CORANGE}Response as String:{TEXTCOLOR} {response.text}")
@@ -229,7 +228,6 @@ def refresh_access_token():
             print(f"\n{CRED}{error}\n{TEXTCOLOR}")
 
 
-# mps: 3
 def request_extended_token() -> bool:
     """
     Using https://www.chosic.com/spotify-playlist-analyzer/ to request temporary extended-token, that can be used to request Web API Data. After 1 hour a new token needs to be requested.
@@ -263,14 +261,12 @@ def request_extended_token() -> bool:
     except Exception as error:
         print_error(
             error_message=str(error),
-            more_infos=None,
-            exit_code=None
+            more_infos=None
         )
         driver.close()
         return False
 
 
-# mps: 3
 def api_request_data(
         url: str,
         request_type: Literal["GET", "POST", "DELETE", "PUT"],
@@ -288,6 +284,10 @@ def api_request_data(
     :return: JSON data fetched from Spotify API
     """
 
+    if request_type not in ["GET", "POST", "DELETE", "PUT"]:
+        raise CustomException(f"{request_type} not supported\n{CCYAN}Supported HTTP request methods are 'GET', 'POST', 'DELETE', 'PUT'{CRED}")
+
+
     if check_token_expired(extended_token=False) == 0:
         refresh_access_token()
 
@@ -303,59 +303,63 @@ def api_request_data(
             headers['Content-Type'] = 'application/json'
 
     # print(headers)
-    match request_type:
-        # Note: there can be errors depending on whether 'json=' or 'data=' was used, modify cases if needed
-        case "GET":
-            query = requests.Request(method="GET", url=url, headers=headers, json=json_data)
-            response = requests.get(
-                url=url,
-                headers=headers,
-                json=json_data
-            )
-        case "POST":
-            query = requests.Request(method="POST", url=url, headers=headers, json=json_data)
-            response = requests.post(
-                url=url,
-                headers=headers,
-                json=json_data
-            )
-
-        case "DELETE":
-            query = requests.Request(method="DELETE", url=url, headers=headers, json=json_data)
-            response = requests.delete(
-                url=url,
-                headers=headers,
-                json=json_data
-            )
-
-        case "PUT":
-            if json_as_data:
-                query = requests.Request(method="PUT", url=url, headers=headers, data=json_data)
-                response = requests.put(
+    try:
+        match request_type:
+            # Note: there can be errors depending on whether 'json=' or 'data=' was used, modify cases if needed
+            case "GET":
+                query = requests.Request(method="GET", url=url, headers=headers, json=json_data)
+                response = requests.get(
                     url=url,
                     headers=headers,
-                    data=json_data
+                    json=json_data
                 )
-            else:
-                query = requests.Request(method="PUT", url=url, headers=headers, json=json_data)
-                response = requests.put(
+            case "POST":
+                query = requests.Request(method="POST", url=url, headers=headers, json=json_data)
+                response = requests.post(
                     url=url,
                     headers=headers,
                     json=json_data
                 )
 
-        case _:
-            raise f"{request_type} not supported"
+            case "DELETE":
+                query = requests.Request(method="DELETE", url=url, headers=headers, json=json_data)
+                response = requests.delete(
+                    url=url,
+                    headers=headers,
+                    json=json_data
+                )
+
+            case "PUT":
+                if json_as_data:
+                    query = requests.Request(method="PUT", url=url, headers=headers, data=json_data)
+                    response = requests.put(
+                        url=url,
+                        headers=headers,
+                        data=json_data
+                    )
+                else:
+                    query = requests.Request(method="PUT", url=url, headers=headers, json=json_data)
+                    response = requests.put(
+                        url=url,
+                        headers=headers,
+                        json=json_data
+                    )
+
+    except Exception as error:
+        raise RequestException(
+            error=error,
+            request_query=query,
+        )
 
     if response.status_code not in [200, 201, 202, 204]:
         try:
-            return print_http_error_codes(
-                code=response.status_code,
-                message=json.loads(response.text),
-                causing_query=query
+            raise HttpException(
+                error_code=response.status_code,
+                request_query=query,
+                response_text=json.loads(response.text)
             )
-        except (json.decoder.JSONDecodeError):
-            print(CORANGE+"print_http_error_codes() Error:"+TEXTCOLOR)
+        except json.decoder.JSONDecodeError:
+            print(CORANGE+"HttpException() JSONDecodeError:"+TEXTCOLOR)
             print(f"{CORANGE}Response Code:{TEXTCOLOR} {response.status_code}")
             print(f"{CORANGE}Response as Bytes:{TEXTCOLOR} {response.content}")
             print(f"{CORANGE}Response as String:{TEXTCOLOR} {response.text}")
@@ -373,11 +377,10 @@ def api_request_data(
             except Exception as error:
                 print(f"{CORANGE}Response Length:{TEXTCOLOR}{len(response.text)}")
                 print(f"{CORANGE}Response Content:\n{TEXTCOLOR}{response.text}")
-                print_error(error_message=error, more_infos=None, exit_code=None)
+                print_error(error_message=error, more_infos=None)
 
 
 # <-- Begin Spotify Album Methods -->
-# mps: 3
 def get_album(album_id: str) -> dict:
     """
     Get Spotify catalog information for a single album.
@@ -396,7 +399,6 @@ def get_album(album_id: str) -> dict:
     return {response["uri"]: response}
 
 
-# mps: 3
 def get_several_albums(album_ids: list[str]) -> dict | None:
     """
     Get Spotify catalog information for multiple albums identified by their Spotify IDs.
@@ -424,7 +426,6 @@ def get_several_albums(album_ids: list[str]) -> dict | None:
     return albums
 
 
-# mps: 3
 def get_album_tracks(album_id: str, get_duration: bool = False) -> dict | tuple[dict, int]:
     """
     Get Spotify catalog information about an album’s tracks. Optional parameters can be used to limit the number of tracks returned.
@@ -469,7 +470,6 @@ def get_album_tracks(album_id: str, get_duration: bool = False) -> dict | tuple[
     return track_dicts
 
 
-# mps: 3
 def get_users_saved_albums() -> dict | None:
     """
     Get a list of the albums saved in the current Spotify user's 'Your Music' library.
@@ -508,7 +508,6 @@ def get_users_saved_albums() -> dict | None:
     return albums
 
 
-# mps: 3
 def check_users_saved_albums(album_ids: list[str]) -> dict | None:
     """
     Check if one or more albums is already saved in the current Spotify user's 'Your Music' library.
@@ -537,7 +536,6 @@ def check_users_saved_albums(album_ids: list[str]) -> dict | None:
 
 
 # <-- Begin Spotify Artist Methods -->
-# mps: 3
 def get_artist(artist_id: str) -> dict | None:
     """
     Get Spotify catalog information for a single artist identified by their unique Spotify ID.
@@ -556,7 +554,6 @@ def get_artist(artist_id: str) -> dict | None:
     return {response["uri"]: response}
 
 
-# mps: 3
 def get_several_artists(artist_ids: list[str]) -> dict | None:
     """
     Get Spotify catalog information for several artists based on their Spotify IDs.
@@ -584,7 +581,6 @@ def get_several_artists(artist_ids: list[str]) -> dict | None:
     return artists
 
 
-# mps: 3
 def get_artists_albums(artist_id: str, limit: int = 20) -> dict | None:
     """
     Get Spotify catalog information about an artist's albums.
@@ -626,7 +622,6 @@ def get_artists_albums(artist_id: str, limit: int = 20) -> dict | None:
     return albums
 
 
-# mps: 3
 def get_artists_top_tracks(artist_id: str) -> dict | None:
     """
     Get Spotify catalog information about an artist's top tracks by country.
@@ -645,8 +640,24 @@ def get_artists_top_tracks(artist_id: str) -> dict | None:
     return {item["uri"]: item for item in response["tracks"]}
 
 
-# <-- Begin Spotify Player Methods -->
+# <-- Begin Spotify Market Methods -->
 # mps: 3
+def get_available_markets():
+    """
+    Get the list of markets (ISO 3166-1 alpha-2 country codes) where Spotify is available.
+    Needed Scopes: None
+    Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/get-available-markets
+    Country Codes: https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
+    :return: List of available markets.
+    """
+    response = api_request_data(
+        url=f"https://api.spotify.com/v1/markets",
+        request_type="GET"
+    )
+    return response["markets"]
+
+
+# <-- Begin Spotify Player Methods -->
 def get_playback_state() -> dict:
     """
     Get information about the user’s current playback state, including track or episode, progress, and active device.
@@ -662,7 +673,6 @@ def get_playback_state() -> dict:
     return response
 
 
-# mps: 3
 def transfer_playback(new_device_id: str, playback_state: bool = False) -> None:
     """
     Transfer playback to a new device and optionally begin playback. This API only works for users who have Spotify Premium. The order of execution is not guaranteed when you use this API with other Player API endpoints.
@@ -690,17 +700,29 @@ def get_available_devices():
     Get information about a user’s available Spotify Connect devices. Some device models are not supported and will not be listed in the API response.
     Needed Scopes: ['user-read-playback-state']
     Official API Documentation: https://developer.spotify.com/documentation/web-api/reference/get-a-users-available-devices
-    :return: Dict containing information about available devices, in the form of {device_id: device}
+    :return: Dict containing information about available devices, in the form of {device_uri: device} (Device uri is NOT official)
     """
     response = api_request_data(
         url=f"https://api.spotify.com/v1/me/player/devices",
         request_type="GET"
     )
 
-    return {current_device['id']: current_device for current_device in response["devices"]}
+    return {f"spotify:device:{current_device['id']}": current_device for current_device in response["devices"]}
 
 
 # mps: 3
+def get_device(device_id: str) -> dict | None:
+    """
+    Get information about a user’s Spotify Connect device. Some device models are not supported and will not be listed in the API response.
+    Needed Scopes: ['user-read-playback-state']
+    :param device_id: what device to get information about
+    :return: Dict containing information about the device, in the form of {device_uri: device} (Device uri is NOT official)
+    """
+    available_devices = get_available_devices()
+    target_device = available_devices.get(f"spotify:device:{device_id}", None)
+    return {f"spotify:device:{device_id}": target_device} if target_device else None
+
+
 def get_currently_playing_track() -> dict:
     """
     Get the object currently being played on the user's Spotify account.
@@ -716,7 +738,6 @@ def get_currently_playing_track() -> dict:
     return response
 
 
-# mps: 3
 def start_or_resume_playback(target_device_id: str = None) -> None:
     """
     Start a new context or resume current playback on the user's active device. This API only works for users who have Spotify Premium. The order of execution is not guaranteed when you use this API with other Player API endpoints.
@@ -735,7 +756,6 @@ def start_or_resume_playback(target_device_id: str = None) -> None:
     )
 
 
-# mps: 3
 def pause_playback() -> None:
     """
     Pause playback on the user's account. This API only works for users who have Spotify Premium. The order of execution is not guaranteed when you use this API with other Player API endpoints.
@@ -748,7 +768,6 @@ def pause_playback() -> None:
     )
 
 
-# mps: 3
 def skip_to_next(target_device_id: str = None) -> None:
     """
     Skips to next track in the user’s queue. This API only works for users who have Spotify Premium. The order of execution is not guaranteed when you use this API with other Player API endpoints.
@@ -768,7 +787,6 @@ def skip_to_next(target_device_id: str = None) -> None:
     )
 
 
-# mps: 3
 def skip_to_previous(target_device_id: str = None) -> None:
     """
     Skips to previous track in the user’s queue. This API only works for users who have Spotify Premium. The order of execution is not guaranteed when you use this API with other Player API endpoints.
@@ -786,7 +804,6 @@ def skip_to_previous(target_device_id: str = None) -> None:
     )
 
 
-# mps: 3
 def seek_to_position(position_ms: int, target_device_id: str = None):
     """
     Seeks to the given position in the user’s currently playing track. This API only works for users who have Spotify Premium. The order of execution is not guaranteed when you use this API with other Player API endpoints.
@@ -802,8 +819,7 @@ def seek_to_position(position_ms: int, target_device_id: str = None):
     if position_ms < 0:
         print_error(
             error_message="position_ms must be a positive number",
-            more_infos=f"Entered position: {position_ms}",
-            exit_code=None
+            more_infos=f"Entered position: {position_ms}"
         )
         return
 
@@ -813,7 +829,6 @@ def seek_to_position(position_ms: int, target_device_id: str = None):
     )
 
 
-# mps: 3
 def set_repeat_mode(new_repeat_mode: Literal["track", "context", "off"], target_device_id: str = None) -> None:
     """
     Set the repeat mode for the user's playback. This API only works for users who have Spotify Premium. The order of execution is not guaranteed when you use this API with other Player API endpoints.
@@ -829,8 +844,7 @@ def set_repeat_mode(new_repeat_mode: Literal["track", "context", "off"], target_
     if new_repeat_mode not in ["track", "context", "off"]:
         print_error(
             error_message="new_repeat_mode must be one of 'track', 'context', 'off'",
-            more_infos=f"Entered invalid repeat mode: '{new_repeat_mode}'",
-            exit_code=None
+            more_infos=f"Entered invalid repeat mode: '{new_repeat_mode}'"
         )
         return
 
@@ -840,7 +854,6 @@ def set_repeat_mode(new_repeat_mode: Literal["track", "context", "off"], target_
     )
 
 
-# mps: 3
 def set_playback_volume(new_volume: int, target_device_id: str = None) -> None:
     """
     Set the volume for the user’s current playback device. This API only works for users who have Spotify Premium. The order of execution is not guaranteed when you use this API with other Player API endpoints.
@@ -856,8 +869,7 @@ def set_playback_volume(new_volume: int, target_device_id: str = None) -> None:
     if 0 > new_volume > 100:
         print_error(
             error_message="new_volume must be a value from 0 to 100 inclusive",
-            more_infos=f"Entered new volume: {new_volume}",
-            exit_code=None
+            more_infos=f"Entered new volume: {new_volume}"
         )
         return
 
@@ -867,7 +879,6 @@ def set_playback_volume(new_volume: int, target_device_id: str = None) -> None:
     )
 
 
-# mps: 3
 def toggle_playback_shuffle(new_state: bool, target_device_id: str = None) -> None:
     """
     Toggle shuffle on or off for user’s playback. This API only works for users who have Spotify Premium. The order of execution is not guaranteed when you use this API with other Player API endpoints.
@@ -886,7 +897,6 @@ def toggle_playback_shuffle(new_state: bool, target_device_id: str = None) -> No
     )
 
 
-# mps: 3
 def get_recently_played_tracks(limit: int, after: int = None, before: int = None) -> dict:
     """
     Get tracks from the current user's recently played tracks. Note: Currently doesn't support podcast episodes.
@@ -906,8 +916,7 @@ def get_recently_played_tracks(limit: int, after: int = None, before: int = None
     else:
         print_error(
             error_message="Either after or before must be specified",
-            more_infos=f"after={after}; before={before}",
-            exit_code=None
+            more_infos=f"after={after}; before={before}"
         )
         return
 
@@ -921,7 +930,6 @@ def get_recently_played_tracks(limit: int, after: int = None, before: int = None
     return {current_item["track"]["uri"]: current_item["track"] for current_item in response["items"]}
 
 
-# mps: 3
 def get_the_users_queue() -> dict:
     """
     Get the list of objects that make up the user's queue.
@@ -942,7 +950,6 @@ def get_the_users_queue() -> dict:
     return queue
 
 
-# mps: 3
 def add_item_to_playback_queue(track_uri: str, target_device_id: str = None) -> None:
     """
     Add an item to the end of the user's current playback queue. This API only works for users who have Spotify Premium. The order of execution is not guaranteed when you use this API with other Player API endpoints.
@@ -962,7 +969,6 @@ def add_item_to_playback_queue(track_uri: str, target_device_id: str = None) -> 
     )
 
 
-# mps: 3
 def add_several_items_to_playback_queue(track_uris: list[str], target_device_id: str = None) -> None:
     """
     Add multiple items to the end of the user's current playback queue. This API only works for users who have Spotify Premium. The order of execution is not guaranteed when you use this API with other Player API endpoints.
@@ -981,7 +987,6 @@ def add_several_items_to_playback_queue(track_uris: list[str], target_device_id:
 
 
 # <-- Begin Spotify Playlist Methods -->
-# mps: 3
 def get_playlist(playlist_id: str) -> dict | None:
     """
     Get a playlist owned by a Spotify user.
@@ -1000,7 +1005,6 @@ def get_playlist(playlist_id: str) -> dict | None:
     return {response["uri"]: response}
 
 
-# mps: 3
 def get_several_playlists(playlist_ids: list) -> dict | None:
     """
     Get Spotify catalog information for multiple playlists based on their Spotify IDs.
@@ -1023,7 +1027,6 @@ def get_several_playlists(playlist_ids: list) -> dict | None:
 
     return playlists
 
-# mps: 3
 def change_playlist_details(playlist_id: str, name: str, public: bool, collaborative: bool, description: str) -> None:
     """
     Change a playlist's name and public/private state. (The user must, of course, own the playlist.)
@@ -1051,7 +1054,6 @@ def change_playlist_details(playlist_id: str, name: str, public: bool, collabora
     )
 
 
-# mps: 3
 def get_playlist_items(playlist_id: str, get_duration: bool = False) -> dict | tuple[dict, int] | None:
     """
     Get full details of the items of a playlist owned by a Spotify user.
@@ -1089,8 +1091,7 @@ def get_playlist_items(playlist_id: str, get_duration: bool = False) -> dict | t
     if len(tracks) != total_tracks:
         print_error(
             error_message=f"Could not fetch all Playlist {playlist_id} items",
-            more_infos=f"Tracks fetched: {len(tracks)}, Tracks in Playlist: {total_tracks}; This can be due to duplicates in the Playlist.",
-            exit_code=None
+            more_infos=f"Tracks fetched: {len(tracks)}, Tracks in Playlist: {total_tracks}; This can be due to duplicates in the Playlist."
         )
 
     if get_duration:
@@ -1100,7 +1101,6 @@ def get_playlist_items(playlist_id: str, get_duration: bool = False) -> dict | t
     return tracks
 
 
-# mps: 3
 def update_playlist_items(playlist_id: str, uris: list[str]) -> None:
     """
     Own implementation to update a Playlist
@@ -1127,7 +1127,6 @@ def update_playlist_items(playlist_id: str, uris: list[str]) -> None:
     )
 
 
-# mps: 3
 def add_items_to_playlist(playlist_id: str, uris: list[str]) -> None:
     """
     Append one or more items to a user's playlist.
@@ -1160,7 +1159,6 @@ def add_items_to_playlist(playlist_id: str, uris: list[str]) -> None:
         )
 
 
-# mps: 3
 def remove_playlist_items(playlist_id: str, track_uris: list[str]) -> None:
     """
     Remove one or more items from a user's playlist (all appearances with these URIs/all Duplicates).
@@ -1187,7 +1185,6 @@ def remove_playlist_items(playlist_id: str, track_uris: list[str]) -> None:
         )
 
 
-# mps: 3
 def get_current_users_playlists(limit: int = 20) -> dict | None:
     """
     Get a list of the playlists owned or followed by the current Spotify user.
@@ -1229,7 +1226,6 @@ def get_current_users_playlists(limit: int = 20) -> dict | None:
     return playlists
 
 
-# mps: 3
 def get_users_playlists(user_id: str, limit: int | None = 20) -> dict | None:
     """
     Get a list of the playlists owned or followed by a Spotify user.
@@ -1274,7 +1270,6 @@ def get_users_playlists(user_id: str, limit: int | None = 20) -> dict | None:
     return playlists
 
 
-# mps: 3
 def create_playlist(user_id: str, name: str, public: bool = True, collaborative: bool = False, description: str = None) -> dict | None:
     """
     Create a playlist for a Spotify user. (The playlist will be empty until you add tracks.) Each user is generally limited to a maximum of 11000 playlists.
@@ -1302,7 +1297,6 @@ def create_playlist(user_id: str, name: str, public: bool = True, collaborative:
     return {response["uri"]: response}
 
 
-# mps: 3
 def get_playlist_cover_image(playlist_id: str) -> Image:
     """
     Get the current image associated with a specific playlist.
@@ -1320,7 +1314,6 @@ def get_playlist_cover_image(playlist_id: str) -> Image:
     return image_from_url(response[0]["url"])
 
 
-# mps: 3
 def add_custom_playlist_cover_image(playlist_id: str, b64_image: str) -> None:
     """
     Replace the image used to represent a specific playlist.
@@ -1346,8 +1339,26 @@ def add_custom_playlist_cover_image(playlist_id: str, b64_image: str) -> None:
         json_as_data=True
     )
 
-# <-- Begin Spotify Search Methods -->
+
 # mps: 3
+def save_playlist_state(playlist_id: str, filepath: str) -> None:
+    """
+    Save Collection state as a Dict in the form of {playlist_uri: playlist, track_uri: track} to file
+    :param playlist_id: Spotify Playlist id
+    :param filepath: where to save playlist state
+    """
+
+    playlist = get_playlist(playlist_id=playlist_id)
+    playlist.update(get_playlist_items(playlist_id=playlist_id))
+
+    json_to_file(
+        json_filepath=filepath,
+        json_data=playlist,
+        overwrite=True
+    )
+
+
+# <-- Begin Spotify Search Methods -->
 def search_for_item(
         search_query: str,
         item_type: list[Literal["album", "artist", "playlist", "track"]],
@@ -1394,7 +1405,6 @@ def search_for_item(
 
 
 # <-- Begin Spotify Track Methods -->
-# mps: 3
 def get_track(track_id: str) -> dict:
     """
     Get Spotify catalog information for a single track identified by its unique Spotify ID.
@@ -1412,7 +1422,6 @@ def get_track(track_id: str) -> dict:
     return {response["uri"]: response}
 
 
-# mps: 3
 def get_several_tracks(track_ids: list[str]) -> dict | None:
     """
     Get Spotify catalog information for multiple tracks based on their Spotify IDs.
@@ -1443,7 +1452,6 @@ def get_several_tracks(track_ids: list[str]) -> dict | None:
     return tracks
 
 
-# mps: 3
 def get_users_saved_tracks(limit: int = 20) -> dict | None:
     """
     Get a list of the songs saved in the current Spotify user's 'Your Music' library.
@@ -1484,7 +1492,6 @@ def get_users_saved_tracks(limit: int = 20) -> dict | None:
     return tracks
 
 
-# mps: 3
 def check_users_saved_tracks(check_ids: list[str]) -> dict | None:
     """
     Check if one or more tracks is already saved in the current Spotify user's 'Your Music' library.
@@ -1515,7 +1522,6 @@ def check_users_saved_tracks(check_ids: list[str]) -> dict | None:
     return tracks
 
 
-# mps: 3
 def get_tracks_audio_features(track_id: str):
     """
     Get audio feature information for a single track identified by its unique Spotify ID.
@@ -1533,7 +1539,6 @@ def get_tracks_audio_features(track_id: str):
     return {response["uri"]: response}
 
 
-# mps: 3
 def get_several_tracks_audio_features(track_ids: list[str]) -> dict | None:
     """
     Get audio features for multiple tracks based on their Spotify IDs.
@@ -1567,7 +1572,6 @@ def get_several_tracks_audio_features(track_ids: list[str]) -> dict | None:
 
 
 # <-- Begin Spotify User Methods -->
-# mps: 3
 def get_current_users_profile() -> dict:
     """
     Get detailed profile information about the current user (including the current user's username).
@@ -1584,7 +1588,6 @@ def get_current_users_profile() -> dict:
     return {response["uri"]: response}
 
 
-# mps: 3
 def get_users_top_items(
         item_type: Literal["artists", "tracks"],
         time_range: Literal["short_term", "medium_term", "long_term"] = "medium_term",
@@ -1631,7 +1634,6 @@ def get_users_top_items(
     return tracks
 
 
-# mps: 3
 def get_users_profile(user_id: str) -> dict:
     """
     Get public profile information about a Spotify user.
@@ -1649,7 +1651,6 @@ def get_users_profile(user_id: str) -> dict:
     return {response["uri"]: response}
 
 
-# mps: 3
 def get_several_users(user_ids: list) -> dict | None:
     """
     Get Spotify catalog information for multiple user based on their Spotify IDs.
@@ -1673,7 +1674,6 @@ def get_several_users(user_ids: list) -> dict | None:
     return users
 
 
-# mps: 3
 def get_followed_artists(get_type: str = "artist") -> dict | None:
     """
     Get the current user's followed artists.
@@ -1719,6 +1719,3 @@ def get_followed_artists(get_type: str = "artist") -> dict | None:
 
 if __name__ == '__main__':
     """"""
-    from code_backend.secondary_methods import image_to_b64, image_from_file
-    image = image_to_b64(image_from_file("Icons/Spotipy_Logo.png"), image_format="PNG")
-    add_custom_playlist_cover_image(playlist_id="1BBkq3U5pR34vtI6tN4DBr", b64_image=image)

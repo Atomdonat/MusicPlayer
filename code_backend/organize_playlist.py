@@ -1,7 +1,7 @@
 from code_backend.shared_config import *
 from code_backend.secondary_methods import image_to_b64, url_to_uri, split_list_into_chunks, uri_to_id, print_error, load_json, value_from_dict, key_from_dict,print_debug
-import code_backend.spotify_web_api as sp_api
-
+import code_backend.spotify_web_api as spotify
+from code_backend.spotify_web_api import save_playlist_state
 
 DEFAULT_IMAGE = image_to_b64(Image.open(NO_IMAGE_PATH), 'PNG')
 
@@ -72,8 +72,7 @@ def organize_collection(collection_uri: str, **kwargs) -> None:
     if not collection_type in ["album", "playlist"]:
         print_error(
             error_message="Collection {collection_type} is not valid.",
-            more_infos="Valid options are: album, playlist",
-            exit_code=1
+            more_infos="Valid options are: album, playlist"
         )
 
     # Process Keyword Arguments
@@ -83,37 +82,36 @@ def organize_collection(collection_uri: str, **kwargs) -> None:
     # Fetch tracks from collection
     match collection_type:
         case "album":
-            collection_tracks = sp_api.get_album_tracks(album_id=collection_id)
+            collection_tracks = spotify.get_album_tracks(album_id=collection_id)
         case "playlist":
-            collection_tracks = sp_api.get_playlist_items(playlist_id=collection_id)
+            collection_tracks = spotify.get_playlist_items(playlist_id=collection_id)
         case _:
             print(f"{CRED}Invalid collection type: {collection_type}{TEXTCOLOR}")
             return None
 
     if len(collection_tracks) < 1:
         print_error(
-            error_message="Could not fetch items of '{collection_uri}'",
-            exit_code=1
+            error_message="Could not fetch items of '{collection_uri}'"
         )
 
     # get relevant Collection Data
     match collection_type:
         case "album":
-            collection = sp_api.get_album(album_id=collection_id)
+            collection = spotify.get_album(album_id=collection_id)
             collection_owner_id = [current_artist['id'] for current_artist in collection['artists']][0]
             collection_owner_name = collection["artists"][0]["name"]
             collection_owner_type = "Artist"
         case "playlist":
-            collection = sp_api.get_playlist(playlist_id=collection_id)
+            collection = spotify.get_playlist(playlist_id=collection_id)
             collection_owner_id = collection[collection_uri]['owner']['id']
             collection_owner_name = collection[collection_uri]['owner']['display_name']
             collection_owner_type = "User"
             old_description = collection[collection_uri]['description']
 
     # create Playlist if not yours
-    current_user_id = value_from_dict(sp_api.get_current_users_profile())['id']
+    current_user_id = value_from_dict(spotify.get_current_users_profile())['id']
     if collection_owner_id != current_user_id:
-        new_playlist = sp_api.create_playlist(
+        new_playlist = spotify.create_playlist(
             user_id=current_user_id,
             name=f"{collection[collection_uri]["name"]} (Shuffled)",
             public=True,
@@ -122,16 +120,19 @@ def organize_collection(collection_uri: str, **kwargs) -> None:
         )
 
         collection_id = uri_to_id(key_from_dict(new_playlist))
-        sp_api.add_custom_playlist_cover_image(playlist_id=collection_id, b64_image=DEFAULT_IMAGE)
+        spotify.add_custom_playlist_cover_image(playlist_id=collection_id, b64_image=DEFAULT_IMAGE)
 
     # update Playlist name if it is yours (optional step)
     else:
-        sp_api.change_playlist_details(
+        new_name = f"{collection[collection_uri]["name"]} (Shuffled)" if not str(collection[collection_uri]["name"]).endswith("(Shuffled)") else collection[collection_uri]["name"]
+        new_description = f"reshuffled Playlist" if collection[collection_uri]["description"] == "" else collection[collection_uri]["description"]
+
+        spotify.change_playlist_details(
             playlist_id=collection_id,
-            name=f"{collection[collection_uri]["name"]} (Shuffled)",
+            name=new_name,
             public=True,
             collaborative=False,
-            description=old_description
+            description=new_description
         )
 
     # Shuffle Tracks if wanted (get RNG on what duplicated tracks to remove)
@@ -164,13 +165,8 @@ def organize_collection(collection_uri: str, **kwargs) -> None:
     if shuffle_tracks:
         collection_tracks = all_shuffle(list(collection_tracks))
 
-    sp_api.update_playlist_items(playlist_id=collection_id, uris=collection_tracks)
+    spotify.update_playlist_items(playlist_id=collection_id, uris=collection_tracks)
 
 
 if __name__ == '__main__':
     """"""
-    # organize_collection(
-    #     collection_uri="spotify:playlist:6bRkO7PLCXgmV4EJH52iU4",
-    #     shuffle=True,
-    #     remove=["duplicate"]
-    # )
