@@ -3,13 +3,19 @@ File to develop and debug methods, class and more
 """
 from code_backend.shared_config import *
 from code_backend.secondary_methods import (
-    uri_to_id, print_error, list_from_id_string, file_image_bytes,
+    uri_to_id, list_from_id_string, file_image_bytes,
     spotify_image_bytes, url_to_uri, exclude_from_dict, id_to_uri,
     check_token_expired, load_json, debug_json, print_debug,
-    load_list_from_database, value_from_dict
+    load_list_from_database, value_from_dict,
+    check_spotify_uri, check_spotify_uris, check_spotify_id, check_spotify_ids,
+    check_limits
 )
 import code_backend.spotify_web_api as spotify
 from code_backend.database_access import APP_DATABASE
+from code_backend.exceptions import (
+    SpotifyApiException, SpotifyUriException, SpotifyIdException,
+    InputException, CustomException
+)
 
 
 class _SpotifyObject:
@@ -28,7 +34,7 @@ class _SpotifyObject:
         """
         genres = []
 
-        # TODO: implement
+        # TODO: implement genre_names
 
         return genres
     
@@ -38,9 +44,13 @@ class NewAlbum(_SpotifyObject):
 
     def __init__(self, spotify_album: dict):
         """
-
         :param spotify_album: Dict containing Spotify Albums, in the form of {album_uri: album}
+        :raises InputException: if input is invalid
         """
+
+        if not isinstance(spotify_album, dict):
+            raise InputException(item_value=spotify_album, valid_values="{album_uri: album}", valid_types=dict)
+
         super().__init__()
 
         self.album_json: dict = value_from_dict(spotify_album)
@@ -84,7 +94,11 @@ class NewArtist(_SpotifyObject):
         """
 
         :param spotify_artist: Dict containing Spotify Artists, in the form of {artist_uri: artist}
+        :raises InputException: if input is invalid
         """
+        if not isinstance(spotify_artist, dict):
+            raise InputException(item_value=spotify_artist, valid_values='{artist_uri: artist}', valid_types=dict)
+
         super().__init__()
 
         self.artist_json: dict = value_from_dict(spotify_artist)
@@ -132,7 +146,11 @@ class NewPlaylist(_SpotifyObject):
         """
 
         :param spotify_playlist: Dict containing Spotify Playlists, in the form of {playlist_uri: playlist}
+        :raises InputException: if input is invalid
         """
+        if not isinstance(spotify_playlist, dict):
+            raise InputException(item_value=spotify_playlist, valid_values='{playlist_uri: playlist}', valid_types=dict)
+
         super().__init__()
 
         self.playlist_json: dict = value_from_dict(spotify_playlist)
@@ -176,7 +194,11 @@ class NewTrack(_SpotifyObject):
         """
 
         :param spotify_track: Dict containing Spotify Tracks, in the form of {track_uri: track}
+        :raises InputException: if input is invalid
         """
+        if not isinstance(spotify_track, dict):
+            raise InputException(item_value=spotify_track, valid_values='{track_uri: track}', valid_types=dict)
+
         super().__init__()
 
         self.track_json: dict = value_from_dict(spotify_track)
@@ -221,7 +243,12 @@ class NewUser(_SpotifyObject):
         """
 
         :param spotify_user: Dict containing Spotify Tracks, in the form of {user_uri: user}
+        :raises InputException: if input is invalid
         """
+
+        if not isinstance(spotify_user, dict):
+            raise InputException(item_value=spotify_user, valid_values='{user_uri: user}', valid_types=dict)
+
         super().__init__()
 
         self.user_json: dict = value_from_dict(spotify_user)
@@ -284,14 +311,12 @@ class ItemQueues:
         self.user_queue = set()
 
 
-    # mps: 3
     def update_queues(self) -> None:
         """
         Call `fetch_new_ids_from_database()` for every possible case to update all queues with the new URIs
         :return: updates queues
         """
 
-        # mps: 3
         def fetch_new_ids_from_database(
                 table_name: Literal['albums', 'artists', 'tracks', 'playlists', 'users'],
                 target_type: Literal['album', 'artist', 'playlist', 'track', 'user']
@@ -364,7 +389,6 @@ class ItemQueues:
         self.user_queue.update(fetch_new_ids_from_database(table_name="playlists", target_type="user"))
 
 
-    # mps: 3
     def process_all_queues(self):
         """
         iterates through every queue and adds the items to the database
@@ -413,13 +437,16 @@ class ItemQueues:
             self.user_queue.clear()
 
 
-# cps: 3
 class NewDevice:
     def __init__(self, spotify_device: dict) -> None:
         """
 
         :param spotify_device: Dict containing Spotify Device, in the form of {device_uri: device}
+        :raises InputException: if input is invalid
         """
+        if not isinstance(spotify_device, dict):
+            raise InputException(item_value=spotify_device, valid_values='{device_uri: device}', valid_types=dict)
+
         self.device_json = value_from_dict(spotify_device)
         self.device_id: str = self.device_json['id']
         self.device_name: str = self.device_json['name']
@@ -444,9 +471,16 @@ class NewDevice:
         )
 
 
-# cps: 3
 class Album:
     def __init__(self, album_id: str):
+        """
+
+        :param album_id:
+        :raises SpotifyIdException: if spotify id is invalid
+        """
+        if not check_spotify_id(album_id):
+            raise SpotifyIdException(invalid_id=album_id, id_type="album")
+
         album_from_db = APP_DATABASE.fetch_row(table_name="albums", item_id=album_id, table_column="*")
         if album_from_db is None:
             print(f"{CCYAN}Album with id '{album_id}' does not exist in database, requesting now ...{TEXTCOLOR}")
@@ -468,9 +502,18 @@ class Album:
             self.blacklisted, \
             self.album_json = album_from_db
 
-# cps: 3
+
 class Artist:
     def __init__(self, artist_id: str):
+        """
+
+        :param artist_id:
+        :raises SpotifyIdException: if spotify id is invalid
+        """
+
+        if not check_spotify_id(artist_id):
+            raise SpotifyIdException(invalid_id=artist_id, id_type="artist")
+
         artist_from_db = APP_DATABASE.fetch_row(table_name="artists", item_id=artist_id, table_column="*")
         if artist_from_db is None:
             print(f"{CCYAN}Artist with id '{artist_id}' does not exist in database, requesting now ...{TEXTCOLOR}")
@@ -493,9 +536,17 @@ class Artist:
             self.artist_json = artist_from_db
 
 
-# cps: 3
 class Device:
     def __init__(self, device_id: str) -> None:
+        """
+
+        :param device_id:
+        :raises SpotifyIdException: if spotify id is invalid
+        """
+
+        if not check_spotify_id(device_id, is_device=True):
+            raise SpotifyIdException(invalid_id=device_id, id_type="device")
+
         device_from_db = APP_DATABASE.fetch_row(table_name="devices", item_id=device_id, table_column="*")
         if device_from_db is None:
             print(f"{CCYAN}Device with id '{device_id}' does not exist in database, requesting now ...{TEXTCOLOR}")
@@ -514,10 +565,17 @@ class Device:
             self.device_json = device_from_db
 
 
-
-# cps: 3
 class Playlist:
     def __init__(self, playlist_id: str):
+        """
+
+        :param playlist_id:
+        :raises SpotifyIdException: if spotify id is invalid
+        """
+
+        if not check_spotify_id(playlist_id):
+            raise SpotifyIdException(invalid_id=playlist_id, id_type="playlist")
+
         playlist_from_db = APP_DATABASE.fetch_row(table_name="playlists", item_id=playlist_id, table_column="*")
         if playlist_from_db is None:
             print(f"{CCYAN}Playlist with id '{playlist_id}' does not exist in database, requesting now ...{TEXTCOLOR}")
@@ -540,9 +598,17 @@ class Playlist:
             self.playlist_json = playlist_from_db
 
 
-# cps: 3
 class Track:
     def __init__(self, track_id: str):
+        """
+
+        :param track_id:
+        :raises SpotifyIdException: if spotify id is invalid
+        """
+
+        if not check_spotify_id(track_id):
+            raise SpotifyIdException(invalid_id=track_id, id_type="track")
+
         track_from_db = APP_DATABASE.fetch_row(table_name="tracks", item_id=track_id, table_column="*")
         if track_from_db is None:
             print(f"{CCYAN}Track with id '{track_id}' does not exist in database, requesting now ...{TEXTCOLOR}")
@@ -565,9 +631,17 @@ class Track:
             self.track_json = track_from_db
 
 
-# cps: 3
 class User:
     def __init__(self, user_id: str):
+        """
+
+        :param user_id:
+        :raises SpotifyIdException: if spotify id is invalid
+        """
+
+        if not check_spotify_id(user_id, is_user=True):
+            raise SpotifyIdException(invalid_id=user_id, id_type="user")
+
         user_from_db = APP_DATABASE.fetch_row(table_name="users", item_id=user_id, table_column="*")
         if user_from_db is None:
             print(f"{CCYAN}User with id '{user_id}' does not exist in database, requesting now ...{TEXTCOLOR}")
@@ -624,62 +698,3 @@ class User:
 
 if __name__ == "__main__":
     """"""
-    # test_album = load_json("Databases/JSON_Files/spotify_album_dummy.json")
-    # test_artist = load_json("Databases/JSON_Files/spotify_artist_dummy.json")
-    # test_device = load_json("Databases/JSON_Files/spotify_device_dummy.json")
-    # test_playlist = load_json("Databases/JSON_Files/spotify_playlist_dummy.json")
-    # test_track = load_json("Databases/JSON_Files/spotify_track_dummy.json")
-    # test_user = load_json("Databases/JSON_Files/spotify_user_dummy.json")
-
-    # test_album = spotify.get_album(album_id=url_to_uri("https://open.spotify.com/album/4R6FV9NSzhPihHR0h4pI93?si=LOgxO9tTQT2wOPNYc0lA7w", to_id=True))
-    # test_artist = spotify.get_artist(artist_id=url_to_uri("https://open.spotify.com/artist/6XyY86QOPPrYVGvF9ch6wz?si=PZtMG9g6QmaIUFx_TQTlxg", to_id=True))
-    # test_device = spotify.get_device(device_id="a59d3a684d22772199a2fe97cdcdf563eaee9ac1")
-    # test_playlist = spotify.get_playlist(playlist_id=url_to_uri("https://open.spotify.com/playlist/6bRkO7PLCXgmV4EJH52iU4?si=a36e73fd53dd47a5", to_id=True))
-    # test_track = spotify.get_track(track_id=url_to_uri("https://open.spotify.com/track/6zrR8itT7IfAdl5aS7YQyt?si=3f8580cc786b4c0e", to_id=True))
-    # test_user = spotify.get_users_profile(user_id=url_to_uri("https://open.spotify.com/user/simonluca1?si=72dc4d32737443f5", to_id=True))
-
-    # Test Classes
-    # class_map = [
-    #     [NewAlbum, test_album],
-    #     [NewArtist, test_artist],
-    #     [NewDevice, test_device],
-    #     [NewPlaylist, test_playlist],
-    #     [NewTrack, test_track],
-    #     [NewUser, test_user],
-    # ]
-    # for current_class, current_args in class_map:
-    #     try:
-    #         current_class(current_args)
-    #     except Exception as e:
-    #         print_error(error_message=e)
-
-
-    # Test ItemQueue with one initial instance
-    # item_queue = ItemQueues()
-    # Playlist(test_playlist)
-    #
-    # try:
-    #     item_queue.update_queues()
-    #     item_queue.process_all_queues()
-    # except Exception as e:
-    #     print_error(error_message=e)
-
-
-    # class_map = [
-    #     [Album, "0000000000000000000000"],
-    #     [Artist, "0000000000000000000000"],
-    #     [Device, "a59d3a684d22772199a2fe97cdcdf563eaee9ac1"],
-    #     [Playlist, "0000000000000000000000"],
-    #     [Track, "0000000000000000000000"],
-    #     [User, "0000000000000000000000"],
-    # ]
-    # for current_class, current_args in class_map:
-    #     try:
-    #         current_class(current_args)
-    #
-    #     except Exception as e:
-    #         print_error(error_message=e)
-
-    user = User("simonluca1")
-    print(json.dumps(user.__dict__, indent=4))
-    print(user.user_id)

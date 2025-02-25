@@ -1,0 +1,79 @@
+{
+  "spotify:track:14FP9BNWHekbC17tqcppOR": {
+    "album": {
+      "album_type": "single",
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/6O7MpKrY91vlCd4Osi6XKs"
+          },
+          "href": "https://api.spotify.com/v1/artists/6O7MpKrY91vlCd4Osi6XKs",
+          "id": "6O7MpKrY91vlCd4Osi6XKs",
+          "name": "Black Veil Brides",
+          "type": "artist",
+          "uri": "spotify:artist:6O7MpKrY91vlCd4Osi6XKs"
+        }
+      ],
+      "external_urls": {
+        "spotify": "https://open.spotify.com/album/6ehXKNVHjv2GYuhhy7ecwG"
+      },
+      "href": "https://api.spotify.com/v1/albums/6ehXKNVHjv2GYuhhy7ecwG",
+      "id": "6ehXKNVHjv2GYuhhy7ecwG",
+      "images": [
+        {
+          "url": "https://i.scdn.co/image/ab67616d0000b273b32d10b54b26a8c0f96d0667",
+          "width": 640,
+          "height": 640
+        },
+        {
+          "url": "https://i.scdn.co/image/ab67616d00001e02b32d10b54b26a8c0f96d0667",
+          "width": 300,
+          "height": 300
+        },
+        {
+          "url": "https://i.scdn.co/image/ab67616d00004851b32d10b54b26a8c0f96d0667",
+          "width": 64,
+          "height": 64
+        }
+      ],
+      "is_playable": true,
+      "name": "Saviour II",
+      "release_date": "2022-09-06",
+      "release_date_precision": "day",
+      "total_tracks": 1,
+      "type": "album",
+      "uri": "spotify:album:6ehXKNVHjv2GYuhhy7ecwG"
+    },
+    "artists": [
+      {
+        "external_urls": {
+          "spotify": "https://open.spotify.com/artist/6O7MpKrY91vlCd4Osi6XKs"
+        },
+        "href": "https://api.spotify.com/v1/artists/6O7MpKrY91vlCd4Osi6XKs",
+        "id": "6O7MpKrY91vlCd4Osi6XKs",
+        "name": "Black Veil Brides",
+        "type": "artist",
+        "uri": "spotify:artist:6O7MpKrY91vlCd4Osi6XKs"
+      }
+    ],
+    "disc_number": 1,
+    "duration_ms": 200489,
+    "explicit": false,
+    "external_ids": {
+      "isrc": "USYFZ2288801"
+    },
+    "external_urls": {
+      "spotify": "https://open.spotify.com/track/14FP9BNWHekbC17tqcppOR"
+    },
+    "href": "https://api.spotify.com/v1/tracks/14FP9BNWHekbC17tqcppOR",
+    "id": "14FP9BNWHekbC17tqcppOR",
+    "is_local": false,
+    "is_playable": true,
+    "name": "Saviour II",
+    "popularity": 50,
+    "preview_url": null,
+    "track_number": 1,
+    "type": "track",
+    "uri": "spotify:track:14FP9BNWHekbC17tqcppOR"
+  }
+}

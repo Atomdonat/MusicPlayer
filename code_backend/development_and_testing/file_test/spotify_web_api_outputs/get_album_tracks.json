@@ -1,0 +1,382 @@
+[
+  {
+    "spotify:track:4Jk6ZV8QsuWNLVzjX8VeE6": {
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/2CmaKO2zEGJ1NWpS1yfVGz"
+          },
+          "href": "https://api.spotify.com/v1/artists/2CmaKO2zEGJ1NWpS1yfVGz",
+          "id": "2CmaKO2zEGJ1NWpS1yfVGz",
+          "name": "Falling In Reverse",
+          "type": "artist",
+          "uri": "spotify:artist:2CmaKO2zEGJ1NWpS1yfVGz"
+        }
+      ],
+      "disc_number": 1,
+      "duration_ms": 294038,
+      "explicit": false,
+      "external_urls": {
+        "spotify": "https://open.spotify.com/track/4Jk6ZV8QsuWNLVzjX8VeE6"
+      },
+      "href": "https://api.spotify.com/v1/tracks/4Jk6ZV8QsuWNLVzjX8VeE6",
+      "id": "4Jk6ZV8QsuWNLVzjX8VeE6",
+      "is_playable": true,
+      "name": "Coming Home",
+      "preview_url": null,
+      "track_number": 1,
+      "type": "track",
+      "uri": "spotify:track:4Jk6ZV8QsuWNLVzjX8VeE6",
+      "is_local": false
+    },
+    "spotify:track:5IwdHDiLWES2K4XtUjKn4A": {
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/2CmaKO2zEGJ1NWpS1yfVGz"
+          },
+          "href": "https://api.spotify.com/v1/artists/2CmaKO2zEGJ1NWpS1yfVGz",
+          "id": "2CmaKO2zEGJ1NWpS1yfVGz",
+          "name": "Falling In Reverse",
+          "type": "artist",
+          "uri": "spotify:artist:2CmaKO2zEGJ1NWpS1yfVGz"
+        }
+      ],
+      "disc_number": 1,
+      "duration_ms": 234804,
+      "explicit": false,
+      "external_urls": {
+        "spotify": "https://open.spotify.com/track/5IwdHDiLWES2K4XtUjKn4A"
+      },
+      "href": "https://api.spotify.com/v1/tracks/5IwdHDiLWES2K4XtUjKn4A",
+      "id": "5IwdHDiLWES2K4XtUjKn4A",
+      "is_playable": true,
+      "name": "Broken",
+      "preview_url": null,
+      "track_number": 2,
+      "type": "track",
+      "uri": "spotify:track:5IwdHDiLWES2K4XtUjKn4A",
+      "is_local": false
+    },
+    "spotify:track:4VXhicGRlRz7Z4OQUOzkpT": {
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/2CmaKO2zEGJ1NWpS1yfVGz"
+          },
+          "href": "https://api.spotify.com/v1/artists/2CmaKO2zEGJ1NWpS1yfVGz",
+          "id": "2CmaKO2zEGJ1NWpS1yfVGz",
+          "name": "Falling In Reverse",
+          "type": "artist",
+          "uri": "spotify:artist:2CmaKO2zEGJ1NWpS1yfVGz"
+        }
+      ],
+      "disc_number": 1,
+      "duration_ms": 253452,
+      "explicit": false,
+      "external_urls": {
+        "spotify": "https://open.spotify.com/track/4VXhicGRlRz7Z4OQUOzkpT"
+      },
+      "href": "https://api.spotify.com/v1/tracks/4VXhicGRlRz7Z4OQUOzkpT",
+      "id": "4VXhicGRlRz7Z4OQUOzkpT",
+      "is_playable": true,
+      "name": "Loser",
+      "preview_url": null,
+      "track_number": 3,
+      "type": "track",
+      "uri": "spotify:track:4VXhicGRlRz7Z4OQUOzkpT",
+      "is_local": false
+    },
+    "spotify:track:6uSpReaIE9rsnvhmpsJClE": {
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/2CmaKO2zEGJ1NWpS1yfVGz"
+          },
+          "href": "https://api.spotify.com/v1/artists/2CmaKO2zEGJ1NWpS1yfVGz",
+          "id": "2CmaKO2zEGJ1NWpS1yfVGz",
+          "name": "Falling In Reverse",
+          "type": "artist",
+          "uri": "spotify:artist:2CmaKO2zEGJ1NWpS1yfVGz"
+        }
+      ],
+      "disc_number": 1,
+      "duration_ms": 191248,
+      "explicit": true,
+      "external_urls": {
+        "spotify": "https://open.spotify.com/track/6uSpReaIE9rsnvhmpsJClE"
+      },
+      "href": "https://api.spotify.com/v1/tracks/6uSpReaIE9rsnvhmpsJClE",
+      "id": "6uSpReaIE9rsnvhmpsJClE",
+      "is_playable": true,
+      "name": "Fuck You and All Your Friends",
+      "preview_url": null,
+      "track_number": 4,
+      "type": "track",
+      "uri": "spotify:track:6uSpReaIE9rsnvhmpsJClE",
+      "is_local": false
+    },
+    "spotify:track:5ElqFDw0Rn1tkdaJpDJSrx": {
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/2CmaKO2zEGJ1NWpS1yfVGz"
+          },
+          "href": "https://api.spotify.com/v1/artists/2CmaKO2zEGJ1NWpS1yfVGz",
+          "id": "2CmaKO2zEGJ1NWpS1yfVGz",
+          "name": "Falling In Reverse",
+          "type": "artist",
+          "uri": "spotify:artist:2CmaKO2zEGJ1NWpS1yfVGz"
+        }
+      ],
+      "disc_number": 1,
+      "duration_ms": 218536,
+      "explicit": true,
+      "external_urls": {
+        "spotify": "https://open.spotify.com/track/5ElqFDw0Rn1tkdaJpDJSrx"
+      },
+      "href": "https://api.spotify.com/v1/tracks/5ElqFDw0Rn1tkdaJpDJSrx",
+      "id": "5ElqFDw0Rn1tkdaJpDJSrx",
+      "is_playable": true,
+      "name": "I Hate Everyone",
+      "preview_url": null,
+      "track_number": 5,
+      "type": "track",
+      "uri": "spotify:track:5ElqFDw0Rn1tkdaJpDJSrx",
+      "is_local": false
+    },
+    "spotify:track:2uEhFDZqAjzflscjStpmzd": {
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/2CmaKO2zEGJ1NWpS1yfVGz"
+          },
+          "href": "https://api.spotify.com/v1/artists/2CmaKO2zEGJ1NWpS1yfVGz",
+          "id": "2CmaKO2zEGJ1NWpS1yfVGz",
+          "name": "Falling In Reverse",
+          "type": "artist",
+          "uri": "spotify:artist:2CmaKO2zEGJ1NWpS1yfVGz"
+        }
+      ],
+      "disc_number": 1,
+      "duration_ms": 235334,
+      "explicit": true,
+      "external_urls": {
+        "spotify": "https://open.spotify.com/track/2uEhFDZqAjzflscjStpmzd"
+      },
+      "href": "https://api.spotify.com/v1/tracks/2uEhFDZqAjzflscjStpmzd",
+      "id": "2uEhFDZqAjzflscjStpmzd",
+      "is_playable": true,
+      "name": "I'm Bad At Life",
+      "preview_url": null,
+      "track_number": 6,
+      "type": "track",
+      "uri": "spotify:track:2uEhFDZqAjzflscjStpmzd",
+      "is_local": false
+    },
+    "spotify:track:0unL0Fgezp3ts4aFtT2FB5": {
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/2CmaKO2zEGJ1NWpS1yfVGz"
+          },
+          "href": "https://api.spotify.com/v1/artists/2CmaKO2zEGJ1NWpS1yfVGz",
+          "id": "2CmaKO2zEGJ1NWpS1yfVGz",
+          "name": "Falling In Reverse",
+          "type": "artist",
+          "uri": "spotify:artist:2CmaKO2zEGJ1NWpS1yfVGz"
+        }
+      ],
+      "disc_number": 1,
+      "duration_ms": 228183,
+      "explicit": false,
+      "external_urls": {
+        "spotify": "https://open.spotify.com/track/0unL0Fgezp3ts4aFtT2FB5"
+      },
+      "href": "https://api.spotify.com/v1/tracks/0unL0Fgezp3ts4aFtT2FB5",
+      "id": "0unL0Fgezp3ts4aFtT2FB5",
+      "is_playable": true,
+      "name": "Hanging On",
+      "preview_url": null,
+      "track_number": 7,
+      "type": "track",
+      "uri": "spotify:track:0unL0Fgezp3ts4aFtT2FB5",
+      "is_local": false
+    },
+    "spotify:track:2b5wWbvt1IPBEMczBPtuB1": {
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/2CmaKO2zEGJ1NWpS1yfVGz"
+          },
+          "href": "https://api.spotify.com/v1/artists/2CmaKO2zEGJ1NWpS1yfVGz",
+          "id": "2CmaKO2zEGJ1NWpS1yfVGz",
+          "name": "Falling In Reverse",
+          "type": "artist",
+          "uri": "spotify:artist:2CmaKO2zEGJ1NWpS1yfVGz"
+        }
+      ],
+      "disc_number": 1,
+      "duration_ms": 193447,
+      "explicit": false,
+      "external_urls": {
+        "spotify": "https://open.spotify.com/track/2b5wWbvt1IPBEMczBPtuB1"
+      },
+      "href": "https://api.spotify.com/v1/tracks/2b5wWbvt1IPBEMczBPtuB1",
+      "id": "2b5wWbvt1IPBEMczBPtuB1",
+      "is_playable": true,
+      "name": "Superhero",
+      "preview_url": null,
+      "track_number": 8,
+      "type": "track",
+      "uri": "spotify:track:2b5wWbvt1IPBEMczBPtuB1",
+      "is_local": false
+    },
+    "spotify:track:4UAdIHc0paTuEJkZWgPiIq": {
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/2CmaKO2zEGJ1NWpS1yfVGz"
+          },
+          "href": "https://api.spotify.com/v1/artists/2CmaKO2zEGJ1NWpS1yfVGz",
+          "id": "2CmaKO2zEGJ1NWpS1yfVGz",
+          "name": "Falling In Reverse",
+          "type": "artist",
+          "uri": "spotify:artist:2CmaKO2zEGJ1NWpS1yfVGz"
+        }
+      ],
+      "disc_number": 1,
+      "duration_ms": 229568,
+      "explicit": false,
+      "external_urls": {
+        "spotify": "https://open.spotify.com/track/4UAdIHc0paTuEJkZWgPiIq"
+      },
+      "href": "https://api.spotify.com/v1/tracks/4UAdIHc0paTuEJkZWgPiIq",
+      "id": "4UAdIHc0paTuEJkZWgPiIq",
+      "is_playable": true,
+      "name": "Straight to Hell",
+      "preview_url": null,
+      "track_number": 9,
+      "type": "track",
+      "uri": "spotify:track:4UAdIHc0paTuEJkZWgPiIq",
+      "is_local": false
+    },
+    "spotify:track:5y6znJ3osgBVDzis8xcNTJ": {
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/2CmaKO2zEGJ1NWpS1yfVGz"
+          },
+          "href": "https://api.spotify.com/v1/artists/2CmaKO2zEGJ1NWpS1yfVGz",
+          "id": "2CmaKO2zEGJ1NWpS1yfVGz",
+          "name": "Falling In Reverse",
+          "type": "artist",
+          "uri": "spotify:artist:2CmaKO2zEGJ1NWpS1yfVGz"
+        }
+      ],
+      "disc_number": 1,
+      "duration_ms": 263896,
+      "explicit": false,
+      "external_urls": {
+        "spotify": "https://open.spotify.com/track/5y6znJ3osgBVDzis8xcNTJ"
+      },
+      "href": "https://api.spotify.com/v1/tracks/5y6znJ3osgBVDzis8xcNTJ",
+      "id": "5y6znJ3osgBVDzis8xcNTJ",
+      "is_playable": true,
+      "name": "I Don't Mind",
+      "preview_url": null,
+      "track_number": 10,
+      "type": "track",
+      "uri": "spotify:track:5y6znJ3osgBVDzis8xcNTJ",
+      "is_local": false
+    },
+    "spotify:track:0kTcEzRcDLjCP27TglgeeP": {
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/2CmaKO2zEGJ1NWpS1yfVGz"
+          },
+          "href": "https://api.spotify.com/v1/artists/2CmaKO2zEGJ1NWpS1yfVGz",
+          "id": "2CmaKO2zEGJ1NWpS1yfVGz",
+          "name": "Falling In Reverse",
+          "type": "artist",
+          "uri": "spotify:artist:2CmaKO2zEGJ1NWpS1yfVGz"
+        }
+      ],
+      "disc_number": 1,
+      "duration_ms": 287922,
+      "explicit": false,
+      "external_urls": {
+        "spotify": "https://open.spotify.com/track/0kTcEzRcDLjCP27TglgeeP"
+      },
+      "href": "https://api.spotify.com/v1/tracks/0kTcEzRcDLjCP27TglgeeP",
+      "id": "0kTcEzRcDLjCP27TglgeeP",
+      "is_playable": true,
+      "name": "The Departure",
+      "preview_url": null,
+      "track_number": 11,
+      "type": "track",
+      "uri": "spotify:track:0kTcEzRcDLjCP27TglgeeP",
+      "is_local": false
+    },
+    "spotify:track:6RlbiSkOcXM6OjcVlELWV3": {
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/2CmaKO2zEGJ1NWpS1yfVGz"
+          },
+          "href": "https://api.spotify.com/v1/artists/2CmaKO2zEGJ1NWpS1yfVGz",
+          "id": "2CmaKO2zEGJ1NWpS1yfVGz",
+          "name": "Falling In Reverse",
+          "type": "artist",
+          "uri": "spotify:artist:2CmaKO2zEGJ1NWpS1yfVGz"
+        }
+      ],
+      "disc_number": 1,
+      "duration_ms": 208082,
+      "explicit": true,
+      "external_urls": {
+        "spotify": "https://open.spotify.com/track/6RlbiSkOcXM6OjcVlELWV3"
+      },
+      "href": "https://api.spotify.com/v1/tracks/6RlbiSkOcXM6OjcVlELWV3",
+      "id": "6RlbiSkOcXM6OjcVlELWV3",
+      "is_playable": true,
+      "name": "Right Now",
+      "preview_url": null,
+      "track_number": 12,
+      "type": "track",
+      "uri": "spotify:track:6RlbiSkOcXM6OjcVlELWV3",
+      "is_local": false
+    },
+    "spotify:track:77JbeEezKoH1w38l2zLFGM": {
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/2CmaKO2zEGJ1NWpS1yfVGz"
+          },
+          "href": "https://api.spotify.com/v1/artists/2CmaKO2zEGJ1NWpS1yfVGz",
+          "id": "2CmaKO2zEGJ1NWpS1yfVGz",
+          "name": "Falling In Reverse",
+          "type": "artist",
+          "uri": "spotify:artist:2CmaKO2zEGJ1NWpS1yfVGz"
+        }
+      ],
+      "disc_number": 1,
+      "duration_ms": 241777,
+      "explicit": true,
+      "external_urls": {
+        "spotify": "https://open.spotify.com/track/77JbeEezKoH1w38l2zLFGM"
+      },
+      "href": "https://api.spotify.com/v1/tracks/77JbeEezKoH1w38l2zLFGM",
+      "id": "77JbeEezKoH1w38l2zLFGM",
+      "is_playable": true,
+      "name": "Paparazzi",
+      "preview_url": null,
+      "track_number": 13,
+      "type": "track",
+      "uri": "spotify:track:77JbeEezKoH1w38l2zLFGM",
+      "is_local": false
+    }
+  },
+  3080287
+]

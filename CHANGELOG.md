@@ -50,6 +50,49 @@
 
 [//]: # (- )
 
+
+## [1.15.5] - 25.02.2025 - Exception Handling and Input Checks
+
+### Changes in Backend Code
+
+#### database_access.py
+- implemented input type/value checks raising Exception if needed
+  - added Exception Types to Docstring
+
+#### exceptions.py
+- implemented custom Exceptions
+
+#### main_app.py
+- implemented input type/value checks raising Exception if needed
+  - added Exception Types to Docstring
+
+#### music_classes.py
+- implemented input type/value checks raising Exception if needed
+
+#### organize_playlist.py
+- implemented input type/value checks raising Exception if needed
+
+#### secondary_methods.py
+- updated methods for Exception Handling
+- implemented input type/value checks raising Exception if needed
+  - added Exception Types to Docstring
+- wrapped logic inside try except blocks to raise Exceptions early on
+
+#### spotify_web_api.py
+- implemented input type/value checks raising Exception if needed
+  - added Exception Types to Docstring
+- updated `request_regular_token()`
+  1. to accept manual login 
+  2. use `refresh_access_token()` if possible (reducing risk of getting f.e. 2FA on login)
+- testing methods (code_backend/testing/file_test/test_spotify_web_api.py) now save output in dedicated files
+- fixed `remove_playlist_items()` not removing all items (caused by market dependent relinked tracks)
+
+### other files
+
+#### README.md
+- regular update
+
+
 ## [1.15.4] - 10.02.2025 - Further API Migration
 
 ### Changes in Backend Code

@@ -1,0 +1,109 @@
+{
+  "device": {
+    "id": "a59d3a684d22772199a2fe97cdcdf563eaee9ac1",
+    "is_active": true,
+    "is_private_session": false,
+    "is_restricted": false,
+    "name": "PC-SIMON",
+    "supports_volume": true,
+    "type": "Computer",
+    "volume_percent": 0
+  },
+  "shuffle_state": false,
+  "smart_shuffle": false,
+  "repeat_state": "track",
+  "timestamp": 1740426935521,
+  "context": {
+    "external_urls": {
+      "spotify": "https://open.spotify.com/playlist/2XeRCS6YsuxUoc7dYq87JU"
+    },
+    "href": "https://api.spotify.com/v1/playlists/2XeRCS6YsuxUoc7dYq87JU",
+    "type": "playlist",
+    "uri": "spotify:playlist:2XeRCS6YsuxUoc7dYq87JU"
+  },
+  "progress_ms": 19618,
+  "item": {
+    "album": {
+      "album_type": "single",
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/2hmePXeTr2b7cdRAtRjvPq"
+          },
+          "href": "https://api.spotify.com/v1/artists/2hmePXeTr2b7cdRAtRjvPq",
+          "id": "2hmePXeTr2b7cdRAtRjvPq",
+          "name": "Jeris Johnson",
+          "type": "artist",
+          "uri": "spotify:artist:2hmePXeTr2b7cdRAtRjvPq"
+        }
+      ],
+      "external_urls": {
+        "spotify": "https://open.spotify.com/album/0G2SRdxswmTnAehBCW0zqU"
+      },
+      "href": "https://api.spotify.com/v1/albums/0G2SRdxswmTnAehBCW0zqU",
+      "id": "0G2SRdxswmTnAehBCW0zqU",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://i.scdn.co/image/ab67616d0000b273762495133abe5c1bf215f2f5",
+          "width": 640
+        },
+        {
+          "height": 300,
+          "url": "https://i.scdn.co/image/ab67616d00001e02762495133abe5c1bf215f2f5",
+          "width": 300
+        },
+        {
+          "height": 64,
+          "url": "https://i.scdn.co/image/ab67616d00004851762495133abe5c1bf215f2f5",
+          "width": 64
+        }
+      ],
+      "is_playable": true,
+      "name": "Kryptonite (Reloaded)",
+      "release_date": "2022-10-28",
+      "release_date_precision": "day",
+      "total_tracks": 1,
+      "type": "album",
+      "uri": "spotify:album:0G2SRdxswmTnAehBCW0zqU"
+    },
+    "artists": [
+      {
+        "external_urls": {
+          "spotify": "https://open.spotify.com/artist/2hmePXeTr2b7cdRAtRjvPq"
+        },
+        "href": "https://api.spotify.com/v1/artists/2hmePXeTr2b7cdRAtRjvPq",
+        "id": "2hmePXeTr2b7cdRAtRjvPq",
+        "name": "Jeris Johnson",
+        "type": "artist",
+        "uri": "spotify:artist:2hmePXeTr2b7cdRAtRjvPq"
+      }
+    ],
+    "disc_number": 1,
+    "duration_ms": 157799,
+    "explicit": true,
+    "external_ids": {
+      "isrc": "USAT22218535"
+    },
+    "external_urls": {
+      "spotify": "https://open.spotify.com/track/2VMs3LPD0pKKD3z55ZmnVH"
+    },
+    "href": "https://api.spotify.com/v1/tracks/2VMs3LPD0pKKD3z55ZmnVH",
+    "id": "2VMs3LPD0pKKD3z55ZmnVH",
+    "is_local": false,
+    "is_playable": true,
+    "name": "Kryptonite (Reloaded)",
+    "popularity": 58,
+    "preview_url": null,
+    "track_number": 1,
+    "type": "track",
+    "uri": "spotify:track:2VMs3LPD0pKKD3z55ZmnVH"
+  },
+  "currently_playing_type": "track",
+  "actions": {
+    "disallows": {
+      "resuming": true
+    }
+  },
+  "is_playing": true
+}

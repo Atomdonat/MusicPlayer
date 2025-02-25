@@ -27,19 +27,21 @@ or update only half of the attributes
 * due to CEST and CET the datetime.datetime method can have an offset
 * don't cross-reference anything (e.g. imports, classes) -> Circular Imports  \
 -> big problems (max recursion depth; IDE be like: ╰（‵□′）╯)
-  * instead move classes/structs to shared file as dataclasses to resolve circular import errors
 * quotation marks '...' within Strings "..." are important
 * if a list is required, enter a list (typehints are useful)
-* though Playlist have markets don't use them
+  * if wrong type passed, python attribute be like: guess I'm new_type now
+* using market with Playlist can lead to errors [Spotify Track Relinking](https://developer.spotify.com/documentation/web-api/concepts/track-relinking)
 * catching exceptions can be a helpful but uncommon benefit (If error do B else do A)
+  * Catch Exceptions early on
 * superclasses can be profitable, but hurt the code readability 
 * added separate CHANGELOG.md file to better track changes and shorten commit messages
 * do not reset Database before Analyzing anything (No Data in DB -> no Data to analyse)
 * you won't get an error (or smth. similar) if you cross the API request limit (using spotipy; for each request the delay grows exponentially)
-* spotipy is a shitty library no documentation -> if it is bad do it yourself but better (-> `spotify_web_api.py`)
+* spotipy is a shitty library no documentation -> if it is bad do it yourself but better (=> `spotify_web_api.py`)
 * where there is a problem, there is another public repo/service fixing/bypassing it
 * not every error means it's not working
 * Whether the requests body is send with `data` or `json` can cause an error or not (Though, the documentations cURL request always says `data`)
+* testcases should include **all** cases
 
 
 ## Code/Comment Highlighting (in Pycharm)
@@ -108,22 +110,29 @@ by Niki Tonsky (https://mastodon.online/@nikitonsky/113691789641950263)
 
 * requests.exceptions.ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')) -> Just retry
 * requests.status_code == 503 -> wait some time then retry
-
+* HTTP error code 500 returned (after client credential login (`request_regular_token()`))
+  * Solution: "Since the client credentials flow does not include authorization, only endpoints that do not access user information can be accessed. You can use another authentication flow for getting recently played tracks from a user. Let me know if you have any questions!"
+  * Source: https://community.spotify.com/t5/Spotify-for-Developers/500-internal-server-error/m-p/5400938/highlight/true#M4961
 
 ## ToDo List (prioritized)
 
 * [ ] do ToDo's in Code
 * [ ] test Code
 * [ ] add Docstrings and comment Code (including Highlightings)
+  * [ ] Generate Documentation using [Sphinx](https://sphinx-rtd-tutorial.readthedocs.io/en/latest/build-the-docs.html#generating-documentation-from-docstrings)
 
 ### Backend related
 
-* [ ] Error handling
-  * [ ] Error handling if input type mismatched (assert)
-  * [ ] what should terminate and what not 
+* [x] Error handling
+  * Error handling if input type mismatched
+    * what should terminate and what not 
     * use custom Exceptions and try except
-* [x] add item_uri to Database table columns
-* [x] Migrate `main_app.py` to new API
+  * [x] database_access.py
+  * [x] main_app.py
+  * [x] music_classes.py
+  * [x] organize_playlist.py
+  * [x] secondary_methods.py
+  * [x] spotify_web_api.py
 * [ ] add CLI interaction for `main_app.py`
   * headless App (e.g. for servers 24/7 app access)
   * [ ] method to print docstrings as manpage
@@ -158,12 +167,11 @@ by Niki Tonsky (https://mastodon.online/@nikitonsky/113691789641950263)
 - Dictionaries / JSON
 - SQLite
 
-## Documentations
+## Third-Party Documentations
 
 ### APIs
 
 * [Spotify for Developers](https://developer.spotify.com/)
-* [Spotipy](https://spotipy.readthedocs.io/en/2.22.1/)
 * [Chosic.com](https://www.chosic.com/spotify-playlist-analyzer/) (indirectly)
 
 ### Backend 
@@ -174,9 +182,9 @@ by Niki Tonsky (https://mastodon.online/@nikitonsky/113691789641950263)
 ### Frontend
 
 * [Tkinter](https://docs.python.org/3/library/tkinter.html)
-* [QT for Python (PySide6)](https://doc.qt.io/qtforpython-6/PySide6/QtWidgets/index.html)
 
 ### Other
 
 * [Markdown](https://www.markdownguide.org/basic-syntax/)
 * [Docstring Conventions](https://peps.python.org/pep-0257/)
+* [Sphinx reStructuredText](https://www.sphinx-doc.org/en/master/index.html)

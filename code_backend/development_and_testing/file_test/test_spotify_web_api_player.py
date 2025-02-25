@@ -1,6 +1,6 @@
 from code_backend.secondary_methods import image_from_file, image_to_b64, url_to_uri, uri_to_id
 from code_backend.spotify_web_api import *
-from code_backend.testing.dev_bench_1 import *
+from code_backend.development_and_testing.dev_bench_1 import *
 import pytest
 
 

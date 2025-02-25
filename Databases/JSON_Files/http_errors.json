@@ -50,7 +50,8 @@
   },
   "500": {
     "code": "500",
-    "name": "Internal Server Error. You should never receive this error because our (Spotify's) clever coders catch them all ... but if you are unlucky enough to get one, please report it to us (Spotify) through either:\nCustomer Service: https://support.spotify.com/contact-spotify-support/\nCommunity Forum: https://developer.spotify.com/community"
+    "name": "Internal Server Error. You should never receive this error because our (Spotify's) clever coders catch them all ... but if you are unlucky enough to get one, please report it to us (Spotify) through either:\nCustomer Service: https://support.spotify.com/contact-spotify-support/\nCommunity Forum: https://developer.spotify.com/community",
+    "explanation": "One reason can be caused by endpoint '/v1/users/{user_id}/playlists/': There are cases where a user's list of playlists (or an individual playlist) cause temporary issues in Spotify's backend.\nhttps://stackoverflow.com/a/30661233"
   },
   "502": {
     "code": "502",

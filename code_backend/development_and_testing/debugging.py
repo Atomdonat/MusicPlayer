@@ -20,25 +20,19 @@ def all_shuffle(collection_tracks: list) -> list:
 
 
 def get_collisions(list_a:list[str], list_b:list[str]) -> list:
-    print(len(list_a), len(list_b))
-    if len(list_a) != len(list_b):
-        print("List length does not match")
-        sys.exit(1)
-
-    matches = []
-    for a_item,b_item in zip(list_a,list_b):
-        if a_item == b_item:
-            matches.append(a_item)
-
-    return matches
+    return set(list_a).intersection(set(list_b))
 
 if __name__ == "__main__":
-    with open("debugging.json", "r") as file:
-        data = json.load(file)
+    # with open("debugging.json", "r") as file:
+    #     data = json.load(file)
+    #
+    # origin_list = [i["uri"] for i in data]
+    # shuffled_list = all_shuffle(origin_list)
+    # collisions = get_collisions(origin_list, shuffled_list)
+    #
+    # with open("debugging_2.json", "w") as file:
+    #     json.dump({"collisions": collisions}, file)
 
-    origin_list = [i["uri"] for i in data]
-    shuffled_list = all_shuffle(origin_list)
-    collisions = get_collisions(origin_list, shuffled_list)
-
-    with open("debugging_2.json", "w") as file:
-        json.dump({"collisions": collisions}, file)
+    a = [i for i in range(10)]
+    b = [i for i in range(5,15)]
+    print(get_collisions(a,b))

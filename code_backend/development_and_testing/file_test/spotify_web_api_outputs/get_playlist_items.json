@@ -1,0 +1,488 @@
+[
+  {
+    "spotify:track:2nRKJI3XsWPb5d8VXwn2iK": {
+      "preview_url": null,
+      "is_playable": true,
+      "explicit": false,
+      "type": "track",
+      "episode": false,
+      "track": true,
+      "album": {
+        "is_playable": true,
+        "type": "album",
+        "album_type": "single",
+        "href": "https://api.spotify.com/v1/albums/2oaBBbAR8c78jxKHHHT1fS",
+        "id": "2oaBBbAR8c78jxKHHHT1fS",
+        "images": [
+          {
+            "height": 640,
+            "url": "https://i.scdn.co/image/ab67616d0000b273985d67a911aade0b2701dc0a",
+            "width": 640
+          },
+          {
+            "height": 300,
+            "url": "https://i.scdn.co/image/ab67616d00001e02985d67a911aade0b2701dc0a",
+            "width": 300
+          },
+          {
+            "height": 64,
+            "url": "https://i.scdn.co/image/ab67616d00004851985d67a911aade0b2701dc0a",
+            "width": 64
+          }
+        ],
+        "name": "Valhalla Calling",
+        "release_date": "2020-11-27",
+        "release_date_precision": "day",
+        "uri": "spotify:album:2oaBBbAR8c78jxKHHHT1fS",
+        "artists": [
+          {
+            "external_urls": {
+              "spotify": "https://open.spotify.com/artist/4FmJD0mpgQ70SNt2EKK8tq"
+            },
+            "href": "https://api.spotify.com/v1/artists/4FmJD0mpgQ70SNt2EKK8tq",
+            "id": "4FmJD0mpgQ70SNt2EKK8tq",
+            "name": "Miracle Of Sound",
+            "type": "artist",
+            "uri": "spotify:artist:4FmJD0mpgQ70SNt2EKK8tq"
+          }
+        ],
+        "external_urls": {
+          "spotify": "https://open.spotify.com/album/2oaBBbAR8c78jxKHHHT1fS"
+        },
+        "total_tracks": 1
+      },
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/4FmJD0mpgQ70SNt2EKK8tq"
+          },
+          "href": "https://api.spotify.com/v1/artists/4FmJD0mpgQ70SNt2EKK8tq",
+          "id": "4FmJD0mpgQ70SNt2EKK8tq",
+          "name": "Miracle Of Sound",
+          "type": "artist",
+          "uri": "spotify:artist:4FmJD0mpgQ70SNt2EKK8tq"
+        }
+      ],
+      "disc_number": 1,
+      "track_number": 1,
+      "duration_ms": 224006,
+      "external_ids": {
+        "isrc": "QZNWV2003617"
+      },
+      "external_urls": {
+        "spotify": "https://open.spotify.com/track/587nP9FS8o0p70Z3JS9Uem"
+      },
+      "href": "https://api.spotify.com/v1/tracks/587nP9FS8o0p70Z3JS9Uem",
+      "id": "2nRKJI3XsWPb5d8VXwn2iK",
+      "name": "Valhalla Calling",
+      "popularity": 5,
+      "uri": "spotify:track:2nRKJI3XsWPb5d8VXwn2iK",
+      "is_local": false,
+      "linked_from": {
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/587nP9FS8o0p70Z3JS9Uem"
+        },
+        "href": "https://api.spotify.com/v1/tracks/587nP9FS8o0p70Z3JS9Uem",
+        "id": "587nP9FS8o0p70Z3JS9Uem",
+        "type": "track",
+        "uri": "spotify:track:587nP9FS8o0p70Z3JS9Uem"
+      }
+    },
+    "spotify:track:6zrR8itT7IfAdl5aS7YQyt": {
+      "preview_url": null,
+      "is_playable": true,
+      "explicit": true,
+      "type": "track",
+      "episode": false,
+      "track": true,
+      "album": {
+        "is_playable": true,
+        "type": "album",
+        "album_type": "album",
+        "href": "https://api.spotify.com/v1/albums/7CI6R1kJLUMfBl4FOKP8nc",
+        "id": "7CI6R1kJLUMfBl4FOKP8nc",
+        "images": [
+          {
+            "height": 640,
+            "url": "https://i.scdn.co/image/ab67616d0000b27311ecca6bd4e5576dbf694e6c",
+            "width": 640
+          },
+          {
+            "height": 300,
+            "url": "https://i.scdn.co/image/ab67616d00001e0211ecca6bd4e5576dbf694e6c",
+            "width": 300
+          },
+          {
+            "height": 64,
+            "url": "https://i.scdn.co/image/ab67616d0000485111ecca6bd4e5576dbf694e6c",
+            "width": 64
+          }
+        ],
+        "name": "Invincible",
+        "release_date": "2017-12-01",
+        "release_date_precision": "day",
+        "uri": "spotify:album:7CI6R1kJLUMfBl4FOKP8nc",
+        "artists": [
+          {
+            "external_urls": {
+              "spotify": "https://open.spotify.com/artist/2iLpvtffIrQ4bMYrFPRN4x"
+            },
+            "href": "https://api.spotify.com/v1/artists/2iLpvtffIrQ4bMYrFPRN4x",
+            "id": "2iLpvtffIrQ4bMYrFPRN4x",
+            "name": "Deuce",
+            "type": "artist",
+            "uri": "spotify:artist:2iLpvtffIrQ4bMYrFPRN4x"
+          }
+        ],
+        "external_urls": {
+          "spotify": "https://open.spotify.com/album/7CI6R1kJLUMfBl4FOKP8nc"
+        },
+        "total_tracks": 14
+      },
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/2iLpvtffIrQ4bMYrFPRN4x"
+          },
+          "href": "https://api.spotify.com/v1/artists/2iLpvtffIrQ4bMYrFPRN4x",
+          "id": "2iLpvtffIrQ4bMYrFPRN4x",
+          "name": "Deuce",
+          "type": "artist",
+          "uri": "spotify:artist:2iLpvtffIrQ4bMYrFPRN4x"
+        }
+      ],
+      "disc_number": 1,
+      "track_number": 1,
+      "duration_ms": 184346,
+      "external_ids": {
+        "isrc": "USDPK1700182"
+      },
+      "external_urls": {
+        "spotify": "https://open.spotify.com/track/6zrR8itT7IfAdl5aS7YQyt"
+      },
+      "href": "https://api.spotify.com/v1/tracks/6zrR8itT7IfAdl5aS7YQyt",
+      "id": "6zrR8itT7IfAdl5aS7YQyt",
+      "name": "Here I Come",
+      "popularity": 34,
+      "uri": "spotify:track:6zrR8itT7IfAdl5aS7YQyt",
+      "is_local": false
+    },
+    "spotify:track:60a0Rd6pjrkxjPbaKzXjfq": {
+      "preview_url": null,
+      "is_playable": true,
+      "explicit": false,
+      "type": "track",
+      "episode": false,
+      "track": true,
+      "album": {
+        "is_playable": true,
+        "type": "album",
+        "album_type": "album",
+        "href": "https://api.spotify.com/v1/albums/6hPkbAV3ZXpGZBGUvL6jVM",
+        "id": "6hPkbAV3ZXpGZBGUvL6jVM",
+        "images": [
+          {
+            "height": 640,
+            "url": "https://i.scdn.co/image/ab67616d0000b273e2f039481babe23658fc719a",
+            "width": 640
+          },
+          {
+            "height": 300,
+            "url": "https://i.scdn.co/image/ab67616d00001e02e2f039481babe23658fc719a",
+            "width": 300
+          },
+          {
+            "height": 64,
+            "url": "https://i.scdn.co/image/ab67616d00004851e2f039481babe23658fc719a",
+            "width": 64
+          }
+        ],
+        "name": "Hybrid Theory (Bonus Edition)",
+        "release_date": "2000-10-24",
+        "release_date_precision": "day",
+        "uri": "spotify:album:6hPkbAV3ZXpGZBGUvL6jVM",
+        "artists": [
+          {
+            "external_urls": {
+              "spotify": "https://open.spotify.com/artist/6XyY86QOPPrYVGvF9ch6wz"
+            },
+            "href": "https://api.spotify.com/v1/artists/6XyY86QOPPrYVGvF9ch6wz",
+            "id": "6XyY86QOPPrYVGvF9ch6wz",
+            "name": "Linkin Park",
+            "type": "artist",
+            "uri": "spotify:artist:6XyY86QOPPrYVGvF9ch6wz"
+          }
+        ],
+        "external_urls": {
+          "spotify": "https://open.spotify.com/album/6hPkbAV3ZXpGZBGUvL6jVM"
+        },
+        "total_tracks": 15
+      },
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/6XyY86QOPPrYVGvF9ch6wz"
+          },
+          "href": "https://api.spotify.com/v1/artists/6XyY86QOPPrYVGvF9ch6wz",
+          "id": "6XyY86QOPPrYVGvF9ch6wz",
+          "name": "Linkin Park",
+          "type": "artist",
+          "uri": "spotify:artist:6XyY86QOPPrYVGvF9ch6wz"
+        }
+      ],
+      "disc_number": 1,
+      "track_number": 8,
+      "duration_ms": 216880,
+      "external_ids": {
+        "isrc": "USWB10002407"
+      },
+      "external_urls": {
+        "spotify": "https://open.spotify.com/track/60a0Rd6pjrkxjPbaKzXjfq"
+      },
+      "href": "https://api.spotify.com/v1/tracks/60a0Rd6pjrkxjPbaKzXjfq",
+      "id": "60a0Rd6pjrkxjPbaKzXjfq",
+      "name": "In the End",
+      "popularity": 83,
+      "uri": "spotify:track:60a0Rd6pjrkxjPbaKzXjfq",
+      "is_local": false
+    },
+    "spotify:track:3gVhsZtseYtY1fMuyYq06F": {
+      "preview_url": null,
+      "is_playable": true,
+      "explicit": false,
+      "type": "track",
+      "episode": false,
+      "track": true,
+      "album": {
+        "is_playable": true,
+        "type": "album",
+        "album_type": "album",
+        "href": "https://api.spotify.com/v1/albums/1CtTTpKbHU8KbHRB4LmBbv",
+        "id": "1CtTTpKbHU8KbHRB4LmBbv",
+        "images": [
+          {
+            "height": 640,
+            "url": "https://i.scdn.co/image/ab67616d0000b2738b2c42026277efc3e058855b",
+            "width": 640
+          },
+          {
+            "height": 300,
+            "url": "https://i.scdn.co/image/ab67616d00001e028b2c42026277efc3e058855b",
+            "width": 300
+          },
+          {
+            "height": 64,
+            "url": "https://i.scdn.co/image/ab67616d000048518b2c42026277efc3e058855b",
+            "width": 64
+          }
+        ],
+        "name": "Mutter",
+        "release_date": "2001-04-02",
+        "release_date_precision": "day",
+        "uri": "spotify:album:1CtTTpKbHU8KbHRB4LmBbv",
+        "artists": [
+          {
+            "external_urls": {
+              "spotify": "https://open.spotify.com/artist/6wWVKhxIU2cEi0K81v7HvP"
+            },
+            "href": "https://api.spotify.com/v1/artists/6wWVKhxIU2cEi0K81v7HvP",
+            "id": "6wWVKhxIU2cEi0K81v7HvP",
+            "name": "Rammstein",
+            "type": "artist",
+            "uri": "spotify:artist:6wWVKhxIU2cEi0K81v7HvP"
+          }
+        ],
+        "external_urls": {
+          "spotify": "https://open.spotify.com/album/1CtTTpKbHU8KbHRB4LmBbv"
+        },
+        "total_tracks": 11
+      },
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/6wWVKhxIU2cEi0K81v7HvP"
+          },
+          "href": "https://api.spotify.com/v1/artists/6wWVKhxIU2cEi0K81v7HvP",
+          "id": "6wWVKhxIU2cEi0K81v7HvP",
+          "name": "Rammstein",
+          "type": "artist",
+          "uri": "spotify:artist:6wWVKhxIU2cEi0K81v7HvP"
+        }
+      ],
+      "disc_number": 1,
+      "track_number": 3,
+      "duration_ms": 272440,
+      "external_ids": {
+        "isrc": "DEN120003766"
+      },
+      "external_urls": {
+        "spotify": "https://open.spotify.com/track/3gVhsZtseYtY1fMuyYq06F"
+      },
+      "href": "https://api.spotify.com/v1/tracks/3gVhsZtseYtY1fMuyYq06F",
+      "id": "3gVhsZtseYtY1fMuyYq06F",
+      "name": "Sonne",
+      "popularity": 74,
+      "uri": "spotify:track:3gVhsZtseYtY1fMuyYq06F",
+      "is_local": false
+    },
+    "spotify:track:5DXGHZ3QDh0FcLXPMWTv9U": {
+      "preview_url": null,
+      "is_playable": true,
+      "explicit": false,
+      "type": "track",
+      "episode": false,
+      "track": true,
+      "album": {
+        "is_playable": true,
+        "type": "album",
+        "album_type": "album",
+        "href": "https://api.spotify.com/v1/albums/1X472EvsSqH09RyrqbtyXU",
+        "id": "1X472EvsSqH09RyrqbtyXU",
+        "images": [
+          {
+            "height": 640,
+            "url": "https://i.scdn.co/image/ab67616d0000b273163d1c5eddd35473f030f2d4",
+            "width": 640
+          },
+          {
+            "height": 300,
+            "url": "https://i.scdn.co/image/ab67616d00001e02163d1c5eddd35473f030f2d4",
+            "width": 300
+          },
+          {
+            "height": 64,
+            "url": "https://i.scdn.co/image/ab67616d00004851163d1c5eddd35473f030f2d4",
+            "width": 64
+          }
+        ],
+        "name": "Papercuts",
+        "release_date": "2024-04-12",
+        "release_date_precision": "day",
+        "uri": "spotify:album:1X472EvsSqH09RyrqbtyXU",
+        "artists": [
+          {
+            "external_urls": {
+              "spotify": "https://open.spotify.com/artist/6XyY86QOPPrYVGvF9ch6wz"
+            },
+            "href": "https://api.spotify.com/v1/artists/6XyY86QOPPrYVGvF9ch6wz",
+            "id": "6XyY86QOPPrYVGvF9ch6wz",
+            "name": "Linkin Park",
+            "type": "artist",
+            "uri": "spotify:artist:6XyY86QOPPrYVGvF9ch6wz"
+          }
+        ],
+        "external_urls": {
+          "spotify": "https://open.spotify.com/album/1X472EvsSqH09RyrqbtyXU"
+        },
+        "total_tracks": 20
+      },
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/6XyY86QOPPrYVGvF9ch6wz"
+          },
+          "href": "https://api.spotify.com/v1/artists/6XyY86QOPPrYVGvF9ch6wz",
+          "id": "6XyY86QOPPrYVGvF9ch6wz",
+          "name": "Linkin Park",
+          "type": "artist",
+          "uri": "spotify:artist:6XyY86QOPPrYVGvF9ch6wz"
+        }
+      ],
+      "disc_number": 1,
+      "track_number": 6,
+      "duration_ms": 216293,
+      "external_ids": {
+        "isrc": "USWB11201322"
+      },
+      "external_urls": {
+        "spotify": "https://open.spotify.com/track/5DXGHZ3QDh0FcLXPMWTv9U"
+      },
+      "href": "https://api.spotify.com/v1/tracks/5DXGHZ3QDh0FcLXPMWTv9U",
+      "id": "5DXGHZ3QDh0FcLXPMWTv9U",
+      "name": "In the End",
+      "popularity": 43,
+      "uri": "spotify:track:5DXGHZ3QDh0FcLXPMWTv9U",
+      "is_local": false
+    },
+    "spotify:track:60eOMEt3WNVX1m1jmApmnX": {
+      "preview_url": null,
+      "is_playable": true,
+      "explicit": false,
+      "type": "track",
+      "episode": false,
+      "track": true,
+      "album": {
+        "is_playable": true,
+        "type": "album",
+        "album_type": "album",
+        "href": "https://api.spotify.com/v1/albums/4VzzEviJGYUtAeSsJlI9QB",
+        "id": "4VzzEviJGYUtAeSsJlI9QB",
+        "images": [
+          {
+            "height": 640,
+            "url": "https://i.scdn.co/image/ab67616d0000b273af52c228c9619ff6298b08cd",
+            "width": 640
+          },
+          {
+            "height": 300,
+            "url": "https://i.scdn.co/image/ab67616d00001e02af52c228c9619ff6298b08cd",
+            "width": 300
+          },
+          {
+            "height": 64,
+            "url": "https://i.scdn.co/image/ab67616d00004851af52c228c9619ff6298b08cd",
+            "width": 64
+          }
+        ],
+        "name": "Woodstock",
+        "release_date": "2017-06-16",
+        "release_date_precision": "day",
+        "uri": "spotify:album:4VzzEviJGYUtAeSsJlI9QB",
+        "artists": [
+          {
+            "external_urls": {
+              "spotify": "https://open.spotify.com/artist/4kI8Ie27vjvonwaB2ePh8T"
+            },
+            "href": "https://api.spotify.com/v1/artists/4kI8Ie27vjvonwaB2ePh8T",
+            "id": "4kI8Ie27vjvonwaB2ePh8T",
+            "name": "Portugal. The Man",
+            "type": "artist",
+            "uri": "spotify:artist:4kI8Ie27vjvonwaB2ePh8T"
+          }
+        ],
+        "external_urls": {
+          "spotify": "https://open.spotify.com/album/4VzzEviJGYUtAeSsJlI9QB"
+        },
+        "total_tracks": 10
+      },
+      "artists": [
+        {
+          "external_urls": {
+            "spotify": "https://open.spotify.com/artist/4kI8Ie27vjvonwaB2ePh8T"
+          },
+          "href": "https://api.spotify.com/v1/artists/4kI8Ie27vjvonwaB2ePh8T",
+          "id": "4kI8Ie27vjvonwaB2ePh8T",
+          "name": "Portugal. The Man",
+          "type": "artist",
+          "uri": "spotify:artist:4kI8Ie27vjvonwaB2ePh8T"
+        }
+      ],
+      "disc_number": 1,
+      "track_number": 3,
+      "duration_ms": 246786,
+      "external_ids": {
+        "isrc": "USAT21700816"
+      },
+      "external_urls": {
+        "spotify": "https://open.spotify.com/track/60eOMEt3WNVX1m1jmApmnX"
+      },
+      "href": "https://api.spotify.com/v1/tracks/60eOMEt3WNVX1m1jmApmnX",
+      "id": "60eOMEt3WNVX1m1jmApmnX",
+      "name": "Live in the Moment",
+      "popularity": 59,
+      "uri": "spotify:track:60eOMEt3WNVX1m1jmApmnX",
+      "is_local": false
+    }
+  },
+  1360751
+]

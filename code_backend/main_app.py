@@ -1,18 +1,15 @@
-from spotipy import SpotifyException
-
 from code_backend.shared_config import *
-from code_backend.music_classes import Album, Artist, Device, Playlist, Track, User
-from code_backend.database_access import APP_DATABASE
-from code_backend.secondary_methods import (
-    uri_to_id, load_json, url_to_uri,
-    SpotifyApiException, HttpException, print_error, debug_json,
-    key_from_dict
-)
-import code_backend.spotify_web_api as spotify
+
 import code_backend.organize_playlist as organize
+import code_backend.spotify_web_api as spotify
+from code_backend.database_access import APP_DATABASE
+from code_backend.exceptions import SpotifyApiException, HttpException, InputException
+from code_backend.music_classes import Album, Artist, Device, Playlist, Track, User
+from code_backend.secondary_methods import (
+    uri_to_id, load_json, url_to_uri, key_from_dict, check_limits
+)
 
 
-# cps: 3
 class Player:
     def __init__(self) -> None:
         self.player = spotify.get_playback_state()
@@ -57,6 +54,7 @@ class Player:
         """
         Switch the current playing state of Spotify Player
         :return:
+        :raises HttpException: if request response code is not good
         """
         if not self.dummy_player:
             if self.is_playing:
@@ -76,6 +74,7 @@ class Player:
     def initialize_player(self):
         """
         Get Information of the current Player state of Spotify (updates attributes)
+        :raises SpotifyApiException: if Exception related to Spotify API occurs
         """
         if spotify.get_playback_state() is None:
             raise SpotifyApiException(f"No Spotify instance found\n{CCYAN}Please start Spotify and retry{TEXTCOLOR}")
@@ -96,6 +95,15 @@ class Player:
 
     @progress.setter
     def progress(self, position_ms: int):
+        """
+
+        :param position_ms:
+        :return:
+        :raises InputException: if input is invalid
+        """
+        if not isinstance(position_ms, int):
+            raise InputException(item_value=position_ms, valid_values="positive integer", valid_types=int)
+
         if not self.dummy_player:
             spotify.seek_to_position(position_ms=position_ms)
             self.progress = position_ms
@@ -106,13 +114,12 @@ class Player:
         """
         Change the current playing state of Spotify Player
         :param new_state: 'off': off, 'context': on, 'track': only repeat current track
+        :raises InputException: if input is invalid
         """
+        if not isinstance(new_state, str) or new_state not in ['context', 'track', 'off']:
+            raise InputException(item_value=new_state, valid_values=('context', 'track', 'off'), valid_types=str)
+
         if not self.dummy_player:
-            if new_state not in ['context', 'track', 'off']:
-                raise SpotifyApiException(
-                    f"Unknown state: {new_state}\n"
-                    f"{CCYAN}Valid states are 'context', 'track' and 'off'{TEXTCOLOR}"
-                )
             spotify.set_repeat_mode(new_repeat_mode=new_state)
             self.repeat_state = new_state
 
@@ -138,11 +145,15 @@ class Player:
             spotify.toggle_playback_shuffle(new_state=self.shuffle_state)
 
     def set_volume(self, new_volume: int):
-        if not (0 <= new_volume <= 100):
-            raise SpotifyApiException(
-                f"Invalid volume: {new_volume}\n"
-                "Volume must be in the range from 0 to 100."
-            )
+        """
+
+        :param new_volume:
+        :return:
+        :raises InputException: if input is invalid
+        """
+        if not isinstance(new_volume, int) or 100 < new_volume < 0:
+            raise InputException(item_value=new_volume, valid_values="0 <= new_volume <= 100", valid_types=int)
+
         if not self.dummy_player:
             spotify.set_playback_volume(new_volume=new_volume)
 
@@ -179,16 +190,19 @@ class Player:
             self.next_track()
 
 
-# cps: 3
 class SpotifyApp:
+    """"""
     def __init__(self) -> None:
+        """
+
+        :raises SpotifyApiException: if Exception related to Spotify API occurs
+        """
         available_markets = spotify.get_available_markets()
         if MARKET not in available_markets:
             raise SpotifyApiException(f"Market '{MARKET}' not available\n{CCYAN}Available markets: {available_markets}{TEXTCOLOR}")
 
         self.player = Player()
 
-    # mps: 3
     @staticmethod
     def find_object(
         search_query: str,
@@ -211,6 +225,8 @@ class SpotifyApp:
         :param limit: The maximum number of results to return in each item type. Default: 20. Minimum: 1. Maximum: 50.
         :param offset: The index of the first result to return. Use with limit to get the next page of search results. Default: 0. Minimum: 0. Maximum: 1000-limit.
         :return: Dict containing the Search response, in the form of {item_uri: item}
+        :raises InputException: if input is invalid
+        :raises LimitException: if limit is invalid
         """
 
         results = spotify.search_for_item(
@@ -244,7 +260,6 @@ class SpotifyApp:
         return results
 
 
-    # mps: 3
     @staticmethod
     def random_tracks_by_genre(genre_name: str, track_count: int = 10, create_playlist: bool = False) -> dict | None:
         """
@@ -253,7 +268,19 @@ class SpotifyApp:
         :param track_count: how many tracks to return
         :param create_playlist: whether to create a new playlist
         :return: Dict containing Spotify Tracks, in the form of {track_uri: track} or (playlist_id, playlist_name)
+        :raises InputException: if input is invalid
+        :raises SpotifyApiException: if Exception related to Spotify API occurs
         """
+
+        if not isinstance(genre_name, str):
+            raise InputException(item_value=genre_name,valid_values="suitable string", valid_types=str)
+
+        if not isinstance(track_count, int) or track_count < 0:
+            raise InputException(item_value=track_count,valid_values="positive integer", valid_types=int)
+
+        if not isinstance(create_playlist, bool):
+            raise InputException(item_value=create_playlist,valid_values=(True, False), valid_types=bool)
+
         random_tracks = set()
 
         anti_loop = track_count
@@ -290,7 +317,7 @@ class SpotifyApp:
                 playlist_id = uri_to_id(key_from_dict(new_playlist))
                 spotify.add_items_to_playlist(
                     playlist_id=playlist_id,
-                    uris=list(random_tracks),
+                    track_uris=list(random_tracks),
                 )
 
                 # Todo: add custom genre image

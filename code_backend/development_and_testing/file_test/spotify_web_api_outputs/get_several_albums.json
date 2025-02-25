@@ -1,0 +1,935 @@
+{
+  "spotify:album:79fnwKynD56xIXBVWkyaE5": {
+    "album_type": "album",
+    "total_tracks": 13,
+    "is_playable": true,
+    "external_urls": {
+      "spotify": "https://open.spotify.com/album/79fnwKynD56xIXBVWkyaE5"
+    },
+    "href": "https://api.spotify.com/v1/albums/79fnwKynD56xIXBVWkyaE5?market=DE",
+    "id": "79fnwKynD56xIXBVWkyaE5",
+    "images": [
+      {
+        "url": "https://i.scdn.co/image/ab67616d0000b27350f150160dc660c5b11c754c",
+        "height": 640,
+        "width": 640
+      },
+      {
+        "url": "https://i.scdn.co/image/ab67616d00001e0250f150160dc660c5b11c754c",
+        "height": 300,
+        "width": 300
+      },
+      {
+        "url": "https://i.scdn.co/image/ab67616d0000485150f150160dc660c5b11c754c",
+        "height": 64,
+        "width": 64
+      }
+    ],
+    "name": "Coming Home (Deluxe Edition)",
+    "release_date": "2017-04-07",
+    "release_date_precision": "day",
+    "type": "album",
+    "uri": "spotify:album:79fnwKynD56xIXBVWkyaE5",
+    "artists": [
+      {
+        "external_urls": {
+          "spotify": "https://open.spotify.com/artist/2CmaKO2zEGJ1NWpS1yfVGz"
+        },
+        "href": "https://api.spotify.com/v1/artists/2CmaKO2zEGJ1NWpS1yfVGz",
+        "id": "2CmaKO2zEGJ1NWpS1yfVGz",
+        "name": "Falling In Reverse",
+        "type": "artist",
+        "uri": "spotify:artist:2CmaKO2zEGJ1NWpS1yfVGz"
+      }
+    ],
+    "tracks": {
+      "href": "https://api.spotify.com/v1/albums/79fnwKynD56xIXBVWkyaE5/tracks?offset=0&limit=50&market=DE",
+      "limit": 50,
+      "next": null,
+      "offset": 0,
+      "previous": null,
+      "total": 13,
+      "items": [
+        {
+          "artists": [
+            {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/artist/2CmaKO2zEGJ1NWpS1yfVGz"
+              },
+              "href": "https://api.spotify.com/v1/artists/2CmaKO2zEGJ1NWpS1yfVGz",
+              "id": "2CmaKO2zEGJ1NWpS1yfVGz",
+              "name": "Falling In Reverse",
+              "type": "artist",
+              "uri": "spotify:artist:2CmaKO2zEGJ1NWpS1yfVGz"
+            }
+          ],
+          "disc_number": 1,
+          "duration_ms": 294038,
+          "explicit": false,
+          "external_urls": {
+            "spotify": "https://open.spotify.com/track/4Jk6ZV8QsuWNLVzjX8VeE6"
+          },
+          "href": "https://api.spotify.com/v1/tracks/4Jk6ZV8QsuWNLVzjX8VeE6",
+          "id": "4Jk6ZV8QsuWNLVzjX8VeE6",
+          "is_playable": true,
+          "name": "Coming Home",
+          "preview_url": null,
+          "track_number": 1,
+          "type": "track",
+          "uri": "spotify:track:4Jk6ZV8QsuWNLVzjX8VeE6",
+          "is_local": false
+        },
+        {
+          "artists": [
+            {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/artist/2CmaKO2zEGJ1NWpS1yfVGz"
+              },
+              "href": "https://api.spotify.com/v1/artists/2CmaKO2zEGJ1NWpS1yfVGz",
+              "id": "2CmaKO2zEGJ1NWpS1yfVGz",
+              "name": "Falling In Reverse",
+              "type": "artist",
+              "uri": "spotify:artist:2CmaKO2zEGJ1NWpS1yfVGz"
+            }
+          ],
+          "disc_number": 1,
+          "duration_ms": 234804,
+          "explicit": false,
+          "external_urls": {
+            "spotify": "https://open.spotify.com/track/5IwdHDiLWES2K4XtUjKn4A"
+          },
+          "href": "https://api.spotify.com/v1/tracks/5IwdHDiLWES2K4XtUjKn4A",
+          "id": "5IwdHDiLWES2K4XtUjKn4A",
+          "is_playable": true,
+          "name": "Broken",
+          "preview_url": null,
+          "track_number": 2,
+          "type": "track",
+          "uri": "spotify:track:5IwdHDiLWES2K4XtUjKn4A",
+          "is_local": false
+        },
+        {
+          "artists": [
+            {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/artist/2CmaKO2zEGJ1NWpS1yfVGz"
+              },
+              "href": "https://api.spotify.com/v1/artists/2CmaKO2zEGJ1NWpS1yfVGz",
+              "id": "2CmaKO2zEGJ1NWpS1yfVGz",
+              "name": "Falling In Reverse",
+              "type": "artist",
+              "uri": "spotify:artist:2CmaKO2zEGJ1NWpS1yfVGz"
+            }
+          ],
+          "disc_number": 1,
+          "duration_ms": 253452,
+          "explicit": false,
+          "external_urls": {
+            "spotify": "https://open.spotify.com/track/4VXhicGRlRz7Z4OQUOzkpT"
+          },
+          "href": "https://api.spotify.com/v1/tracks/4VXhicGRlRz7Z4OQUOzkpT",
+          "id": "4VXhicGRlRz7Z4OQUOzkpT",
+          "is_playable": true,
+          "name": "Loser",
+          "preview_url": null,
+          "track_number": 3,
+          "type": "track",
+          "uri": "spotify:track:4VXhicGRlRz7Z4OQUOzkpT",
+          "is_local": false
+        },
+        {
+          "artists": [
+            {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/artist/2CmaKO2zEGJ1NWpS1yfVGz"
+              },
+              "href": "https://api.spotify.com/v1/artists/2CmaKO2zEGJ1NWpS1yfVGz",
+              "id": "2CmaKO2zEGJ1NWpS1yfVGz",
+              "name": "Falling In Reverse",
+              "type": "artist",
+              "uri": "spotify:artist:2CmaKO2zEGJ1NWpS1yfVGz"
+            }
+          ],
+          "disc_number": 1,
+          "duration_ms": 191248,
+          "explicit": true,
+          "external_urls": {
+            "spotify": "https://open.spotify.com/track/6uSpReaIE9rsnvhmpsJClE"
+          },
+          "href": "https://api.spotify.com/v1/tracks/6uSpReaIE9rsnvhmpsJClE",
+          "id": "6uSpReaIE9rsnvhmpsJClE",
+          "is_playable": true,
+          "name": "Fuck You and All Your Friends",
+          "preview_url": null,
+          "track_number": 4,
+          "type": "track",
+          "uri": "spotify:track:6uSpReaIE9rsnvhmpsJClE",
+          "is_local": false
+        },
+        {
+          "artists": [
+            {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/artist/2CmaKO2zEGJ1NWpS1yfVGz"
+              },
+              "href": "https://api.spotify.com/v1/artists/2CmaKO2zEGJ1NWpS1yfVGz",
+              "id": "2CmaKO2zEGJ1NWpS1yfVGz",
+              "name": "Falling In Reverse",
+              "type": "artist",
+              "uri": "spotify:artist:2CmaKO2zEGJ1NWpS1yfVGz"
+            }
+          ],
+          "disc_number": 1,
+          "duration_ms": 218536,
+          "explicit": true,
+          "external_urls": {
+            "spotify": "https://open.spotify.com/track/5ElqFDw0Rn1tkdaJpDJSrx"
+          },
+          "href": "https://api.spotify.com/v1/tracks/5ElqFDw0Rn1tkdaJpDJSrx",
+          "id": "5ElqFDw0Rn1tkdaJpDJSrx",
+          "is_playable": true,
+          "name": "I Hate Everyone",
+          "preview_url": null,
+          "track_number": 5,
+          "type": "track",
+          "uri": "spotify:track:5ElqFDw0Rn1tkdaJpDJSrx",
+          "is_local": false
+        },
+        {
+          "artists": [
+            {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/artist/2CmaKO2zEGJ1NWpS1yfVGz"
+              },
+              "href": "https://api.spotify.com/v1/artists/2CmaKO2zEGJ1NWpS1yfVGz",
+              "id": "2CmaKO2zEGJ1NWpS1yfVGz",
+              "name": "Falling In Reverse",
+              "type": "artist",
+              "uri": "spotify:artist:2CmaKO2zEGJ1NWpS1yfVGz"
+            }
+          ],
+          "disc_number": 1,
+          "duration_ms": 235334,
+          "explicit": true,
+          "external_urls": {
+            "spotify": "https://open.spotify.com/track/2uEhFDZqAjzflscjStpmzd"
+          },
+          "href": "https://api.spotify.com/v1/tracks/2uEhFDZqAjzflscjStpmzd",
+          "id": "2uEhFDZqAjzflscjStpmzd",
+          "is_playable": true,
+          "name": "I'm Bad At Life",
+          "preview_url": null,
+          "track_number": 6,
+          "type": "track",
+          "uri": "spotify:track:2uEhFDZqAjzflscjStpmzd",
+          "is_local": false
+        },
+        {
+          "artists": [
+            {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/artist/2CmaKO2zEGJ1NWpS1yfVGz"
+              },
+              "href": "https://api.spotify.com/v1/artists/2CmaKO2zEGJ1NWpS1yfVGz",
+              "id": "2CmaKO2zEGJ1NWpS1yfVGz",
+              "name": "Falling In Reverse",
+              "type": "artist",
+              "uri": "spotify:artist:2CmaKO2zEGJ1NWpS1yfVGz"
+            }
+          ],
+          "disc_number": 1,
+          "duration_ms": 228183,
+          "explicit": false,
+          "external_urls": {
+            "spotify": "https://open.spotify.com/track/0unL0Fgezp3ts4aFtT2FB5"
+          },
+          "href": "https://api.spotify.com/v1/tracks/0unL0Fgezp3ts4aFtT2FB5",
+          "id": "0unL0Fgezp3ts4aFtT2FB5",
+          "is_playable": true,
+          "name": "Hanging On",
+          "preview_url": null,
+          "track_number": 7,
+          "type": "track",
+          "uri": "spotify:track:0unL0Fgezp3ts4aFtT2FB5",
+          "is_local": false
+        },
+        {
+          "artists": [
+            {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/artist/2CmaKO2zEGJ1NWpS1yfVGz"
+              },
+              "href": "https://api.spotify.com/v1/artists/2CmaKO2zEGJ1NWpS1yfVGz",
+              "id": "2CmaKO2zEGJ1NWpS1yfVGz",
+              "name": "Falling In Reverse",
+              "type": "artist",
+              "uri": "spotify:artist:2CmaKO2zEGJ1NWpS1yfVGz"
+            }
+          ],
+          "disc_number": 1,
+          "duration_ms": 193447,
+          "explicit": false,
+          "external_urls": {
+            "spotify": "https://open.spotify.com/track/2b5wWbvt1IPBEMczBPtuB1"
+          },
+          "href": "https://api.spotify.com/v1/tracks/2b5wWbvt1IPBEMczBPtuB1",
+          "id": "2b5wWbvt1IPBEMczBPtuB1",
+          "is_playable": true,
+          "name": "Superhero",
+          "preview_url": null,
+          "track_number": 8,
+          "type": "track",
+          "uri": "spotify:track:2b5wWbvt1IPBEMczBPtuB1",
+          "is_local": false
+        },
+        {
+          "artists": [
+            {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/artist/2CmaKO2zEGJ1NWpS1yfVGz"
+              },
+              "href": "https://api.spotify.com/v1/artists/2CmaKO2zEGJ1NWpS1yfVGz",
+              "id": "2CmaKO2zEGJ1NWpS1yfVGz",
+              "name": "Falling In Reverse",
+              "type": "artist",
+              "uri": "spotify:artist:2CmaKO2zEGJ1NWpS1yfVGz"
+            }
+          ],
+          "disc_number": 1,
+          "duration_ms": 229568,
+          "explicit": false,
+          "external_urls": {
+            "spotify": "https://open.spotify.com/track/4UAdIHc0paTuEJkZWgPiIq"
+          },
+          "href": "https://api.spotify.com/v1/tracks/4UAdIHc0paTuEJkZWgPiIq",
+          "id": "4UAdIHc0paTuEJkZWgPiIq",
+          "is_playable": true,
+          "name": "Straight to Hell",
+          "preview_url": null,
+          "track_number": 9,
+          "type": "track",
+          "uri": "spotify:track:4UAdIHc0paTuEJkZWgPiIq",
+          "is_local": false
+        },
+        {
+          "artists": [
+            {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/artist/2CmaKO2zEGJ1NWpS1yfVGz"
+              },
+              "href": "https://api.spotify.com/v1/artists/2CmaKO2zEGJ1NWpS1yfVGz",
+              "id": "2CmaKO2zEGJ1NWpS1yfVGz",
+              "name": "Falling In Reverse",
+              "type": "artist",
+              "uri": "spotify:artist:2CmaKO2zEGJ1NWpS1yfVGz"
+            }
+          ],
+          "disc_number": 1,
+          "duration_ms": 263896,
+          "explicit": false,
+          "external_urls": {
+            "spotify": "https://open.spotify.com/track/5y6znJ3osgBVDzis8xcNTJ"
+          },
+          "href": "https://api.spotify.com/v1/tracks/5y6znJ3osgBVDzis8xcNTJ",
+          "id": "5y6znJ3osgBVDzis8xcNTJ",
+          "is_playable": true,
+          "name": "I Don't Mind",
+          "preview_url": null,
+          "track_number": 10,
+          "type": "track",
+          "uri": "spotify:track:5y6znJ3osgBVDzis8xcNTJ",
+          "is_local": false
+        },
+        {
+          "artists": [
+            {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/artist/2CmaKO2zEGJ1NWpS1yfVGz"
+              },
+              "href": "https://api.spotify.com/v1/artists/2CmaKO2zEGJ1NWpS1yfVGz",
+              "id": "2CmaKO2zEGJ1NWpS1yfVGz",
+              "name": "Falling In Reverse",
+              "type": "artist",
+              "uri": "spotify:artist:2CmaKO2zEGJ1NWpS1yfVGz"
+            }
+          ],
+          "disc_number": 1,
+          "duration_ms": 287922,
+          "explicit": false,
+          "external_urls": {
+            "spotify": "https://open.spotify.com/track/0kTcEzRcDLjCP27TglgeeP"
+          },
+          "href": "https://api.spotify.com/v1/tracks/0kTcEzRcDLjCP27TglgeeP",
+          "id": "0kTcEzRcDLjCP27TglgeeP",
+          "is_playable": true,
+          "name": "The Departure",
+          "preview_url": null,
+          "track_number": 11,
+          "type": "track",
+          "uri": "spotify:track:0kTcEzRcDLjCP27TglgeeP",
+          "is_local": false
+        },
+        {
+          "artists": [
+            {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/artist/2CmaKO2zEGJ1NWpS1yfVGz"
+              },
+              "href": "https://api.spotify.com/v1/artists/2CmaKO2zEGJ1NWpS1yfVGz",
+              "id": "2CmaKO2zEGJ1NWpS1yfVGz",
+              "name": "Falling In Reverse",
+              "type": "artist",
+              "uri": "spotify:artist:2CmaKO2zEGJ1NWpS1yfVGz"
+            }
+          ],
+          "disc_number": 1,
+          "duration_ms": 208082,
+          "explicit": true,
+          "external_urls": {
+            "spotify": "https://open.spotify.com/track/6RlbiSkOcXM6OjcVlELWV3"
+          },
+          "href": "https://api.spotify.com/v1/tracks/6RlbiSkOcXM6OjcVlELWV3",
+          "id": "6RlbiSkOcXM6OjcVlELWV3",
+          "is_playable": true,
+          "name": "Right Now",
+          "preview_url": null,
+          "track_number": 12,
+          "type": "track",
+          "uri": "spotify:track:6RlbiSkOcXM6OjcVlELWV3",
+          "is_local": false
+        },
+        {
+          "artists": [
+            {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/artist/2CmaKO2zEGJ1NWpS1yfVGz"
+              },
+              "href": "https://api.spotify.com/v1/artists/2CmaKO2zEGJ1NWpS1yfVGz",
+              "id": "2CmaKO2zEGJ1NWpS1yfVGz",
+              "name": "Falling In Reverse",
+              "type": "artist",
+              "uri": "spotify:artist:2CmaKO2zEGJ1NWpS1yfVGz"
+            }
+          ],
+          "disc_number": 1,
+          "duration_ms": 241777,
+          "explicit": true,
+          "external_urls": {
+            "spotify": "https://open.spotify.com/track/77JbeEezKoH1w38l2zLFGM"
+          },
+          "href": "https://api.spotify.com/v1/tracks/77JbeEezKoH1w38l2zLFGM",
+          "id": "77JbeEezKoH1w38l2zLFGM",
+          "is_playable": true,
+          "name": "Paparazzi",
+          "preview_url": null,
+          "track_number": 13,
+          "type": "track",
+          "uri": "spotify:track:77JbeEezKoH1w38l2zLFGM",
+          "is_local": false
+        }
+      ]
+    },
+    "copyrights": [
+      {
+        "text": "2017 Epitaph",
+        "type": "C"
+      },
+      {
+        "text": "2017 Epitaph",
+        "type": "P"
+      }
+    ],
+    "external_ids": {
+      "upc": "0045778753260"
+    },
+    "genres": [],
+    "label": "Epitaph",
+    "popularity": 55
+  },
+  "spotify:album:7CI6R1kJLUMfBl4FOKP8nc": {
+    "album_type": "album",
+    "total_tracks": 14,
+    "is_playable": true,
+    "external_urls": {
+      "spotify": "https://open.spotify.com/album/7CI6R1kJLUMfBl4FOKP8nc"
+    },
+    "href": "https://api.spotify.com/v1/albums/7CI6R1kJLUMfBl4FOKP8nc?market=DE",
+    "id": "7CI6R1kJLUMfBl4FOKP8nc",
+    "images": [
+      {
+        "url": "https://i.scdn.co/image/ab67616d0000b27311ecca6bd4e5576dbf694e6c",
+        "height": 640,
+        "width": 640
+      },
+      {
+        "url": "https://i.scdn.co/image/ab67616d00001e0211ecca6bd4e5576dbf694e6c",
+        "height": 300,
+        "width": 300
+      },
+      {
+        "url": "https://i.scdn.co/image/ab67616d0000485111ecca6bd4e5576dbf694e6c",
+        "height": 64,
+        "width": 64
+      }
+    ],
+    "name": "Invincible",
+    "release_date": "2017-12-01",
+    "release_date_precision": "day",
+    "type": "album",
+    "uri": "spotify:album:7CI6R1kJLUMfBl4FOKP8nc",
+    "artists": [
+      {
+        "external_urls": {
+          "spotify": "https://open.spotify.com/artist/2iLpvtffIrQ4bMYrFPRN4x"
+        },
+        "href": "https://api.spotify.com/v1/artists/2iLpvtffIrQ4bMYrFPRN4x",
+        "id": "2iLpvtffIrQ4bMYrFPRN4x",
+        "name": "Deuce",
+        "type": "artist",
+        "uri": "spotify:artist:2iLpvtffIrQ4bMYrFPRN4x"
+      }
+    ],
+    "tracks": {
+      "href": "https://api.spotify.com/v1/albums/7CI6R1kJLUMfBl4FOKP8nc/tracks?offset=0&limit=50&market=DE",
+      "limit": 50,
+      "next": null,
+      "offset": 0,
+      "previous": null,
+      "total": 14,
+      "items": [
+        {
+          "artists": [
+            {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/artist/2iLpvtffIrQ4bMYrFPRN4x"
+              },
+              "href": "https://api.spotify.com/v1/artists/2iLpvtffIrQ4bMYrFPRN4x",
+              "id": "2iLpvtffIrQ4bMYrFPRN4x",
+              "name": "Deuce",
+              "type": "artist",
+              "uri": "spotify:artist:2iLpvtffIrQ4bMYrFPRN4x"
+            }
+          ],
+          "disc_number": 1,
+          "duration_ms": 184346,
+          "explicit": true,
+          "external_urls": {
+            "spotify": "https://open.spotify.com/track/6zrR8itT7IfAdl5aS7YQyt"
+          },
+          "href": "https://api.spotify.com/v1/tracks/6zrR8itT7IfAdl5aS7YQyt",
+          "id": "6zrR8itT7IfAdl5aS7YQyt",
+          "is_playable": true,
+          "name": "Here I Come",
+          "preview_url": null,
+          "track_number": 1,
+          "type": "track",
+          "uri": "spotify:track:6zrR8itT7IfAdl5aS7YQyt",
+          "is_local": false
+        },
+        {
+          "artists": [
+            {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/artist/2iLpvtffIrQ4bMYrFPRN4x"
+              },
+              "href": "https://api.spotify.com/v1/artists/2iLpvtffIrQ4bMYrFPRN4x",
+              "id": "2iLpvtffIrQ4bMYrFPRN4x",
+              "name": "Deuce",
+              "type": "artist",
+              "uri": "spotify:artist:2iLpvtffIrQ4bMYrFPRN4x"
+            }
+          ],
+          "disc_number": 1,
+          "duration_ms": 271653,
+          "explicit": true,
+          "external_urls": {
+            "spotify": "https://open.spotify.com/track/7wMBiapp4RAOm1UTkvreN3"
+          },
+          "href": "https://api.spotify.com/v1/tracks/7wMBiapp4RAOm1UTkvreN3",
+          "id": "7wMBiapp4RAOm1UTkvreN3",
+          "is_playable": true,
+          "name": "Hell's Gonna Break Loose",
+          "preview_url": null,
+          "track_number": 2,
+          "type": "track",
+          "uri": "spotify:track:7wMBiapp4RAOm1UTkvreN3",
+          "is_local": false
+        },
+        {
+          "artists": [
+            {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/artist/2iLpvtffIrQ4bMYrFPRN4x"
+              },
+              "href": "https://api.spotify.com/v1/artists/2iLpvtffIrQ4bMYrFPRN4x",
+              "id": "2iLpvtffIrQ4bMYrFPRN4x",
+              "name": "Deuce",
+              "type": "artist",
+              "uri": "spotify:artist:2iLpvtffIrQ4bMYrFPRN4x"
+            }
+          ],
+          "disc_number": 1,
+          "duration_ms": 215400,
+          "explicit": true,
+          "external_urls": {
+            "spotify": "https://open.spotify.com/track/2x2Ad3qBjAOu9xndGQ38xJ"
+          },
+          "href": "https://api.spotify.com/v1/tracks/2x2Ad3qBjAOu9xndGQ38xJ",
+          "id": "2x2Ad3qBjAOu9xndGQ38xJ",
+          "is_playable": true,
+          "name": "Bitch This Is It",
+          "preview_url": null,
+          "track_number": 3,
+          "type": "track",
+          "uri": "spotify:track:2x2Ad3qBjAOu9xndGQ38xJ",
+          "is_local": false
+        },
+        {
+          "artists": [
+            {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/artist/2iLpvtffIrQ4bMYrFPRN4x"
+              },
+              "href": "https://api.spotify.com/v1/artists/2iLpvtffIrQ4bMYrFPRN4x",
+              "id": "2iLpvtffIrQ4bMYrFPRN4x",
+              "name": "Deuce",
+              "type": "artist",
+              "uri": "spotify:artist:2iLpvtffIrQ4bMYrFPRN4x"
+            }
+          ],
+          "disc_number": 1,
+          "duration_ms": 232951,
+          "explicit": true,
+          "external_urls": {
+            "spotify": "https://open.spotify.com/track/7JD3EmcItisEyje2TMV466"
+          },
+          "href": "https://api.spotify.com/v1/tracks/7JD3EmcItisEyje2TMV466",
+          "id": "7JD3EmcItisEyje2TMV466",
+          "is_playable": true,
+          "name": "Gone Tomorrow Here Today",
+          "preview_url": null,
+          "track_number": 4,
+          "type": "track",
+          "uri": "spotify:track:7JD3EmcItisEyje2TMV466",
+          "is_local": false
+        },
+        {
+          "artists": [
+            {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/artist/2iLpvtffIrQ4bMYrFPRN4x"
+              },
+              "href": "https://api.spotify.com/v1/artists/2iLpvtffIrQ4bMYrFPRN4x",
+              "id": "2iLpvtffIrQ4bMYrFPRN4x",
+              "name": "Deuce",
+              "type": "artist",
+              "uri": "spotify:artist:2iLpvtffIrQ4bMYrFPRN4x"
+            }
+          ],
+          "disc_number": 1,
+          "duration_ms": 244853,
+          "explicit": true,
+          "external_urls": {
+            "spotify": "https://open.spotify.com/track/2neadGUsSe4q2YL9x2M3HQ"
+          },
+          "href": "https://api.spotify.com/v1/tracks/2neadGUsSe4q2YL9x2M3HQ",
+          "id": "2neadGUsSe4q2YL9x2M3HQ",
+          "is_playable": true,
+          "name": "World On Fire",
+          "preview_url": null,
+          "track_number": 5,
+          "type": "track",
+          "uri": "spotify:track:2neadGUsSe4q2YL9x2M3HQ",
+          "is_local": false
+        },
+        {
+          "artists": [
+            {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/artist/2iLpvtffIrQ4bMYrFPRN4x"
+              },
+              "href": "https://api.spotify.com/v1/artists/2iLpvtffIrQ4bMYrFPRN4x",
+              "id": "2iLpvtffIrQ4bMYrFPRN4x",
+              "name": "Deuce",
+              "type": "artist",
+              "uri": "spotify:artist:2iLpvtffIrQ4bMYrFPRN4x"
+            }
+          ],
+          "disc_number": 1,
+          "duration_ms": 293653,
+          "explicit": true,
+          "external_urls": {
+            "spotify": "https://open.spotify.com/track/023YrpD0YTWrFsxOl8ZnHg"
+          },
+          "href": "https://api.spotify.com/v1/tracks/023YrpD0YTWrFsxOl8ZnHg",
+          "id": "023YrpD0YTWrFsxOl8ZnHg",
+          "is_playable": true,
+          "name": "My Buddy",
+          "preview_url": null,
+          "track_number": 6,
+          "type": "track",
+          "uri": "spotify:track:023YrpD0YTWrFsxOl8ZnHg",
+          "is_local": false
+        },
+        {
+          "artists": [
+            {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/artist/2iLpvtffIrQ4bMYrFPRN4x"
+              },
+              "href": "https://api.spotify.com/v1/artists/2iLpvtffIrQ4bMYrFPRN4x",
+              "id": "2iLpvtffIrQ4bMYrFPRN4x",
+              "name": "Deuce",
+              "type": "artist",
+              "uri": "spotify:artist:2iLpvtffIrQ4bMYrFPRN4x"
+            }
+          ],
+          "disc_number": 1,
+          "duration_ms": 279613,
+          "explicit": true,
+          "external_urls": {
+            "spotify": "https://open.spotify.com/track/5BY4kideu8rsHz1ozFsD0N"
+          },
+          "href": "https://api.spotify.com/v1/tracks/5BY4kideu8rsHz1ozFsD0N",
+          "id": "5BY4kideu8rsHz1ozFsD0N",
+          "is_playable": true,
+          "name": "Invincible",
+          "preview_url": null,
+          "track_number": 7,
+          "type": "track",
+          "uri": "spotify:track:5BY4kideu8rsHz1ozFsD0N",
+          "is_local": false
+        },
+        {
+          "artists": [
+            {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/artist/2iLpvtffIrQ4bMYrFPRN4x"
+              },
+              "href": "https://api.spotify.com/v1/artists/2iLpvtffIrQ4bMYrFPRN4x",
+              "id": "2iLpvtffIrQ4bMYrFPRN4x",
+              "name": "Deuce",
+              "type": "artist",
+              "uri": "spotify:artist:2iLpvtffIrQ4bMYrFPRN4x"
+            }
+          ],
+          "disc_number": 1,
+          "duration_ms": 243552,
+          "explicit": true,
+          "external_urls": {
+            "spotify": "https://open.spotify.com/track/1L2fLlgZE0sdQJnRKZh9Pe"
+          },
+          "href": "https://api.spotify.com/v1/tracks/1L2fLlgZE0sdQJnRKZh9Pe",
+          "id": "1L2fLlgZE0sdQJnRKZh9Pe",
+          "is_playable": true,
+          "name": "Bad Attitude",
+          "preview_url": null,
+          "track_number": 8,
+          "type": "track",
+          "uri": "spotify:track:1L2fLlgZE0sdQJnRKZh9Pe",
+          "is_local": false
+        },
+        {
+          "artists": [
+            {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/artist/2iLpvtffIrQ4bMYrFPRN4x"
+              },
+              "href": "https://api.spotify.com/v1/artists/2iLpvtffIrQ4bMYrFPRN4x",
+              "id": "2iLpvtffIrQ4bMYrFPRN4x",
+              "name": "Deuce",
+              "type": "artist",
+              "uri": "spotify:artist:2iLpvtffIrQ4bMYrFPRN4x"
+            }
+          ],
+          "disc_number": 1,
+          "duration_ms": 223746,
+          "explicit": true,
+          "external_urls": {
+            "spotify": "https://open.spotify.com/track/1J8CK9o0tgSAylB7qrewiW"
+          },
+          "href": "https://api.spotify.com/v1/tracks/1J8CK9o0tgSAylB7qrewiW",
+          "id": "1J8CK9o0tgSAylB7qrewiW",
+          "is_playable": true,
+          "name": "Best Of Me",
+          "preview_url": null,
+          "track_number": 9,
+          "type": "track",
+          "uri": "spotify:track:1J8CK9o0tgSAylB7qrewiW",
+          "is_local": false
+        },
+        {
+          "artists": [
+            {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/artist/2iLpvtffIrQ4bMYrFPRN4x"
+              },
+              "href": "https://api.spotify.com/v1/artists/2iLpvtffIrQ4bMYrFPRN4x",
+              "id": "2iLpvtffIrQ4bMYrFPRN4x",
+              "name": "Deuce",
+              "type": "artist",
+              "uri": "spotify:artist:2iLpvtffIrQ4bMYrFPRN4x"
+            }
+          ],
+          "disc_number": 1,
+          "duration_ms": 296200,
+          "explicit": true,
+          "external_urls": {
+            "spotify": "https://open.spotify.com/track/5d5cv3Fy47XNzN2hjtdPWB"
+          },
+          "href": "https://api.spotify.com/v1/tracks/5d5cv3Fy47XNzN2hjtdPWB",
+          "id": "5d5cv3Fy47XNzN2hjtdPWB",
+          "is_playable": true,
+          "name": "Thank You",
+          "preview_url": null,
+          "track_number": 10,
+          "type": "track",
+          "uri": "spotify:track:5d5cv3Fy47XNzN2hjtdPWB",
+          "is_local": false
+        },
+        {
+          "artists": [
+            {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/artist/2iLpvtffIrQ4bMYrFPRN4x"
+              },
+              "href": "https://api.spotify.com/v1/artists/2iLpvtffIrQ4bMYrFPRN4x",
+              "id": "2iLpvtffIrQ4bMYrFPRN4x",
+              "name": "Deuce",
+              "type": "artist",
+              "uri": "spotify:artist:2iLpvtffIrQ4bMYrFPRN4x"
+            }
+          ],
+          "disc_number": 1,
+          "duration_ms": 247840,
+          "explicit": true,
+          "external_urls": {
+            "spotify": "https://open.spotify.com/track/02gtKckI6prGeHwlycKh9R"
+          },
+          "href": "https://api.spotify.com/v1/tracks/02gtKckI6prGeHwlycKh9R",
+          "id": "02gtKckI6prGeHwlycKh9R",
+          "is_playable": true,
+          "name": "Catch Me If You Can",
+          "preview_url": null,
+          "track_number": 11,
+          "type": "track",
+          "uri": "spotify:track:02gtKckI6prGeHwlycKh9R",
+          "is_local": false
+        },
+        {
+          "artists": [
+            {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/artist/2iLpvtffIrQ4bMYrFPRN4x"
+              },
+              "href": "https://api.spotify.com/v1/artists/2iLpvtffIrQ4bMYrFPRN4x",
+              "id": "2iLpvtffIrQ4bMYrFPRN4x",
+              "name": "Deuce",
+              "type": "artist",
+              "uri": "spotify:artist:2iLpvtffIrQ4bMYrFPRN4x"
+            }
+          ],
+          "disc_number": 1,
+          "duration_ms": 308093,
+          "explicit": true,
+          "external_urls": {
+            "spotify": "https://open.spotify.com/track/0KYHXOjibpsC87L4YWWEXS"
+          },
+          "href": "https://api.spotify.com/v1/tracks/0KYHXOjibpsC87L4YWWEXS",
+          "id": "0KYHXOjibpsC87L4YWWEXS",
+          "is_playable": true,
+          "name": "It's Alright It's Ok",
+          "preview_url": null,
+          "track_number": 12,
+          "type": "track",
+          "uri": "spotify:track:0KYHXOjibpsC87L4YWWEXS",
+          "is_local": false
+        },
+        {
+          "artists": [
+            {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/artist/2iLpvtffIrQ4bMYrFPRN4x"
+              },
+              "href": "https://api.spotify.com/v1/artists/2iLpvtffIrQ4bMYrFPRN4x",
+              "id": "2iLpvtffIrQ4bMYrFPRN4x",
+              "name": "Deuce",
+              "type": "artist",
+              "uri": "spotify:artist:2iLpvtffIrQ4bMYrFPRN4x"
+            },
+            {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/artist/3VVxcUwzqxPmemulSyVqw8"
+              },
+              "href": "https://api.spotify.com/v1/artists/3VVxcUwzqxPmemulSyVqw8",
+              "id": "3VVxcUwzqxPmemulSyVqw8",
+              "name": "Gadjet",
+              "type": "artist",
+              "uri": "spotify:artist:3VVxcUwzqxPmemulSyVqw8"
+            }
+          ],
+          "disc_number": 1,
+          "duration_ms": 300799,
+          "explicit": false,
+          "external_urls": {
+            "spotify": "https://open.spotify.com/track/3ihKTgHc5nscRacIUWIw5C"
+          },
+          "href": "https://api.spotify.com/v1/tracks/3ihKTgHc5nscRacIUWIw5C",
+          "id": "3ihKTgHc5nscRacIUWIw5C",
+          "is_playable": true,
+          "name": "Talkin' About You",
+          "preview_url": null,
+          "track_number": 13,
+          "type": "track",
+          "uri": "spotify:track:3ihKTgHc5nscRacIUWIw5C",
+          "is_local": false
+        },
+        {
+          "artists": [
+            {
+              "external_urls": {
+                "spotify": "https://open.spotify.com/artist/2iLpvtffIrQ4bMYrFPRN4x"
+              },
+              "href": "https://api.spotify.com/v1/artists/2iLpvtffIrQ4bMYrFPRN4x",
+              "id": "2iLpvtffIrQ4bMYrFPRN4x",
+              "name": "Deuce",
+              "type": "artist",
+              "uri": "spotify:artist:2iLpvtffIrQ4bMYrFPRN4x"
+            }
+          ],
+          "disc_number": 1,
+          "duration_ms": 309640,
+          "explicit": false,
+          "external_urls": {
+            "spotify": "https://open.spotify.com/track/4CiIsb4nuu583OYj1gzVhU"
+          },
+          "href": "https://api.spotify.com/v1/tracks/4CiIsb4nuu583OYj1gzVhU",
+          "id": "4CiIsb4nuu583OYj1gzVhU",
+          "is_playable": true,
+          "name": "Pull Me Under",
+          "preview_url": null,
+          "track_number": 14,
+          "type": "track",
+          "uri": "spotify:track:4CiIsb4nuu583OYj1gzVhU",
+          "is_local": false
+        }
+      ]
+    },
+    "copyrights": [
+      {
+        "text": "2017 Endurance Music Group",
+        "type": "C"
+      },
+      {
+        "text": "2017 Endurance Music Group",
+        "type": "P"
+      }
+    ],
+    "external_ids": {
+      "upc": "849320019169"
+    },
+    "genres": [],
+    "label": "Endurance Music Group",
+    "popularity": 34
+  }
+}

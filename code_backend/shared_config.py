@@ -30,14 +30,15 @@ from urllib.parse import quote, urlencode
 import numpy
 import requests
 from dotenv import find_dotenv, load_dotenv, set_key
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, UnidentifiedImageError
+from PIL.ImageFile import ImageFile
 from requests import PreparedRequest
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from flask import Flask, jsonify, redirect, request
 
 
@@ -48,6 +49,8 @@ NO_IMAGE_PATH = os.path.join(ROOT_DIR_PATH, 'Icons', 'Spotipy_if_no_image.png')
 MAIN_DATABASE_PATH = os.path.join(ROOT_DIR_PATH, 'Databases', 'main_database.db')
 JSON_PATH = os.path.join(ROOT_DIR_PATH, 'Databases', 'JSON_Files', 'spotify_devices.json')
 ENV_PATH = os.path.join(ROOT_DIR_PATH,'code_backend', '.env')
+SPOTIFY_HTTP_ERRORS_PATH = os.path.join(ROOT_DIR_PATH, "Databases", "JSON_Files", "http_errors.json")
+
 
 load_dotenv(ENV_PATH)
 CLIENT_ID = os.getenv("CLIENT_ID")
@@ -57,17 +60,18 @@ SPOTIFY_USERNAME = os.getenv("SPOTIFY_USERNAME")
 SPOTIFY_PASSWORD = os.getenv("SPOTIFY_PASSWORD")
 MARKET = 'DE'
 SCOPES = " ".join([
-    'user-read-playback-state',
-    'user-read-currently-playing',
-    'user-modify-playback-state',
-    'user-library-read',
-    'user-top-read',
-    'ugc-image-upload',
-    'playlist-modify-public',
     'playlist-modify-private',
+    'playlist-modify-public',
     'playlist-read-private',
+    'ugc-image-upload',
+    'user-follow-read',
+    'user-library-read',
+    'user-modify-playback-state',
+    'user-read-currently-playing',
     'user-read-email',
-    'user-follow-read'
+    'user-read-playback-state',
+    'user-read-recently-played',
+    'user-top-read'
 ])
 
 MAX_REQUESTS_PER_CALL = 500
