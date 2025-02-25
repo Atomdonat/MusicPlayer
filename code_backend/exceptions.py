@@ -1,16 +1,16 @@
 """
 Project specific exceptions
 
-for Docstrings:
-        :raises CustomException: If Exception occurs
-        :raises DatabaseException: If Exception related to the Database occurs
-        :raises HttpException: if request response code is not good
-        :raises InputException: if input is invalid
-        :raises LimitException: if limit is invalid
-        :raises RequestException: if Exception occurs while using requests
-        :raises SpotifyApiException: if Exception related to Spotify API occurs
-        :raises SpotifyIdException: if spotify id is invalid
-        :raises SpotifyUriException: if spotify uri is invalid
+Exception Definition for Docstrings:
+:raises CustomException: If Exception occurs
+:raises DatabaseException: If Exception related to the Database occurs
+:raises HttpException: if request response code is not good
+:raises InputException: if input is invalid
+:raises LimitException: if limit is invalid
+:raises RequestException: if Exception occurs while using requests
+:raises SpotifyApiException: if Exception related to Spotify API occurs
+:raises SpotifyIdException: if spotify id is invalid
+:raises SpotifyUriException: if spotify uri is invalid
 
 """
 
@@ -20,6 +20,7 @@ from code_backend.shared_config import *
 def absolute_path(path: str) -> str:
     """
     Converts the given path to an absolute path. If the path is absolute nothing happens. If in doubt just call it
+
     :param path: (relative) path to convert
     :return: absolute path
     """
@@ -37,6 +38,7 @@ def absolute_path(path: str) -> str:
 def load_json(path: str) -> dict:
     """
     Load JSON from .json file
+
     :param path: path to file
     :return: JSON object
     """
@@ -56,7 +58,8 @@ class HttpException(SpotifyApiException):
     Exception raised for HTTP errors when interacting with the Spotify Web API.
 
     Web API uses the following response status codes, as defined in the RFC 2616 and RFC 6585
-    Official API Documentation: https://developer.spotify.com/documentation/web-api/concepts/api-calls#response-status-codes
+
+    **Official API Documentation:** https://developer.spotify.com/documentation/web-api/concepts/api-calls#response-status-codes
     """
     def __init__(self, error_code, request_query: requests.Request, response_text: str):
         """

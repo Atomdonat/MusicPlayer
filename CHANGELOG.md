@@ -50,6 +50,11 @@
 
 [//]: # (- )
 
+## [1.15.6] - 25.02.2025 - generated Documentation
+
+### Changes in Backend Code
+- improved Docstrings for Documentation 
+
 
 ## [1.15.5] - 25.02.2025 - Exception Handling and Input Checks
 

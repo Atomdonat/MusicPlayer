@@ -13,6 +13,7 @@ class MyAppDatabase:
     def __init__(self, database_file: str) -> None:
         """
         initialize the database using a path
+
         :param database_file: (relative) path to the database file
         :raises DatabaseException: If Exception related to the Database occurs
         """
@@ -148,6 +149,7 @@ class MyAppDatabase:
     def execute_query(self, sql_query: str, parameters=None, fetch: bool = False) -> None | list:
         """
         Execute a SQL query with parameters
+
         :param sql_query: SQL query
         :param parameters: parameters to pass to the SQL query
         :param fetch: If to Fetch Data (True: Fetch/Get Data; False: Update/Give Data)
@@ -184,6 +186,7 @@ class MyAppDatabase:
     def execute_script(self, sql_script: str, fetch: bool = False):
         """
         Execute a SQL script without parameters
+
         :param sql_script: SQL query
         :param fetch: If to Fetch Data (True: Fetch/Get Data; False: Update/Give Data)
         :return: If fetch=True data gets returned, else returns None
@@ -214,6 +217,7 @@ class MyAppDatabase:
     def execute_queue_queries(self) -> None:
         """
         Execute all SQL queries queued in self.sql_query_queue
+
         :return:
         :raises DatabaseException: If Exception related to the Database occurs
         :raises InputException: if input is invalid
@@ -224,6 +228,7 @@ class MyAppDatabase:
     def split_queries(self, sql_query: str, parameter: dict):
         """
         Split SQL script/query containing multiple commands with parameters into multiple queries and execute them. The placeholders in the script must match the keys in parameter.
+
         :param sql_query: SQL query
         :param parameter: parameters to pass to the SQL query
         :return:
@@ -245,6 +250,7 @@ class MyAppDatabase:
     def add_dummies(self) -> None:
         """
         Add dummy data to the database to avoid Exceptions and to test methods
+
         :return:
         :raises CustomException: If Exception occurs
         :raises DatabaseException: If Exception related to the Database occurs
@@ -264,6 +270,7 @@ class MyAppDatabase:
     def initialize_tables(self) -> None:
         """
         Initialize the tables in the database. Creates the tables 'albums', 'artists', 'playlists', 'tracks', 'users', 'devices' and 'genres' and add dummy data
+
         :return:
         :raises CustomException: If Exception occurs
         :raises DatabaseException: If Exception related to the Database occurs
@@ -281,6 +288,7 @@ class MyAppDatabase:
     ) -> None:
         """
         Adds item to table if it does not exist, otherwise, the insert will be ignored. If not all required keys are passed, an error is raised with exit code 1.
+
         :param table_name: Which table to add
         :param kwargs: which arguments are passed to database
         :return:
@@ -311,6 +319,7 @@ class MyAppDatabase:
     def remove_specific_item(self, table_name: Literal['albums', 'artists', 'tracks', 'playlists', 'users', 'genres', 'devices'], item_id: str):
         """
         remove item from table by ID
+
         :param table_name: name of the table
         :param item_id: what item to remove
         :return:
@@ -341,6 +350,7 @@ class MyAppDatabase:
     def reset_table(self, table_name: Literal['albums', 'artists', 'tracks', 'playlists', 'users', 'genres', 'devices']):
         """
         reset table to initial state
+
         :param table_name: name of the table
         :return:
         :raises CustomException: If Exception occurs
@@ -357,6 +367,7 @@ class MyAppDatabase:
     def reset_database(self):
         """
         reset complete database (all tables) to initial state
+
         :return:
         :raises CustomException: If Exception occurs
         :raises DatabaseException: If Exception related to the Database occurs
@@ -378,6 +389,7 @@ class MyAppDatabase:
     ) -> list | str | int | float | None:
         """
         fetch item from table by ID
+
         :param table_name: name of the table
         :param item_id: what item to fetch
         :param table_column: what column to fetch (default: '*' fetches all columns)
@@ -415,6 +427,7 @@ class MyAppDatabase:
     ) -> list | None:
         """
         fetch column from table by ID
+
         :param table_name: name of the table
         :param table_column: what column to fetch
         :return: wanted column
@@ -447,6 +460,7 @@ class MyAppDatabase:
     ) -> dict | None:
         """
         Fetch one or more rows from a table, where the value of target_column is target_value.
+
         :param table_name: Table to fetch from
         :param target_column: Which column to match
         :param target_value: Which value to match
@@ -487,6 +501,7 @@ class MyAppDatabase:
     ) -> None:
         """
         Updates the specified value from table by ID
+
         :param table_name: name of the table
         :param item_id: what item to update
         :param table_column: which column to update

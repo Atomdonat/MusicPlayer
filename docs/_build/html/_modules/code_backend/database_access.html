@@ -1,0 +1,693 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>code_backend.database_access &mdash; MusicPlayer 1.15.6 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=1f24c071"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            MusicPlayer
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">MusicPlayer</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">MusicPlayer</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">code_backend.database_access</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for code_backend.database_access</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">code_backend.shared_config</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">code_backend.secondary_methods</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">dict_factory</span><span class="p">,</span> <span class="n">get_str_from_json_file</span><span class="p">,</span>
+    <span class="n">load_sql_query</span><span class="p">,</span> <span class="n">absolute_path</span><span class="p">,</span> <span class="n">check_spotify_id</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">code_backend.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseException</span><span class="p">,</span> <span class="n">InputException</span><span class="p">,</span> <span class="n">CustomException</span><span class="p">,</span> <span class="n">SpotifyIdException</span>
+
+
+<div class="viewcode-block" id="MyAppDatabase">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.database_access.MyAppDatabase">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyAppDatabase</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    class acting as Data Access Object for Database. Handling all access to the Database</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        initialize the database using a path</span>
+
+<span class="sd">        :param database_file: (relative) path to the database file</span>
+<span class="sd">        :raises DatabaseException: If Exception related to the Database occurs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">database_file</span> <span class="o">=</span> <span class="n">absolute_path</span><span class="p">(</span><span class="n">database_file</span><span class="p">,</span> <span class="n">is_file</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">database_file</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">DatabaseException</span><span class="p">(</span><span class="s2">&quot;Database file not found&quot;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">database</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">database_file</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sql_query_queue</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DatabaseException</span><span class="p">(</span><span class="n">error_message</span><span class="o">=</span><span class="n">error</span><span class="p">,</span> <span class="n">more_infos</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Exception occurred while connecting to database: &#39;</span><span class="si">{</span><span class="n">database_file</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">table_struct</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;albums&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;album_id&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;album_name&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;album_uri&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;album_url&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;album_image&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;genre_names&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;total_duration&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;track_count&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;artist_ids&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;track_ids&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;popularity&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;blacklisted&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;album_json&quot;</span>
+            <span class="p">],</span>
+            <span class="s2">&quot;artists&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;artist_id&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;artist_name&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;artist_uri&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;artist_url&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;artist_image&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;genre_names&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;follower&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;album_ids&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;playlist_ids&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;top_track_ids&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;popularity&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;blacklisted&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;artist_json&quot;</span>
+            <span class="p">],</span>
+            <span class="s2">&quot;devices&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;device_id&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;device_name&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;device_type&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;is_active&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;is_private_session&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;is_restricted&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;supports_volume&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;volume_percent&quot;</span>
+            <span class="p">],</span>
+            <span class="s2">&quot;genres&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;genre_name&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;acousticness_lower_limit&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;acousticness_upper_limit&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;danceability_lower_limit&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;danceability_upper_limit&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;duration_ms&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;energy_lower_limit&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;energy_upper_limit&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;instrumentalness_lower_limit&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;instrumentalness_upper_limit&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;key_lower_limit&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;key_upper_limit&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;liveness_lower_limit&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;liveness_upper_limit&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;loudness_lower_limit&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;loudness_upper_limit&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;mode_lower_limit&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;mode_upper_limit&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;speechiness_lower_limit&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;speechiness_upper_limit&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;tempo_lower_limit&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;tempo_upper_limit&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;valence_lower_limit&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;valence_upper_limit&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;popularity&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;blacklisted&quot;</span>
+            <span class="p">],</span>
+            <span class="s2">&quot;playlists&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;playlist_id&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;playlist_name&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;playlist_uri&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;playlist_url&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;playlist_image&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;genre_names&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;total_duration&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;track_count&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;owner_id&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;track_ids&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;popularity&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;blacklisted&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;playlist_json&quot;</span>
+            <span class="p">],</span>
+            <span class="s2">&quot;tracks&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;track_id&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;track_name&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;track_uri&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;track_url&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;track_image&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;genre_names&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;track_duration&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;artist_ids&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;album_id&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;playlist_ids&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;popularity&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;blacklisted&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;track_json&quot;</span>
+            <span class="p">],</span>
+            <span class="s2">&quot;users&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;user_id&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;user_name&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;user_uri&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;user_url&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;user_image&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;follower&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;playlist_ids&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;top_track_ids&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;top_artist_ids&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;top_genre_names&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;popularity&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;blacklisted&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;user_json&quot;</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+
+<div class="viewcode-block" id="MyAppDatabase.execute_query">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.database_access.MyAppDatabase.execute_query">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">execute_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sql_query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fetch</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Execute a SQL query with parameters</span>
+
+<span class="sd">        :param sql_query: SQL query</span>
+<span class="sd">        :param parameters: parameters to pass to the SQL query</span>
+<span class="sd">        :param fetch: If to Fetch Data (True: Fetch/Get Data; False: Update/Give Data)</span>
+<span class="sd">        :return: If fetch=True data gets returned, else returns None</span>
+<span class="sd">        :raises DatabaseException: If Exception related to the Database occurs</span>
+<span class="sd">        :raises InputException: if input is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sql_query</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">sql_query</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;sql query&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fetch</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">fetch</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql_query</span><span class="p">,</span> <span class="n">parameters</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">fetch</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+                <span class="c1"># Replaces image byte strings with &#39;...&#39; (shortens output immensely)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="n">pop_type</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">][:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span>
+                    <span class="n">parameters</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pop_type</span><span class="si">}</span><span class="s2">_image&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pop_type</span><span class="si">}</span><span class="s2">_image&quot;</span><span class="p">][:</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;...&quot;</span>
+                <span class="k">raise</span> <span class="n">DatabaseException</span><span class="p">(</span><span class="n">error_message</span><span class="o">=</span><span class="n">error</span><span class="p">,</span> <span class="n">more_infos</span><span class="o">=</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Exception occurred while trying to execute query: &#39;</span><span class="si">{</span><span class="n">sql_query</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">with parameters: </span><span class="si">{</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span><span class="w"> </span><span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span><span class="w"> </span><span class="nb">dict</span><span class="p">)</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="n">parameters</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">parameters</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">))</span>
+
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="MyAppDatabase.execute_script">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.database_access.MyAppDatabase.execute_script">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">execute_script</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sql_script</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">fetch</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Execute a SQL script without parameters</span>
+
+<span class="sd">        :param sql_script: SQL query</span>
+<span class="sd">        :param fetch: If to Fetch Data (True: Fetch/Get Data; False: Update/Give Data)</span>
+<span class="sd">        :return: If fetch=True data gets returned, else returns None</span>
+<span class="sd">        :raises DatabaseException: If Exception related to the Database occurs</span>
+<span class="sd">        :raises InputException: if input is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sql_script</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">sql_script</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;sql script&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fetch</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">fetch</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">fetch</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql_script</span><span class="p">,</span> <span class="p">())</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">executescript</span><span class="p">(</span><span class="n">sql_script</span><span class="p">)</span>
+
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">DatabaseException</span><span class="p">(</span><span class="n">error_message</span><span class="o">=</span><span class="n">error</span><span class="p">,</span> <span class="n">more_infos</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Exception occurred while trying to execute script: &#39;</span><span class="si">{</span><span class="n">sql_script</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="MyAppDatabase.execute_queue_queries">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.database_access.MyAppDatabase.execute_queue_queries">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">execute_queue_queries</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Execute all SQL queries queued in self.sql_query_queue</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        :raises DatabaseException: If Exception related to the Database occurs</span>
+<span class="sd">        :raises InputException: if input is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">sql_query</span><span class="p">,</span> <span class="n">sql_values</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sql_query_queue</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">execute_query</span><span class="p">(</span><span class="n">sql_query</span><span class="p">,</span> <span class="n">sql_values</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MyAppDatabase.split_queries">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.database_access.MyAppDatabase.split_queries">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">split_queries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sql_query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">parameter</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Split SQL script/query containing multiple commands with parameters into multiple queries and execute them. The placeholders in the script must match the keys in parameter.</span>
+
+<span class="sd">        :param sql_query: SQL query</span>
+<span class="sd">        :param parameter: parameters to pass to the SQL query</span>
+<span class="sd">        :return:</span>
+<span class="sd">        :raises DatabaseException: If Exception related to the Database occurs</span>
+<span class="sd">        :raises InputException: if input is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sql_query</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">sql_query</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;sql query&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">parameter</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;{column: value}&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+        <span class="n">queries</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s2">;&quot;</span> <span class="k">for</span> <span class="n">query</span> <span class="ow">in</span> <span class="n">sql_query</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)]</span>
+
+        <span class="k">for</span> <span class="n">query</span> <span class="ow">in</span> <span class="n">queries</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">execute_query</span><span class="p">(</span><span class="n">sql_query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="n">parameter</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MyAppDatabase.add_dummies">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.database_access.MyAppDatabase.add_dummies">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_dummies</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add dummy data to the database to avoid Exceptions and to test methods</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        :raises CustomException: If Exception occurs</span>
+<span class="sd">        :raises DatabaseException: If Exception related to the Database occurs</span>
+<span class="sd">        :raises InputException: if input is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;album_json&quot;</span><span class="p">:</span> <span class="n">get_str_from_json_file</span><span class="p">(</span><span class="n">absolute_path</span><span class="p">(</span><span class="s2">&quot;/Databases/JSON_Files/spotify_album_dummy.json&quot;</span><span class="p">)),</span>
+            <span class="s2">&quot;artist_json&quot;</span><span class="p">:</span> <span class="n">get_str_from_json_file</span><span class="p">(</span><span class="n">absolute_path</span><span class="p">(</span><span class="s2">&quot;/Databases/JSON_Files/spotify_artist_dummy.json&quot;</span><span class="p">)),</span>
+            <span class="s2">&quot;device_json&quot;</span><span class="p">:</span> <span class="n">get_str_from_json_file</span><span class="p">(</span><span class="n">absolute_path</span><span class="p">(</span><span class="s2">&quot;/Databases/JSON_Files/spotify_device_dummy.json&quot;</span><span class="p">)),</span>
+            <span class="s2">&quot;playlist_json&quot;</span><span class="p">:</span> <span class="n">get_str_from_json_file</span><span class="p">(</span><span class="n">absolute_path</span><span class="p">(</span><span class="s2">&quot;/Databases/JSON_Files/spotify_playlist_dummy.json&quot;</span><span class="p">)),</span>
+            <span class="s2">&quot;track_json&quot;</span><span class="p">:</span> <span class="n">get_str_from_json_file</span><span class="p">(</span><span class="n">absolute_path</span><span class="p">(</span><span class="s2">&quot;/Databases/JSON_Files/spotify_track_dummy.json&quot;</span><span class="p">)),</span>
+            <span class="s2">&quot;user_json&quot;</span><span class="p">:</span> <span class="n">get_str_from_json_file</span><span class="p">(</span><span class="n">absolute_path</span><span class="p">(</span><span class="s2">&quot;/Databases/JSON_Files/spotify_user_dummy.json&quot;</span><span class="p">))</span>
+        <span class="p">}</span>
+        <span class="n">sql_script</span> <span class="o">=</span> <span class="n">load_sql_query</span><span class="p">(</span><span class="s2">&quot;code_backend/sql_queries/insert_dummies.sql&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">split_queries</span><span class="p">(</span><span class="n">sql_query</span><span class="o">=</span><span class="n">sql_script</span><span class="p">,</span> <span class="n">parameter</span><span class="o">=</span><span class="n">params</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MyAppDatabase.initialize_tables">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.database_access.MyAppDatabase.initialize_tables">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">initialize_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the tables in the database. Creates the tables &#39;albums&#39;, &#39;artists&#39;, &#39;playlists&#39;, &#39;tracks&#39;, &#39;users&#39;, &#39;devices&#39; and &#39;genres&#39; and add dummy data</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        :raises CustomException: If Exception occurs</span>
+<span class="sd">        :raises DatabaseException: If Exception related to the Database occurs</span>
+<span class="sd">        :raises InputException: if input is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sqlite_command</span> <span class="o">=</span> <span class="n">load_sql_query</span><span class="p">(</span><span class="s2">&quot;code_backend/sql_queries/create_tables.sql&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">execute_script</span><span class="p">(</span><span class="n">sqlite_command</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_dummies</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="MyAppDatabase.add_item_to_table">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.database_access.MyAppDatabase.add_item_to_table">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_item_to_table</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">table_name</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;albums&#39;</span><span class="p">,</span> <span class="s1">&#39;artists&#39;</span><span class="p">,</span> <span class="s1">&#39;tracks&#39;</span><span class="p">,</span> <span class="s1">&#39;playlists&#39;</span><span class="p">,</span> <span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="s1">&#39;genres&#39;</span><span class="p">,</span> <span class="s1">&#39;devices&#39;</span><span class="p">],</span>
+            <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds item to table if it does not exist, otherwise, the insert will be ignored. If not all required keys are passed, an error is raised with exit code 1.</span>
+
+<span class="sd">        :param table_name: Which table to add</span>
+<span class="sd">        :param kwargs: which arguments are passed to database</span>
+<span class="sd">        :return:</span>
+<span class="sd">        :raises CustomException: If Exception occurs</span>
+<span class="sd">        :raises DatabaseException: If Exception related to the Database occurs</span>
+<span class="sd">        :raises InputException: if input is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="n">table_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;albums&#39;</span><span class="p">,</span> <span class="s1">&#39;artists&#39;</span><span class="p">,</span> <span class="s1">&#39;tracks&#39;</span><span class="p">,</span> <span class="s1">&#39;playlists&#39;</span><span class="p">,</span> <span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="s1">&#39;devices&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">table_name</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;albums&#39;</span><span class="p">,</span> <span class="s1">&#39;artists&#39;</span><span class="p">,</span> <span class="s1">&#39;tracks&#39;</span><span class="p">,</span> <span class="s1">&#39;playlists&#39;</span><span class="p">,</span> <span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="s1">&#39;devices&#39;</span><span class="p">),</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+        <span class="n">missing_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table_struct</span><span class="p">[</span><span class="n">table_name</span><span class="p">])</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">missing_keys</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">missing_keys</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">({</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">: Any&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_struct</span><span class="p">[</span><span class="n">table_name</span><span class="p">]}),</span> <span class="n">valid_types</span><span class="o">=</span><span class="n">Any</span><span class="p">)</span>
+
+        <span class="n">sql_query</span> <span class="o">=</span> <span class="n">load_sql_query</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;code_backend/sql_queries/insert_</span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">.sql&quot;</span><span class="p">)</span>
+        <span class="n">sql_values</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)):</span>
+                <span class="n">sql_values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">sql_values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">execute_query</span><span class="p">(</span><span class="n">sql_query</span><span class="p">,</span> <span class="n">sql_values</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Added </span><span class="si">{</span><span class="n">kwargs</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">table_name</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">_id&quot;</span><span class="p">]</span><span class="si">}</span><span class="s2"> to table &#39;</span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MyAppDatabase.remove_specific_item">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.database_access.MyAppDatabase.remove_specific_item">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_specific_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;albums&#39;</span><span class="p">,</span> <span class="s1">&#39;artists&#39;</span><span class="p">,</span> <span class="s1">&#39;tracks&#39;</span><span class="p">,</span> <span class="s1">&#39;playlists&#39;</span><span class="p">,</span> <span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="s1">&#39;genres&#39;</span><span class="p">,</span> <span class="s1">&#39;devices&#39;</span><span class="p">],</span> <span class="n">item_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        remove item from table by ID</span>
+
+<span class="sd">        :param table_name: name of the table</span>
+<span class="sd">        :param item_id: what item to remove</span>
+<span class="sd">        :return:</span>
+<span class="sd">        :raises DatabaseException: If Exception related to the Database occurs</span>
+<span class="sd">        :raises InputException: if input is invalid</span>
+<span class="sd">        :raises SpotifyIdException: if spotify id is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="n">table_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;albums&#39;</span><span class="p">,</span> <span class="s1">&#39;artists&#39;</span><span class="p">,</span> <span class="s1">&#39;tracks&#39;</span><span class="p">,</span> <span class="s1">&#39;playlists&#39;</span><span class="p">,</span> <span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="s1">&#39;devices&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">table_name</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;albums&#39;</span><span class="p">,</span> <span class="s1">&#39;artists&#39;</span><span class="p">,</span> <span class="s1">&#39;tracks&#39;</span><span class="p">,</span> <span class="s1">&#39;playlists&#39;</span><span class="p">,</span> <span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="s1">&#39;devices&#39;</span><span class="p">),</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+        <span class="k">match</span> <span class="n">table_name</span><span class="p">:</span>
+            <span class="k">case</span> <span class="s2">&quot;devices&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">check_spotify_id</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="n">is_device</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">SpotifyIdException</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="n">table_name</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">case</span> <span class="s2">&quot;user&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">check_spotify_id</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="n">is_user</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">SpotifyIdException</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="n">table_name</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">check_spotify_id</span><span class="p">(</span><span class="n">item_id</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">SpotifyIdException</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="n">table_name</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">primary_key</span> <span class="o">=</span> <span class="n">table_name</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_id&quot;</span>
+        <span class="n">sql_delete_command</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;DELETE FROM </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2"> WHERE </span><span class="si">{</span><span class="n">primary_key</span><span class="si">}</span><span class="s2"> = ?&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">execute_query</span><span class="p">(</span><span class="n">sql_delete_command</span><span class="p">,</span> <span class="p">(</span><span class="n">item_id</span><span class="p">,))</span></div>
+
+
+<div class="viewcode-block" id="MyAppDatabase.reset_table">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.database_access.MyAppDatabase.reset_table">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;albums&#39;</span><span class="p">,</span> <span class="s1">&#39;artists&#39;</span><span class="p">,</span> <span class="s1">&#39;tracks&#39;</span><span class="p">,</span> <span class="s1">&#39;playlists&#39;</span><span class="p">,</span> <span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="s1">&#39;genres&#39;</span><span class="p">,</span> <span class="s1">&#39;devices&#39;</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        reset table to initial state</span>
+
+<span class="sd">        :param table_name: name of the table</span>
+<span class="sd">        :return:</span>
+<span class="sd">        :raises CustomException: If Exception occurs</span>
+<span class="sd">        :raises DatabaseException: If Exception related to the Database occurs</span>
+<span class="sd">        :raises InputException: if input is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="n">table_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;albums&#39;</span><span class="p">,</span> <span class="s1">&#39;artists&#39;</span><span class="p">,</span> <span class="s1">&#39;tracks&#39;</span><span class="p">,</span> <span class="s1">&#39;playlists&#39;</span><span class="p">,</span> <span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="s1">&#39;devices&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">table_name</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;albums&#39;</span><span class="p">,</span> <span class="s1">&#39;artists&#39;</span><span class="p">,</span> <span class="s1">&#39;tracks&#39;</span><span class="p">,</span> <span class="s1">&#39;playlists&#39;</span><span class="p">,</span> <span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="s1">&#39;devices&#39;</span><span class="p">),</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">execute_script</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;DELETE * FROM </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_dummies</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="MyAppDatabase.reset_database">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.database_access.MyAppDatabase.reset_database">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset_database</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        reset complete database (all tables) to initial state</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        :raises CustomException: If Exception occurs</span>
+<span class="sd">        :raises DatabaseException: If Exception related to the Database occurs</span>
+<span class="sd">        :raises InputException: if input is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">table_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_query</span><span class="p">(</span><span class="n">sql_query</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;SELECT name FROM sqlite_master WHERE type=&#39;table&#39; ORDER BY name;&quot;&quot;&quot;</span><span class="p">,</span> <span class="n">fetch</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">table_names</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">table_name</span> <span class="ow">in</span> <span class="n">table_names</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">execute_query</span><span class="p">(</span><span class="n">sql_query</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;DROP TABLE </span><span class="si">{</span><span class="n">table_name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">;&quot;&quot;&quot;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">initialize_tables</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="MyAppDatabase.fetch_row">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.database_access.MyAppDatabase.fetch_row">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fetch_row</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">table_name</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;albums&#39;</span><span class="p">,</span> <span class="s1">&#39;artists&#39;</span><span class="p">,</span> <span class="s1">&#39;tracks&#39;</span><span class="p">,</span> <span class="s1">&#39;playlists&#39;</span><span class="p">,</span> <span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="s1">&#39;genres&#39;</span><span class="p">,</span> <span class="s1">&#39;devices&#39;</span><span class="p">],</span>
+            <span class="n">item_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+            <span class="n">table_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;*&#39;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        fetch item from table by ID</span>
+
+<span class="sd">        :param table_name: name of the table</span>
+<span class="sd">        :param item_id: what item to fetch</span>
+<span class="sd">        :param table_column: what column to fetch (default: &#39;*&#39; fetches all columns)</span>
+<span class="sd">        :return: hopefully what you asked for (row, value of column, None, ¯\\_(ツ)_/¯)</span>
+<span class="sd">        :raises DatabaseException: If Exception related to the Database occurs</span>
+<span class="sd">        :raises InputException: if input is invalid</span>
+<span class="sd">        :raises SpotifyIdException: if spotify id is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="n">table_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;albums&#39;</span><span class="p">,</span> <span class="s1">&#39;artists&#39;</span><span class="p">,</span> <span class="s1">&#39;tracks&#39;</span><span class="p">,</span> <span class="s1">&#39;playlists&#39;</span><span class="p">,</span> <span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="s1">&#39;devices&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">table_name</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;albums&#39;</span><span class="p">,</span> <span class="s1">&#39;artists&#39;</span><span class="p">,</span> <span class="s1">&#39;tracks&#39;</span><span class="p">,</span> <span class="s1">&#39;playlists&#39;</span><span class="p">,</span> <span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="s1">&#39;devices&#39;</span><span class="p">),</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+        <span class="k">match</span> <span class="n">table_name</span><span class="p">:</span>
+            <span class="k">case</span> <span class="s2">&quot;devices&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">check_spotify_id</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="n">is_device</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">SpotifyIdException</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="n">table_name</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">case</span> <span class="s2">&quot;user&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">check_spotify_id</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="n">is_user</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">SpotifyIdException</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="n">table_name</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">check_spotify_id</span><span class="p">(</span><span class="n">item_id</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">SpotifyIdException</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="n">table_name</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">primary_key</span> <span class="o">=</span> <span class="n">table_name</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_id&quot;</span>
+
+        <span class="n">sql_command</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;SELECT </span><span class="si">{</span><span class="n">table_column</span><span class="si">}</span><span class="s2"> FROM </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2"> WHERE </span><span class="si">{</span><span class="n">primary_key</span><span class="si">}</span><span class="s2"> = ?;&quot;&quot;&quot;</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_query</span><span class="p">(</span><span class="n">sql_command</span><span class="p">,</span> <span class="p">(</span><span class="n">item_id</span><span class="p">,),</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">result</span> <span class="k">else</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="MyAppDatabase.fetch_column">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.database_access.MyAppDatabase.fetch_column">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fetch_column</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">table_name</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;albums&#39;</span><span class="p">,</span> <span class="s1">&#39;artists&#39;</span><span class="p">,</span> <span class="s1">&#39;tracks&#39;</span><span class="p">,</span> <span class="s1">&#39;playlists&#39;</span><span class="p">,</span> <span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="s1">&#39;genres&#39;</span><span class="p">,</span> <span class="s1">&#39;devices&#39;</span><span class="p">],</span>
+            <span class="n">table_column</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        fetch column from table by ID</span>
+
+<span class="sd">        :param table_name: name of the table</span>
+<span class="sd">        :param table_column: what column to fetch</span>
+<span class="sd">        :return: wanted column</span>
+<span class="sd">        :raises DatabaseException: If Exception related to the Database occurs</span>
+<span class="sd">        :raises InputException: if input is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="n">table_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;albums&#39;</span><span class="p">,</span> <span class="s1">&#39;artists&#39;</span><span class="p">,</span> <span class="s1">&#39;tracks&#39;</span><span class="p">,</span> <span class="s1">&#39;playlists&#39;</span><span class="p">,</span> <span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="s1">&#39;devices&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">table_name</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;albums&#39;</span><span class="p">,</span> <span class="s1">&#39;artists&#39;</span><span class="p">,</span> <span class="s1">&#39;tracks&#39;</span><span class="p">,</span> <span class="s1">&#39;playlists&#39;</span><span class="p">,</span> <span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="s1">&#39;devices&#39;</span><span class="p">),</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">table_column</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="n">table_column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_struct</span><span class="p">[</span><span class="n">table_name</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">table_column</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table_struct</span><span class="p">[</span><span class="n">table_name</span><span class="p">]),</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_query</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;SELECT </span><span class="si">{</span><span class="n">table_column</span><span class="si">}</span><span class="s2"> FROM </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">;&quot;&quot;&quot;</span><span class="p">,</span> <span class="p">(),</span> <span class="n">fetch</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span> <span class="k">if</span> <span class="n">result</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="n">DatabaseException</span><span class="p">(</span>
+                <span class="n">error_message</span><span class="o">=</span><span class="n">error</span><span class="p">,</span>
+                <span class="n">more_infos</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Exception occurred while fetching column &#39;</span><span class="si">{</span><span class="n">table_column</span><span class="si">}</span><span class="s2">&#39; from Database table &#39;</span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+            <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="MyAppDatabase.fetch_rows">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.database_access.MyAppDatabase.fetch_rows">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fetch_rows</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">table_name</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;albums&#39;</span><span class="p">,</span> <span class="s1">&#39;artists&#39;</span><span class="p">,</span> <span class="s1">&#39;tracks&#39;</span><span class="p">,</span> <span class="s1">&#39;playlists&#39;</span><span class="p">,</span> <span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="s1">&#39;genres&#39;</span><span class="p">,</span> <span class="s1">&#39;devices&#39;</span><span class="p">],</span>
+            <span class="n">target_column</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+            <span class="n">target_value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fetch one or more rows from a table, where the value of target_column is target_value.</span>
+
+<span class="sd">        :param table_name: Table to fetch from</span>
+<span class="sd">        :param target_column: Which column to match</span>
+<span class="sd">        :param target_value: Which value to match</span>
+<span class="sd">        :return: Dict containing the fetched rows, in the form of {primary_key: row}</span>
+<span class="sd">        :raises DatabaseException: If Exception related to the Database occurs</span>
+<span class="sd">        :raises InputException: if input is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="n">table_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;albums&#39;</span><span class="p">,</span> <span class="s1">&#39;artists&#39;</span><span class="p">,</span> <span class="s1">&#39;tracks&#39;</span><span class="p">,</span> <span class="s1">&#39;playlists&#39;</span><span class="p">,</span> <span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="s1">&#39;devices&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">table_name</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;albums&#39;</span><span class="p">,</span> <span class="s1">&#39;artists&#39;</span><span class="p">,</span> <span class="s1">&#39;tracks&#39;</span><span class="p">,</span> <span class="s1">&#39;playlists&#39;</span><span class="p">,</span> <span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="s1">&#39;devices&#39;</span><span class="p">),</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target_column</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="n">target_column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_struct</span><span class="p">[</span><span class="n">table_name</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">target_column</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table_struct</span><span class="p">[</span><span class="n">table_name</span><span class="p">]),</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target_value</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="ow">and</span> <span class="n">target_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">target_value</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;any string, int, float or None&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">con</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">MAIN_DATABASE_PATH</span><span class="p">)</span>
+            <span class="n">con</span><span class="o">.</span><span class="n">row_factory</span> <span class="o">=</span> <span class="n">dict_factory</span>
+            <span class="n">cur</span> <span class="o">=</span> <span class="n">con</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+            <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;SELECT * FROM </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2"> WHERE </span><span class="si">{</span><span class="n">target_column</span><span class="si">}</span><span class="s2"> = ?;&quot;&quot;&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">target_value</span><span class="p">,))</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="n">row</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">table_name</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">_id&quot;</span><span class="p">]:</span> <span class="n">row</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()}</span>
+            <span class="k">return</span> <span class="n">result</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="n">DatabaseException</span><span class="p">(</span>
+                <span class="n">error_message</span><span class="o">=</span><span class="n">error</span><span class="p">,</span>
+                <span class="n">more_infos</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Exception occurred while fetching rows from table </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">, where &#39;</span><span class="si">{</span><span class="n">target_column</span><span class="si">}</span><span class="s2">&#39; == &#39;</span><span class="si">{</span><span class="n">target_value</span><span class="si">}</span><span class="s2">&#39;;`&quot;</span>
+            <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="MyAppDatabase.update_item">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.database_access.MyAppDatabase.update_item">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_item</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">table_name</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;albums&#39;</span><span class="p">,</span> <span class="s1">&#39;artists&#39;</span><span class="p">,</span> <span class="s1">&#39;tracks&#39;</span><span class="p">,</span> <span class="s1">&#39;playlists&#39;</span><span class="p">,</span> <span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="s1">&#39;genres&#39;</span><span class="p">,</span> <span class="s1">&#39;devices&#39;</span><span class="p">],</span>
+            <span class="n">item_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+            <span class="n">table_column</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+            <span class="n">new_value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates the specified value from table by ID</span>
+
+<span class="sd">        :param table_name: name of the table</span>
+<span class="sd">        :param item_id: what item to update</span>
+<span class="sd">        :param table_column: which column to update</span>
+<span class="sd">        :param new_value: new value</span>
+<span class="sd">        :return:</span>
+<span class="sd">        :raises DatabaseException: If Exception related to the Database occurs</span>
+<span class="sd">        :raises InputException: if input is invalid</span>
+<span class="sd">        :raises SpotifyIdException: if spotify id is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="n">table_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;albums&#39;</span><span class="p">,</span> <span class="s1">&#39;artists&#39;</span><span class="p">,</span> <span class="s1">&#39;tracks&#39;</span><span class="p">,</span> <span class="s1">&#39;playlists&#39;</span><span class="p">,</span> <span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="s1">&#39;devices&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">table_name</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;albums&#39;</span><span class="p">,</span> <span class="s1">&#39;artists&#39;</span><span class="p">,</span> <span class="s1">&#39;tracks&#39;</span><span class="p">,</span> <span class="s1">&#39;playlists&#39;</span><span class="p">,</span> <span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="s1">&#39;devices&#39;</span><span class="p">),</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+        <span class="k">match</span> <span class="n">table_name</span><span class="p">:</span>
+            <span class="k">case</span> <span class="s2">&quot;devices&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">check_spotify_id</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="n">is_device</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">SpotifyIdException</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="n">table_name</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">case</span> <span class="s2">&quot;user&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">check_spotify_id</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="n">is_user</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">SpotifyIdException</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="n">table_name</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">check_spotify_id</span><span class="p">(</span><span class="n">item_id</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">SpotifyIdException</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="n">table_name</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">table_column</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="n">table_column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_struct</span><span class="p">[</span><span class="n">table_name</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">table_column</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table_struct</span><span class="p">[</span><span class="n">table_name</span><span class="p">]),</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_value</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="ow">and</span> <span class="n">new_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">new_value</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;any string, int, float or None&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+
+        <span class="n">primary_key</span> <span class="o">=</span> <span class="n">table_name</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_id&quot;</span>
+
+        <span class="n">sql_command</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;UPDATE </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2"> SET </span><span class="si">{</span><span class="n">table_column</span><span class="si">}</span><span class="s2"> = ? WHERE </span><span class="si">{</span><span class="n">primary_key</span><span class="si">}</span><span class="s2"> = ?;&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">execute_query</span><span class="p">(</span><span class="n">sql_command</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">new_value</span><span class="p">),</span> <span class="n">item_id</span><span class="p">,),</span> <span class="kc">False</span><span class="p">)</span></div>
+</div>
+
+
+
+
+<span class="n">APP_DATABASE</span> <span class="o">=</span> <span class="n">MyAppDatabase</span><span class="p">(</span><span class="n">MAIN_DATABASE_PATH</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+    <span class="c1"># APP_DATABASE.reset_database()</span>
+    <span class="c1"># APP_DATABASE.initialize_tables()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Atomdonat.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

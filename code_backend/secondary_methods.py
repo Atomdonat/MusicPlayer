@@ -8,6 +8,7 @@ from code_backend.exceptions import InputException, CustomException, SpotifyIdEx
 def millis_to_minutes(millis: int, to_hours: bool = False) -> str:
     """
     Convert milliseconds to minutes or hours
+
     :param millis: value in milliseconds
     :param to_hours: if to convert to hours
     :return: converted milliseconds
@@ -29,6 +30,7 @@ def millis_to_minutes(millis: int, to_hours: bool = False) -> str:
 def url_to_uri(spotify_url: str, to_id: bool = False) -> str:
     """
     Convert spotify url to uri or id
+
     :param spotify_url: url to spotify item
     :param to_id: if to get only the id
     :return: Spotify uri or id
@@ -61,6 +63,7 @@ def url_to_uri(spotify_url: str, to_id: bool = False) -> str:
 def id_to_uri(class_type: Literal['album', 'artist', 'track', 'playlist', 'user'], spotify_id: str) -> str:
     """
     Convert spotify id to uri
+
     :param class_type: what item type to use
     :param spotify_id: spotify id
     :return: spotify uri
@@ -80,6 +83,7 @@ def id_to_uri(class_type: Literal['album', 'artist', 'track', 'playlist', 'user'
 def uri_to_id(spotify_uri: str, get_type: bool = False) -> tuple[str,str] | str:
     """
     Extract the Spotify ID (and Type) from the Spotify URI in the form of "spotify:${type}:${id}"
+
     :param spotify_uri: The Spotify URI for the item.
     :param get_type: if to get the Spotify type (e.g. album)
     :return: item_id | (item_id, item_type)
@@ -100,6 +104,7 @@ def uri_to_id(spotify_uri: str, get_type: bool = False) -> tuple[str,str] | str:
 def json_to_file(json_filepath: str, json_data: dict, overwrite: bool = False):
     """
     Dump a dict into a json file
+
     :param json_filepath: where to save the json file
     :param json_data: json data
     :param overwrite: if to overwrite the json file if it exists
@@ -127,6 +132,7 @@ def json_to_file(json_filepath: str, json_data: dict, overwrite: bool = False):
 def average_file_size(directory_path: str) -> float:
     """
     Calculate the average file size of a directory
+
     :param directory_path: path to directory
     :return: size in bytes
     :raises InputException: if input is invalid
@@ -155,6 +161,7 @@ def average_file_size(directory_path: str) -> float:
 def format_bytes(input_bytes: int):
     """
     Convert bytes to human-readable string
+
     :param input_bytes: bytes
     :return: human-readable string
     :raises InputException: if input is invalid
@@ -201,6 +208,7 @@ def key_from_dict(dictio: dict) -> str:
 def list_from_id_string(id_string: str) -> list[str]:
     """
     Convert an id string into a list of strings (`load_list_from_database()` should do this better?)
+
     :param id_string: input id string
     :return: list of id strings
     :raises InputException: if input is invalid
@@ -221,6 +229,7 @@ def list_from_id_string(id_string: str) -> list[str]:
 def image_from_url(image_url: str) -> ImageFile:
     """
     Load an image from a URL
+
     :param image_url: image url
     :return: Pillow Image
     :raises InputException: if input is invalid
@@ -247,6 +256,7 @@ def image_from_url(image_url: str) -> ImageFile:
 def image_from_file(file_path: str) -> Image:
     """
     Load an image from a file
+
     :param file_path: path to file
     :return: Pillow Image
     :raises InputException: if input is invalid
@@ -265,6 +275,7 @@ def image_from_file(file_path: str) -> Image:
 def resize_image(image: Image, width=100, height=100) -> bytes:
     """
     Resize an image to a given width and height
+
     :param image: what image to resize
     :param width: target width
     :param height: target height
@@ -295,6 +306,7 @@ def resize_image(image: Image, width=100, height=100) -> bytes:
 def bytes_to_image(image_bytes: bytes) -> Image:
     """
     Convert bytes to an image using the RGBA matrix
+
     :param image_bytes: image bytes
     :return: Pillow Image
     :raises InputException: if input is invalid
@@ -315,6 +327,7 @@ def bytes_to_image(image_bytes: bytes) -> Image:
 def get_tk_image(image: Image, image_size: [int, int]) -> ImageTk:
     """
     Convert Pillow Image to Tk Image
+
     :param image: Pillow Image
     :param image_size: target image size [width, height]
     :return: Tk Image
@@ -340,6 +353,7 @@ def get_tk_image(image: Image, image_size: [int, int]) -> ImageTk:
 def tk_image_from_file(file_path: str) -> Image:
     """
     Load an Tk image from a file
+
     :param file_path: path to file
     :return: Tk Photo Image
     :raises InputException: if input is invalid
@@ -364,6 +378,7 @@ def tk_image_from_file(file_path: str) -> Image:
 def image_to_b64(image: Image, image_format: Literal['PNG', 'JPEG'] | str) -> str:
     """
     Convert an image to base64
+
     :param image: Pillow Image
     :param image_format: source format
     :return: base64 encoded image
@@ -395,6 +410,7 @@ def image_to_b64(image: Image, image_format: Literal['PNG', 'JPEG'] | str) -> st
 def spotify_image_bytes(image_url: str) -> str:
     """
     Load an image from a URL to a Spotify usable image
+
     :param image_url: url to image
     :return: bytes for spotify
     :raises InputException: if input is invalid
@@ -410,6 +426,7 @@ def spotify_image_bytes(image_url: str) -> str:
 def file_image_bytes(image_path: str) -> str:
     """
     Load an image from path to a Spotify usable image
+
     :param image_path: path to image
     :return: bytes for spotify
     :raises InputException: if input is invalid
@@ -424,6 +441,7 @@ def file_image_bytes(image_path: str) -> str:
 def split_list_into_chunks(lst: list, chunk_length: int = 50) -> list:
     """
     Split a list into chunks of size chunk_length
+
     :param lst: what list to split
     :param chunk_length: size of each chunk
     :return: chunked list
@@ -448,6 +466,7 @@ T = TypeVar('T')
 def concat_iterables(iter1: Iterable[T], iter2: Iterable[T]) -> List[T]:
     """
     Concat two iterables into one iterable.
+
     :param iter1: iterable 1
     :param iter2: iterable 2
     :return: concatenated iterable
@@ -471,6 +490,7 @@ def concat_iterables(iter1: Iterable[T], iter2: Iterable[T]) -> List[T]:
 def debug_json(jason: dict):
     """
     Dump a dict into 'code_backend/testing/debugging.json'.
+
     :param jason: what dict to dump
     :raises InputException: if input is invalid
     """
@@ -484,6 +504,7 @@ def debug_json(jason: dict):
 def check_upper_limit(limit: int, api_max_limit: int = 50) -> int:
     """
     Checks if the user limit exceeded the API limit.
+
     :param limit: current limit
     :param api_max_limit: maximum API limit
     :return: 0: limit okay; 1: API limit subceeded, print error message
@@ -506,6 +527,7 @@ def check_upper_limit(limit: int, api_max_limit: int = 50) -> int:
 def check_lower_limit(limit: int, api_min_limit: int = 1) -> int:
     """
     Checks if the user limit subceeded the API limit.
+
     :param limit: current limit
     :param api_min_limit: minimum API limit
     :return: 0: limit okay; 1: API limit subceeded, print error message
@@ -527,6 +549,7 @@ def check_lower_limit(limit: int, api_min_limit: int = 1) -> int:
 def check_limits(limit: int, min_limit: int = 1, max_limit: int = MAX_REQUESTS_PER_CALL) -> int:
     """
     Checks if the limit is in range of the API.
+
     :param limit: current limit (1 <= limit <= MAX_REQUESTS_PER_CALL)
     :param min_limit: minimum API limit
     :param max_limit: maximum API limit
@@ -549,6 +572,7 @@ def check_limits(limit: int, min_limit: int = 1, max_limit: int = MAX_REQUESTS_P
 def update_env_key(env_key: str, new_value) -> tuple[str, str]:
     """
     Update the env key with the new value.
+
     :param env_key: what key to update
     :param new_value: what new value to set
     :return: old value and current value
@@ -578,6 +602,7 @@ def update_env_key(env_key: str, new_value) -> tuple[str, str]:
 def check_token_expired(extended_token: bool = False, print_remaining_time: bool = False) -> int:
     """
     Checks when the Token expires
+
     :param extended_token: Whether to check the regular Token (=False) or the extended one (=True)
     :param print_remaining_time: Whether to print the time the token remains valid
     :return: Time till Token expires (if 0 is returned, the token did expire)
@@ -612,6 +637,7 @@ def check_token_expired(extended_token: bool = False, print_remaining_time: bool
 def print_debug(content) -> None:
     """
     Print debug content
+
     :param content: what to display inside the debug block
     :raises InputException: if input is invalid
     """
@@ -628,6 +654,7 @@ def print_debug(content) -> None:
 def exclude_from_dict(target_dict: dict, exclude_keys: list) -> dict:
     """
     Safely exclude keys from a dictionary
+
     :param target_dict: what dictionary to exclude from
     :param exclude_keys: what keys to pop
     :raises InputException: if input is invalid
@@ -653,6 +680,7 @@ def exclude_from_dict(target_dict: dict, exclude_keys: list) -> dict:
 def dict_factory(cursor, row) -> dict:
     """
     by Alex Martelli on Stackoverflow (https://stackoverflow.com/a/3300514)
+
     :param cursor: Database cursor
     :param row: Database table row
     :return: Dict containing the column names and values {column_name: value}
@@ -680,6 +708,7 @@ def dict_factory(cursor, row) -> dict:
 def get_str_from_json_file(json_path: str) -> str:
     """
     Load a JSON file and then dump it in a string
+
     :param json_path: path to JSON file
     :return: JSON file converted to string
     :raises InputException: if input is invalid
@@ -698,6 +727,7 @@ def get_str_from_json_file(json_path: str) -> str:
 def load_sql_query(file_path: str) -> str:
     """
     Load a SQL query from a file Using the path from the Repository Root
+
     :param file_path: relative path to query file
     :return: loaded query
     :raises InputException: if input is invalid
@@ -717,6 +747,7 @@ def load_sql_query(file_path: str) -> str:
 def absolute_path(path: str, is_file: bool = False) -> str:
     """
     Converts the given path to an absolute path. If the path is absolute nothing happens. If in doubt just call it
+
     :param path: (relative) path to convert
     :param is_file: (optional) whether the path is a file
     :return: absolute path
@@ -743,6 +774,7 @@ def absolute_path(path: str, is_file: bool = False) -> str:
 def load_json(path: str) -> dict:
     """
     Load JSON from .json file
+
     :param path: path to file
     :return: JSON object
     :raises InputException: if input is invalid
@@ -792,6 +824,7 @@ def resolve_json_pointer(json_data: dict, json_pointer: str) -> Any:
 def load_list_from_database(fetched_list: list) -> list:
     """
     Convert a list string into a list (e.g. ["['6O7MpKrY91vlCd4Osi6XKs']", "['2iLpvtffIrQ4bMYrFPRN4x']"] -> [['6O7MpKrY91vlCd4Osi6XKs'], ['2iLpvtffIrQ4bMYrFPRN4x']])
+
     :param fetched_list: list of list-strings
     :return: list containing flattened data
     :raises InputException: if input is invalid
@@ -812,6 +845,7 @@ def load_list_from_database(fetched_list: list) -> list:
 def flatten(lst: list) -> list:
     """
     Recursively flatten a list
+
     :param lst: multidimensional list
     :return: one-dimensional list
     :raises InputException: if input is invalid
@@ -860,6 +894,7 @@ def remove_key_recursively(d, key_to_remove: str):
 def check_base62(check_str: str) -> bool:
     """
     Check if a string is a base62 encoded string
+
     :param check_str: string to be checked
     :return: True: string is base62 encoded; False: otherwise
     :raises InputException: if input is invalid
@@ -875,7 +910,9 @@ def check_base62(check_str: str) -> bool:
 def check_spotify_id(spotify_id: str, is_device: bool = False, is_user: bool = False) -> bool:
     """
     Check if a spotify ID is valid
-    Official Documentation: https://developer.spotify.com/documentation/web-api/concepts/spotify-uris-ids
+
+    **Official Documentation:** https://developer.spotify.com/documentation/web-api/concepts/spotify-uris-ids
+
     :param spotify_id: spotify ID to be checked
     :param is_device: if the spotify ID is from a device
     :param is_user: if the spotify ID is from a user
@@ -908,7 +945,9 @@ def check_spotify_id(spotify_id: str, is_device: bool = False, is_user: bool = F
 def check_spotify_uri(spotify_uri: str) -> bool:
     """
     Check if a spotify URI is valid
-    Official Documentation: https://developer.spotify.com/documentation/web-api/concepts/spotify-uris-ids
+
+    **Official Documentation:** https://developer.spotify.com/documentation/web-api/concepts/spotify-uris-ids
+
     :param spotify_uri: spotify URI to be checked
     :return: True: uri format is valid; False: otherwise
     :raises InputException: if the spotify URI is invalid
@@ -932,6 +971,7 @@ def check_spotify_uri(spotify_uri: str) -> bool:
 def check_spotify_ids(spotify_ids: list) -> bool:
     """
     Check if a list contains valid spotify IDs (not working for user)
+
     :param spotify_ids: list containing spotify IDs to be checked
     :return: True: spotify ID formats are valid; False: otherwise
     :raises InputException: if the spotify IDs are invalid
@@ -947,6 +987,7 @@ def check_spotify_ids(spotify_ids: list) -> bool:
 def check_spotify_user_ids(spotify_ids: list) -> bool:
     """
     Check if a list contains valid spotify user IDs
+
     :param spotify_ids: list containing spotify user IDs to be checked
     :return: True: spotify user ID formats are valid; False: otherwise
     """
@@ -961,6 +1002,7 @@ def check_spotify_user_ids(spotify_ids: list) -> bool:
 def check_spotify_device_ids(spotify_ids: list) -> bool:
     """
     Check if a list contains valid spotify device IDs
+
     :param spotify_ids: list containing spotify device IDs to be checked
     :return: True: spotify device ID formats are valid; False: otherwise
     :raises InputException: if input is invalid
@@ -975,6 +1017,7 @@ def check_spotify_device_ids(spotify_ids: list) -> bool:
 def check_spotify_uris(spotify_uris: list) -> bool:
     """
     Check if a list contains valid spotify URIs
+
     :param spotify_uris: list containing spotify URIs to be checked
     :return: True: spotify URI formats are valid; False: otherwise
     :raises InputException: if input is invalid
@@ -989,6 +1032,7 @@ def check_spotify_uris(spotify_uris: list) -> bool:
 def get_invalid_spotify_ids(spotify_ids: list) -> list:
     """
     Get invalid spotify IDs (not working for user)
+
     :param spotify_ids: list containing spotify IDs to be checked
     :return: invalid spotify IDs
     :raises InputException: if input is invalid
@@ -1002,6 +1046,7 @@ def get_invalid_spotify_ids(spotify_ids: list) -> list:
 def get_invalid_spotify_uris(spotify_uris: list) -> list:
     """
     Get invalid spotify URIs
+
     :param spotify_uris: list containing spotify URIs to be checked
     :return: invalid spotify URIs
     :raises InputException: if input is invalid

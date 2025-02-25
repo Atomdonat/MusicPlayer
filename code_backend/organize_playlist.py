@@ -14,6 +14,7 @@ DEFAULT_IMAGE = image_to_b64(Image.open(NO_IMAGE_PATH), 'PNG')
 def all_shuffle(collection_tracks: list) -> list:
     """
     Shuffles the given list using the PRNG random.randint(). Every item will occur exactly once.
+
     :param collection_tracks: list to be shuffled
     :return: shuffled list
     :raises InputException: if input is invalid
@@ -40,6 +41,7 @@ def all_shuffle(collection_tracks: list) -> list:
 def all_shuffle_dict(collection_tracks: dict) -> dict:
     """
     Shuffles the given dict using the PRNG random.randint(). Every item will occur exactly once.
+
     :param collection_tracks: dict to be shuffled
     :return: shuffled dict
     :raises InputException: if input is invalid
@@ -62,6 +64,7 @@ def all_shuffle_dict(collection_tracks: dict) -> dict:
 def remove_duplicates(tracks: list[dict], get_removed: bool = False) -> set | tuple[set, set]:
     """
     Removes duplicate tracks (name and artist are the same) from a list of dicts
+
     :param tracks: list of tracks in the form of {"uri": ..., "name": ..., "artist": ...}
     :param get_removed: True: (no duplicates, removed duplicates); False: no duplicates
     :return: Set of unique Tracks (optional with the removed duplicates)
@@ -99,8 +102,9 @@ def remove_duplicates(tracks: list[dict], get_removed: bool = False) -> set | tu
 def organize_collection(collection_uri: str, **kwargs) -> None:
     """
     Reorganizes the given Playlist and either creates new Playlist or updates existing Playlist. (If successful either new Playlist appears in Spotify or Playlist Content changed)
+
     :param collection_uri: Spotify Collection URI to organize
-    :param kwargs: valid kwargs: "shuffle=..." -> shuffle collection tracks; "remove=['duplicate']" -> remove duplicate tracks; "remove=['remove_string']" -> removes tracks containing 'remove_string' (supports regex pattern)
+    :param kwargs: valid kwargs: ``shuffle=...`` -> shuffle collection tracks; ``remove=['duplicate']`` -> remove duplicate tracks; ``remove=['remove_string']`` -> removes tracks containing 'remove_string' (supports regex pattern)
     :return: New/Updated Playlist in Spotify
     :raises InputException: if input is invalid
     :raises SpotifyApiException: if Exception related to Spotify API occurs

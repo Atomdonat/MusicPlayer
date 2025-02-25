@@ -1,0 +1,1307 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>code_backend.secondary_methods &mdash; MusicPlayer 1.15.6 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=1f24c071"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            MusicPlayer
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">MusicPlayer</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">MusicPlayer</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">code_backend.secondary_methods</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for code_backend.secondary_methods</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">File containing (helper) methods outsourced from other files</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">code_backend.shared_config</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">code_backend.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">InputException</span><span class="p">,</span> <span class="n">CustomException</span><span class="p">,</span> <span class="n">SpotifyIdException</span><span class="p">,</span> <span class="n">SpotifyUriException</span><span class="p">,</span> <span class="n">RequestException</span>
+
+
+<div class="viewcode-block" id="millis_to_minutes">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.millis_to_minutes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">millis_to_minutes</span><span class="p">(</span><span class="n">millis</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">to_hours</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert milliseconds to minutes or hours</span>
+
+<span class="sd">    :param millis: value in milliseconds</span>
+<span class="sd">    :param to_hours: if to convert to hours</span>
+<span class="sd">    :return: converted milliseconds</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">millis</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">millis</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;milliseconds&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">to_hours</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">to_hours</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">to_hours</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="n">millis</span> <span class="o">//</span> <span class="mi">1000</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="n">millis</span> <span class="o">//</span> <span class="mi">1000</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">millis</span> <span class="o">%</span> <span class="mi">1000</span><span class="p">)</span>  <span class="c1"># .strip(&quot;:&quot;)[2:]</span></div>
+
+
+
+
+<div class="viewcode-block" id="url_to_uri">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.url_to_uri">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">url_to_uri</span><span class="p">(</span><span class="n">spotify_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">to_id</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert spotify url to uri or id</span>
+
+<span class="sd">    :param spotify_url: url to spotify item</span>
+<span class="sd">    :param to_id: if to get only the id</span>
+<span class="sd">    :return: Spotify uri or id</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    :raises CustomException: If Exception occurs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spotify_url</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">spotify_url</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;spotify url&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">to_id</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">to_id</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">class_type</span> <span class="o">=</span> <span class="n">spotify_url</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">id_</span> <span class="o">=</span> <span class="p">(</span><span class="n">spotify_url</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;?&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">CustomException</span><span class="p">(</span><span class="n">error_message</span><span class="o">=</span><span class="n">error</span><span class="p">,</span> <span class="n">more_infos</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Exception occurred while converting spotify url to uri: &#39;</span><span class="si">{</span><span class="n">spotify_url</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+
+    <span class="n">class_type</span> <span class="o">=</span> <span class="n">class_type</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">class_type</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;s&quot;</span> <span class="k">else</span> <span class="n">class_type</span>
+
+    <span class="k">if</span> <span class="n">to_id</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">id_</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;spotify:&quot;</span> <span class="o">+</span> <span class="n">class_type</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="n">id_</span></div>
+
+
+
+<div class="viewcode-block" id="id_to_uri">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.id_to_uri">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">id_to_uri</span><span class="p">(</span><span class="n">class_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;album&#39;</span><span class="p">,</span> <span class="s1">&#39;artist&#39;</span><span class="p">,</span> <span class="s1">&#39;track&#39;</span><span class="p">,</span> <span class="s1">&#39;playlist&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">],</span> <span class="n">spotify_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert spotify id to uri</span>
+
+<span class="sd">    :param class_type: what item type to use</span>
+<span class="sd">    :param spotify_id: spotify id</span>
+<span class="sd">    :return: spotify uri</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    :raises SpotifyIdException: if spotify id is invalid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">class_type</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="n">class_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;album&#39;</span><span class="p">,</span> <span class="s1">&#39;artist&#39;</span><span class="p">,</span> <span class="s1">&#39;track&#39;</span><span class="p">,</span> <span class="s1">&#39;playlist&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">class_type</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;album&#39;</span><span class="p">,</span> <span class="s1">&#39;artist&#39;</span><span class="p">,</span> <span class="s1">&#39;track&#39;</span><span class="p">,</span> <span class="s1">&#39;playlist&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">),</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">check_spotify_id</span><span class="p">(</span><span class="n">spotify_id</span><span class="o">=</span><span class="n">spotify_id</span><span class="p">,</span> <span class="n">is_user</span><span class="o">=</span><span class="p">(</span><span class="n">class_type</span> <span class="o">==</span> <span class="s1">&#39;user&#39;</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="n">SpotifyIdException</span><span class="p">(</span><span class="n">invalid_id</span><span class="o">=</span><span class="n">spotify_id</span><span class="p">,</span> <span class="n">id_type</span><span class="o">=</span><span class="n">class_type</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="s2">&quot;spotify:&quot;</span> <span class="o">+</span> <span class="n">class_type</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="n">spotify_id</span></div>
+
+
+
+<div class="viewcode-block" id="uri_to_id">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.uri_to_id">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">uri_to_id</span><span class="p">(</span><span class="n">spotify_uri</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">get_type</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract the Spotify ID (and Type) from the Spotify URI in the form of &quot;spotify:${type}:${id}&quot;</span>
+
+<span class="sd">    :param spotify_uri: The Spotify URI for the item.</span>
+<span class="sd">    :param get_type: if to get the Spotify type (e.g. album)</span>
+<span class="sd">    :return: item_id | (item_id, item_type)</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    :raises SpotifyUriException: if spotify uri is invalid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">check_spotify_uri</span><span class="p">(</span><span class="n">spotify_uri</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SpotifyUriException</span><span class="p">(</span><span class="n">invalid_uri</span><span class="o">=</span><span class="n">spotify_uri</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">get_type</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">get_type</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+    <span class="n">uri_parts</span> <span class="o">=</span> <span class="n">spotify_uri</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">uri_parts</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="n">uri_parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="k">if</span> <span class="n">get_type</span> <span class="k">else</span> <span class="n">uri_parts</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="json_to_file">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.json_to_file">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">json_to_file</span><span class="p">(</span><span class="n">json_filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">json_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Dump a dict into a json file</span>
+
+<span class="sd">    :param json_filepath: where to save the json file</span>
+<span class="sd">    :param json_data: json data</span>
+<span class="sd">    :param overwrite: if to overwrite the json file if it exists</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">json_filepath</span> <span class="o">=</span> <span class="n">absolute_path</span><span class="p">(</span><span class="n">json_filepath</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">json_data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">json_data</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;valid json data&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">overwrite</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">overwrite</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">overwrite</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">json_filepath</span><span class="p">):</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_filepath</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">json_data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_filepath</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">json_data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="average_file_size">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.average_file_size">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">average_file_size</span><span class="p">(</span><span class="n">directory_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the average file size of a directory</span>
+
+<span class="sd">    :param directory_path: path to directory</span>
+<span class="sd">    :return: size in bytes</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    :raises CustomException: If Exception occurs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">directory_path</span> <span class="o">=</span> <span class="n">absolute_path</span><span class="p">(</span><span class="n">directory_path</span><span class="p">)</span>
+
+    <span class="n">current_size</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">counted_files</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">directory_path</span><span class="p">):</span>
+            <span class="c1"># if re.search(&#39;track&#39;,filename) != None:</span>
+            <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">directory_path</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+                <span class="n">current_size</span> <span class="o">+=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+                <span class="n">counted_files</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">current_size</span> <span class="o">/</span> <span class="n">counted_files</span>
+    
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">CustomException</span><span class="p">(</span><span class="n">error_message</span><span class="o">=</span><span class="n">error</span><span class="p">,</span> <span class="n">more_infos</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Exception occurred while calculating average file size of &#39;</span><span class="si">{</span><span class="n">directory_path</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="format_bytes">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.format_bytes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">format_bytes</span><span class="p">(</span><span class="n">input_bytes</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert bytes to human-readable string</span>
+
+<span class="sd">    :param input_bytes: bytes</span>
+<span class="sd">    :return: human-readable string</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_bytes</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">input_bytes</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">input_bytes</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;positive integers&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="n">factor</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">units</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;KB&#39;</span><span class="p">,</span> <span class="s1">&#39;MB&#39;</span><span class="p">,</span> <span class="s1">&#39;GB&#39;</span><span class="p">,</span> <span class="s1">&#39;TB&#39;</span><span class="p">,</span> <span class="s1">&#39;PB&#39;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="n">units</span><span class="p">:</span>
+        <span class="n">new_factor</span> <span class="o">=</span> <span class="n">factor</span> <span class="o">*</span> <span class="mi">1024</span>
+        <span class="k">if</span> <span class="n">input_bytes</span> <span class="o">&lt;=</span> <span class="n">new_factor</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">input_bytes</span><span class="o">/</span><span class="n">factor</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">unit</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">factor</span> <span class="o">=</span> <span class="n">new_factor</span></div>
+
+
+
+<div class="viewcode-block" id="value_from_dict">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.value_from_dict">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">value_from_dict</span><span class="p">(</span><span class="n">dictio</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param dictio:</span>
+<span class="sd">    :return: Value from dict</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dictio</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">dictio</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;valid dict&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">dictio</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span></div>
+
+
+
+<div class="viewcode-block" id="key_from_dict">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.key_from_dict">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">key_from_dict</span><span class="p">(</span><span class="n">dictio</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param dictio:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dictio</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">dictio</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;valid dict&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">dictio</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span></div>
+
+
+
+<div class="viewcode-block" id="list_from_id_string">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.list_from_id_string">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">list_from_id_string</span><span class="p">(</span><span class="n">id_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert an id string into a list of strings (`load_list_from_database()` should do this better?)</span>
+
+<span class="sd">    :param id_string: input id string</span>
+<span class="sd">    :return: list of id strings</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    :raises CustomException: If Exception occurs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">id_string</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">id_string</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;string containing list of ids&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">list_elements</span> <span class="o">=</span> <span class="n">id_string</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">CustomException</span><span class="p">(</span><span class="n">error_message</span><span class="o">=</span><span class="n">error</span><span class="p">,</span> <span class="n">more_infos</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Exception occurred while parsing id string: &#39;</span><span class="si">{</span><span class="n">id_string</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">element</span> <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">list_elements</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="image_from_url">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.image_from_url">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">image_from_url</span><span class="p">(</span><span class="n">image_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ImageFile</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load an image from a URL</span>
+
+<span class="sd">    :param image_url: image url</span>
+<span class="sd">    :return: Pillow Image</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    :raises CustomException: If Exception occurs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image_url</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">image_url</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;valid url&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="n">image_url</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">image_url</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">RequestException</span><span class="p">(</span><span class="n">error</span><span class="o">=</span><span class="n">error</span><span class="p">,</span> <span class="n">request_query</span><span class="o">=</span><span class="n">query</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">))</span>
+
+    <span class="k">except</span> <span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">,</span> <span class="n">UnidentifiedImageError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">CustomException</span><span class="p">(</span><span class="n">error_message</span><span class="o">=</span><span class="n">error</span><span class="p">,</span> <span class="n">more_infos</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Exception occurred while trying to load image from url: &#39;</span><span class="si">{</span><span class="n">image_url</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="image_from_file">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.image_from_file">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">image_from_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Image</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load an image from a file</span>
+
+<span class="sd">    :param file_path: path to file</span>
+<span class="sd">    :return: Pillow Image</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    :raises CustomException: If Exception occurs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">file_path</span> <span class="o">=</span> <span class="n">absolute_path</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">is_file</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">,</span> <span class="n">UnidentifiedImageError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">CustomException</span><span class="p">(</span><span class="n">error_message</span><span class="o">=</span><span class="n">e</span><span class="p">,</span> <span class="n">more_infos</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Exception occurred while trying to load image from file: &#39;</span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="resize_image">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.resize_image">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">resize_image</span><span class="p">(</span><span class="n">image</span><span class="p">:</span> <span class="n">Image</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Resize an image to a given width and height</span>
+
+<span class="sd">    :param image: what image to resize</span>
+<span class="sd">    :param width: target width</span>
+<span class="sd">    :param height: target height</span>
+<span class="sd">    :return: bytes of resized image</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    :raises CustomException: If Exception occurs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">Image</span><span class="o">.</span><span class="n">Image</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">image</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;valid image&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="n">Image</span><span class="o">.</span><span class="n">Image</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">width</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;positive integers&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">height</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">height</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">height</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;positive integers&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">new_size</span> <span class="o">=</span> <span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+        <span class="n">resized_image</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">new_size</span><span class="p">)</span>
+    
+        <span class="k">return</span> <span class="n">resized_image</span>
+    
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">CustomException</span><span class="p">(</span><span class="n">error_message</span><span class="o">=</span><span class="n">error</span><span class="p">,</span> <span class="n">more_infos</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Exception occurred while resizing image: </span><span class="se">\n</span><span class="s2">&#39;</span><span class="si">{</span><span class="n">image</span><span class="si">}</span><span class="s2">&#39;,</span><span class="se">\n</span><span class="s2">width: &#39;</span><span class="si">{</span><span class="n">width</span><span class="si">}</span><span class="s2">&#39;,</span><span class="se">\n</span><span class="s2">height: &#39;</span><span class="si">{</span><span class="n">height</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="bytes_to_image">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.bytes_to_image">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">bytes_to_image</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Image</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert bytes to an image using the RGBA matrix</span>
+
+<span class="sd">    :param image_bytes: image bytes</span>
+<span class="sd">    :return: Pillow Image</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    :raises CustomException: If Exception occurs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">image_bytes</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;valid bytes&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">bytes</span><span class="p">)</span>
+    
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">))</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;RGBA&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">image</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">,</span> <span class="n">UnidentifiedImageError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">CustomException</span><span class="p">(</span><span class="n">error_message</span><span class="o">=</span><span class="n">e</span><span class="p">,</span> <span class="n">more_infos</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Exception occurred while converting bytes to image: &#39;</span><span class="si">{</span><span class="n">image_bytes</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span></div>
+
+        
+
+
+<div class="viewcode-block" id="get_tk_image">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.get_tk_image">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_tk_image</span><span class="p">(</span><span class="n">image</span><span class="p">:</span> <span class="n">Image</span><span class="p">,</span> <span class="n">image_size</span><span class="p">:</span> <span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ImageTk</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert Pillow Image to Tk Image</span>
+
+<span class="sd">    :param image: Pillow Image</span>
+<span class="sd">    :param image_size: target image size [width, height]</span>
+<span class="sd">    :return: Tk Image</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    :raises CustomException: If Exception occurs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">Image</span><span class="o">.</span><span class="n">Image</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">image</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;valid image&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="n">Image</span><span class="o">.</span><span class="n">Image</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image_size</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_size</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">image_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">image_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">image_size</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;[positive integer, positive integers]&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span>
+    
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">resized_image</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="n">image_size</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">image_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">Image</span><span class="o">.</span><span class="n">Resampling</span><span class="o">.</span><span class="n">LANCZOS</span><span class="p">)</span>
+        <span class="n">instance_image</span> <span class="o">=</span> <span class="n">ImageTk</span><span class="o">.</span><span class="n">PhotoImage</span><span class="p">(</span><span class="n">resized_image</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">instance_image</span>
+    
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">CustomException</span><span class="p">(</span><span class="n">error_message</span><span class="o">=</span><span class="n">error</span><span class="p">,</span> <span class="n">more_infos</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Exception occurred while converting Image to Tk Image: &#39;</span><span class="si">{</span><span class="n">image</span><span class="si">}</span><span class="s2">&#39;,</span><span class="se">\n</span><span class="s2">width: &#39;</span><span class="si">{</span><span class="n">image_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;,</span><span class="se">\n</span><span class="s2">height: &#39;</span><span class="si">{</span><span class="n">image_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>    </div>
+
+
+
+<div class="viewcode-block" id="tk_image_from_file">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.tk_image_from_file">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">tk_image_from_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Image</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load an Tk image from a file</span>
+
+<span class="sd">    :param file_path: path to file</span>
+<span class="sd">    :return: Tk Photo Image</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    :raises CustomException: If Exception occurs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">file_path</span> <span class="o">=</span> <span class="n">absolute_path</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">is_file</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">new_image_width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">0.05</span> <span class="o">*</span> <span class="n">GUI_SIZE</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">new_image_height</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">0.07</span> <span class="o">*</span> <span class="n">GUI_SIZE</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="n">new_image_width</span><span class="p">,</span> <span class="n">new_image_height</span><span class="p">),</span> <span class="n">Image</span><span class="o">.</span><span class="n">Resampling</span><span class="o">.</span><span class="n">LANCZOS</span><span class="p">)</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">ImageTk</span><span class="o">.</span><span class="n">PhotoImage</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">image</span>
+    
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">CustomException</span><span class="p">(</span><span class="n">error_message</span><span class="o">=</span><span class="n">error</span><span class="p">,</span> <span class="n">more_infos</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Exception occurred while trying to load Tk image from file: &#39;</span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="image_to_b64">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.image_to_b64">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">image_to_b64</span><span class="p">(</span><span class="n">image</span><span class="p">:</span> <span class="n">Image</span><span class="p">,</span> <span class="n">image_format</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;PNG&#39;</span><span class="p">,</span> <span class="s1">&#39;JPEG&#39;</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert an image to base64</span>
+
+<span class="sd">    :param image: Pillow Image</span>
+<span class="sd">    :param image_format: source format</span>
+<span class="sd">    :return: base64 encoded image</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">Image</span><span class="o">.</span><span class="n">Image</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">image</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;valid image&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="n">Image</span><span class="o">.</span><span class="n">Image</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image_format</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">image_format</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;Image formats from (https://pillow.readthedocs.io/en/stable/handbook/image-file-formats.html)&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+    
+    <span class="n">output</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">image</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="n">image_format</span><span class="p">)</span>
+        <span class="n">im_data</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+
+        <span class="n">image_data</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">im_data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image_data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="c1"># Python 3, decode from bytes to string</span>
+            <span class="n">image_data</span> <span class="o">=</span> <span class="n">image_data</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">image_data</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">CRED</span><span class="si">}{</span><span class="n">error</span><span class="si">}</span><span class="s2">: Image format error!</span><span class="se">\n</span><span class="s2">Make sure the Image format matches (https://pillow.readthedocs.io/en/stable/handbook/image-file-formats.html)</span><span class="si">{</span><span class="n">TEXTCOLOR</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="spotify_image_bytes">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.spotify_image_bytes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">spotify_image_bytes</span><span class="p">(</span><span class="n">image_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load an image from a URL to a Spotify usable image</span>
+
+<span class="sd">    :param image_url: url to image</span>
+<span class="sd">    :return: bytes for spotify</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image_url</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">image_url</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;valid url&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+    
+    <span class="n">image</span> <span class="o">=</span> <span class="n">image_from_url</span><span class="p">(</span><span class="n">image_url</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">image_to_b64</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="n">image</span><span class="p">,</span> <span class="n">image_format</span><span class="o">=</span><span class="s1">&#39;JPEG&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="file_image_bytes">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.file_image_bytes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">file_image_bytes</span><span class="p">(</span><span class="n">image_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load an image from path to a Spotify usable image</span>
+
+<span class="sd">    :param image_path: path to image</span>
+<span class="sd">    :return: bytes for spotify</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">image_path</span> <span class="o">=</span> <span class="n">absolute_path</span><span class="p">(</span><span class="n">image_path</span><span class="p">,</span> <span class="n">is_file</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    
+    <span class="n">image</span> <span class="o">=</span> <span class="n">image_from_file</span><span class="p">(</span><span class="n">image_path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">image_to_b64</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="n">image</span><span class="p">,</span> <span class="n">image_format</span><span class="o">=</span><span class="s1">&#39;JPEG&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="split_list_into_chunks">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.split_list_into_chunks">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">split_list_into_chunks</span><span class="p">(</span><span class="n">lst</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">chunk_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Split a list into chunks of size chunk_length</span>
+
+<span class="sd">    :param lst: what list to split</span>
+<span class="sd">    :param chunk_length: size of each chunk</span>
+<span class="sd">    :return: chunked list</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    :raises CustomException: If Exception occurs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">lst</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;valid list&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chunk_length</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">chunk_length</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">chunk_length</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;positive integers&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">lst</span><span class="p">[</span><span class="n">x</span><span class="p">:</span><span class="n">x</span><span class="o">+</span><span class="n">chunk_length</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">lst</span><span class="p">),</span> <span class="n">chunk_length</span><span class="p">)]</span>
+    
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">CustomException</span><span class="p">(</span><span class="n">error_message</span><span class="o">=</span><span class="n">error</span><span class="p">,</span> <span class="n">more_infos</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Exception occurred while splitting list: &#39;</span><span class="si">{</span><span class="n">lst</span><span class="si">}</span><span class="s2">&#39; into chunks of size &#39;</span><span class="si">{</span><span class="n">chunk_length</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span></div>
+
+
+
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="concat_iterables">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.concat_iterables">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">concat_iterables</span><span class="p">(</span><span class="n">iter1</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">iter2</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Concat two iterables into one iterable.</span>
+
+<span class="sd">    :param iter1: iterable 1</span>
+<span class="sd">    :param iter2: iterable 2</span>
+<span class="sd">    :return: concatenated iterable</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    :raises CustomException: If Exception occurs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">iter1</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">iter1</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;valid iterable&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="n">Iterable</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">iter2</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">iter2</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;valid iterable&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="n">Iterable</span><span class="p">)</span>
+    
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="o">*</span><span class="n">iter1</span><span class="p">,</span> <span class="o">*</span><span class="n">iter2</span><span class="p">]</span>
+    
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">CustomException</span><span class="p">(</span><span class="n">error_message</span><span class="o">=</span><span class="n">error</span><span class="p">,</span> <span class="n">more_infos</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Exception occurred while concatenating iterables: &#39;</span><span class="si">{</span><span class="n">iter1</span><span class="si">}</span><span class="s2">&#39; and &#39;</span><span class="si">{</span><span class="n">iter2</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="debug_json">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.debug_json">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">debug_json</span><span class="p">(</span><span class="n">jason</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Dump a dict into &#39;code_backend/testing/debugging.json&#39;.</span>
+
+<span class="sd">    :param jason: what dict to dump</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">json_to_file</span><span class="p">(</span>
+        <span class="n">json_filepath</span><span class="o">=</span><span class="s2">&quot;code_backend/testing/debugging.json&quot;</span><span class="p">,</span>
+        <span class="n">json_data</span><span class="o">=</span><span class="n">jason</span><span class="p">,</span>
+        <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="check_upper_limit">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.check_upper_limit">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_upper_limit</span><span class="p">(</span><span class="n">limit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">api_max_limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks if the user limit exceeded the API limit.</span>
+
+<span class="sd">    :param limit: current limit</span>
+<span class="sd">    :param api_max_limit: maximum API limit</span>
+<span class="sd">    :return: 0: limit okay; 1: API limit subceeded, print error message</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">limit</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">limit</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;positive integers&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">api_max_limit</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">MAX_REQUESTS_PER_CALL</span> <span class="o">&lt;</span> <span class="n">api_max_limit</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">api_max_limit</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;0 &lt; api_max_limit &lt; MAX_REQUESTS_PER_CALL&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">limit</span> <span class="o">&gt;</span> <span class="n">api_max_limit</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">CRED</span><span class="si">}</span><span class="s2">Limit of </span><span class="si">{</span><span class="n">limit</span><span class="si">}</span><span class="s2"> exceeded API limit of </span><span class="si">{</span><span class="n">api_max_limit</span><span class="si">}</span><span class="s2"> per request</span><span class="si">{</span><span class="n">TEXTCOLOR</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="mi">0</span></div>
+
+
+
+<div class="viewcode-block" id="check_lower_limit">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.check_lower_limit">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_lower_limit</span><span class="p">(</span><span class="n">limit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">api_min_limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks if the user limit subceeded the API limit.</span>
+
+<span class="sd">    :param limit: current limit</span>
+<span class="sd">    :param api_min_limit: minimum API limit</span>
+<span class="sd">    :return: 0: limit okay; 1: API limit subceeded, print error message</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">limit</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">limit</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;positive integers&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">api_min_limit</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">api_min_limit</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">api_min_limit</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;positive integers&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">limit</span> <span class="o">&lt;</span> <span class="n">api_min_limit</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">CRED</span><span class="si">}</span><span class="s2">Limit of </span><span class="si">{</span><span class="n">limit</span><span class="si">}</span><span class="s2"> subceeded API limit of </span><span class="si">{</span><span class="n">api_min_limit</span><span class="si">}</span><span class="s2"> per request</span><span class="si">{</span><span class="n">TEXTCOLOR</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="mi">0</span></div>
+
+
+
+<div class="viewcode-block" id="check_limits">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.check_limits">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_limits</span><span class="p">(</span><span class="n">limit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">min_limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">max_limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">MAX_REQUESTS_PER_CALL</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks if the limit is in range of the API.</span>
+
+<span class="sd">    :param limit: current limit (1 &lt;= limit &lt;= MAX_REQUESTS_PER_CALL)</span>
+<span class="sd">    :param min_limit: minimum API limit</span>
+<span class="sd">    :param max_limit: maximum API limit</span>
+<span class="sd">    :return: 0: limit okay; 1: limit out of API range, print error message; 2: API limit both subceeded and exceeded, print error message</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">limit</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">limit</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;positive integers&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">min_limit</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">min_limit</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">min_limit</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;positive integers&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">max_limit</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">MAX_REQUESTS_PER_CALL</span> <span class="o">&lt;</span> <span class="n">max_limit</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">max_limit</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;0 &lt; max_limit &lt; MAX_REQUESTS_PER_CALL&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">check_lower_limit</span><span class="p">(</span><span class="n">limit</span><span class="p">,</span> <span class="n">min_limit</span><span class="p">)</span> <span class="o">+</span> <span class="n">check_upper_limit</span><span class="p">(</span><span class="n">limit</span><span class="p">,</span> <span class="n">max_limit</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="update_env_key">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.update_env_key">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">update_env_key</span><span class="p">(</span><span class="n">env_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">new_value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Update the env key with the new value.</span>
+
+<span class="sd">    :param env_key: what key to update</span>
+<span class="sd">    :param new_value: what new value to set</span>
+<span class="sd">    :return: old value and current value</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    :raises CustomException: If Exception occurs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env_key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">env_key</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;any string&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+    
+    <span class="n">env_file</span> <span class="o">=</span> <span class="n">find_dotenv</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">env_file</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">CRED</span><span class="si">}</span><span class="s2">Could not find .env file</span><span class="se">\n</span><span class="si">{</span><span class="n">TEXTCOLOR</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">load_dotenv</span><span class="p">(</span><span class="n">env_file</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">old_value</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="n">env_key</span><span class="p">)</span>
+
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="n">env_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_value</span>
+        <span class="n">set_key</span><span class="p">(</span><span class="n">env_file</span><span class="p">,</span> <span class="n">env_key</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="n">env_key</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">old_value</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="n">env_key</span><span class="p">]</span>
+    
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">CustomException</span><span class="p">(</span><span class="n">error_message</span><span class="o">=</span><span class="n">error</span><span class="p">,</span> <span class="n">more_infos</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Exception occurred while updating .env key &#39;</span><span class="si">{</span><span class="n">env_key</span><span class="si">}</span><span class="s2">&#39; to &#39;</span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="check_token_expired">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.check_token_expired">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_token_expired</span><span class="p">(</span><span class="n">extended_token</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">print_remaining_time</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks when the Token expires</span>
+
+<span class="sd">    :param extended_token: Whether to check the regular Token (=False) or the extended one (=True)</span>
+<span class="sd">    :param print_remaining_time: Whether to print the time the token remains valid</span>
+<span class="sd">    :return: Time till Token expires (if 0 is returned, the token did expire)</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    :raises CustomException: If Exception occurs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">extended_token</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">extended_token</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    
+    <span class="n">env_file</span> <span class="o">=</span> <span class="n">find_dotenv</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">env_file</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not find .env file&quot;</span><span class="p">)</span>
+
+    <span class="n">load_dotenv</span><span class="p">(</span><span class="n">env_file</span><span class="p">)</span>
+    <span class="n">token_name</span> <span class="o">=</span> <span class="s2">&quot;EXTENDED_TOKEN&quot;</span> <span class="k">if</span> <span class="n">extended_token</span> <span class="k">else</span> <span class="s2">&quot;REGULAR_TOKEN&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">token_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="n">token_name</span><span class="p">))</span>
+        <span class="n">expiration_date</span> <span class="o">=</span> <span class="n">token_data</span><span class="p">[</span><span class="s2">&quot;expires&quot;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">print_remaining_time</span><span class="p">:</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">expiration_date</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Token expires in: </span><span class="si">{</span><span class="n">t</span><span class="o">//</span><span class="mi">60</span><span class="si">}</span><span class="s2"> min </span><span class="si">{</span><span class="n">t</span><span class="o">%</span><span class="mi">60</span><span class="si">}</span><span class="s2"> sec&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">expiration_date</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">expiration_date</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">CustomException</span><span class="p">(</span><span class="n">error_message</span><span class="o">=</span><span class="n">error</span><span class="p">,</span> <span class="n">more_infos</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Exception occurred while checking expiration of token &#39;</span><span class="si">{</span><span class="n">token_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="print_debug">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.print_debug">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">print_debug</span><span class="p">(</span><span class="n">content</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Print debug content</span>
+
+<span class="sd">    :param content: what to display inside the debug block</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">content</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">content</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;anything, but None&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">CORANGE</span><span class="si">}</span><span class="se">\n</span><span class="s2">&lt;----- Begin Debugging -----&gt;</span><span class="se">\n\n</span><span class="si">{</span><span class="n">content</span><span class="si">}</span><span class="se">\n\n</span><span class="si">{</span><span class="n">CORANGE</span><span class="si">}</span><span class="s2">&lt;------ End Debugging ------&gt;</span><span class="se">\n</span><span class="si">{</span><span class="n">TEXTCOLOR</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="exclude_from_dict">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.exclude_from_dict">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">exclude_from_dict</span><span class="p">(</span><span class="n">target_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">exclude_keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Safely exclude keys from a dictionary</span>
+
+<span class="sd">    :param target_dict: what dictionary to exclude from</span>
+<span class="sd">    :param exclude_keys: what keys to pop</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    :raises CustomException: If Exception occurs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target_dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">target_dict</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;valid dict&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude_keys</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">exclude_keys</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;valid list&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">exclude_keys</span><span class="p">:</span>
+            <span class="n">target_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">CustomException</span><span class="p">(</span><span class="n">error_message</span><span class="o">=</span><span class="n">error</span><span class="p">,</span> <span class="n">more_infos</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Exception occurred while excluding keys &#39;</span><span class="si">{</span><span class="n">exclude_keys</span><span class="si">}</span><span class="s2">&#39; from dictionary &#39;</span><span class="si">{</span><span class="n">target_dict</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">target_dict</span></div>
+
+
+
+<div class="viewcode-block" id="dict_factory">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.dict_factory">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">dict_factory</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">row</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    by Alex Martelli on Stackoverflow (https://stackoverflow.com/a/3300514)</span>
+
+<span class="sd">    :param cursor: Database cursor</span>
+<span class="sd">    :param row: Database table row</span>
+<span class="sd">    :return: Dict containing the column names and values {column_name: value}</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    :raises CustomException: If Exception occurs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Todo: Input check</span>
+    <span class="c1">#   if not isinstance(cursor, ??):</span>
+    <span class="c1">#       raise InputException(item_value=cursor, valid_values=&quot;valid cursor&quot;, valid_types=??)</span>
+    <span class="c1">#   if not isinstance(row, ??):</span>
+    <span class="c1">#       raise InputException(item_value=row, valid_values=??, valid_types=??)</span>
+
+    <span class="n">d</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cursor</span><span class="o">.</span><span class="n">description</span><span class="p">):</span>
+            <span class="n">d</span><span class="p">[</span><span class="n">col</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">CustomException</span><span class="p">(</span><span class="n">error_message</span><span class="o">=</span><span class="n">error</span><span class="p">,</span> <span class="n">more_infos</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Exception occurred while using dict_factory on cursor &#39;</span><span class="si">{</span><span class="n">cursor</span><span class="si">}</span><span class="s2">&#39; and row &#39;</span><span class="si">{</span><span class="n">row</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">d</span></div>
+
+
+
+<div class="viewcode-block" id="get_str_from_json_file">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.get_str_from_json_file">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_str_from_json_file</span><span class="p">(</span><span class="n">json_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load a JSON file and then dump it in a string</span>
+
+<span class="sd">    :param json_path: path to JSON file</span>
+<span class="sd">    :return: JSON file converted to string</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    :raises CustomException: If Exception occurs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">json_path</span> <span class="o">=</span> <span class="n">absolute_path</span><span class="p">(</span><span class="n">json_path</span><span class="p">,</span> <span class="n">is_file</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">load_json</span><span class="p">(</span><span class="n">json_path</span><span class="p">))</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">CustomException</span><span class="p">(</span><span class="n">error_message</span><span class="o">=</span><span class="n">error</span><span class="p">,</span> <span class="n">more_infos</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Exception occurred while loading JSON file &#39;</span><span class="si">{</span><span class="n">json_path</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="load_sql_query">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.load_sql_query">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_sql_query</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load a SQL query from a file Using the path from the Repository Root</span>
+
+<span class="sd">    :param file_path: relative path to query file</span>
+<span class="sd">    :return: loaded query</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    :raises CustomException: If Exception occurs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">file_path</span> <span class="o">=</span> <span class="n">absolute_path</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">is_file</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">query_file</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">query_file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">CustomException</span><span class="p">(</span><span class="n">error_message</span><span class="o">=</span><span class="n">error</span><span class="p">,</span> <span class="n">more_infos</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Exception occurred while loading SQL query from file &#39;</span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="absolute_path">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.absolute_path">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">absolute_path</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">is_file</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts the given path to an absolute path. If the path is absolute nothing happens. If in doubt just call it</span>
+
+<span class="sd">    :param path: (relative) path to convert</span>
+<span class="sd">    :param is_file: (optional) whether the path is a file</span>
+<span class="sd">    :return: absolute path</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">ROOT_DIR_PATH</span><span class="p">):</span>
+        <span class="c1"># remove leading &#39;/&#39; or &#39;./&#39;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">path</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span> <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;./&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">path</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ROOT_DIR_PATH</span><span class="p">,</span> <span class="n">path</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">path</span><span class="p">)[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;valid filepath&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">is_file</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;path to existing file&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">path</span></div>
+
+
+
+<div class="viewcode-block" id="load_json">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.load_json">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_json</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load JSON from .json file</span>
+
+<span class="sd">    :param path: path to file</span>
+<span class="sd">    :return: JSON object</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    :raises CustomException: If Exception occurs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">path</span> <span class="o">=</span> <span class="n">absolute_path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">is_file</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">j_file</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">j_file</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">CustomException</span><span class="p">(</span><span class="n">error_message</span><span class="o">=</span><span class="n">error</span><span class="p">,</span> <span class="n">more_infos</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Exception occurred while loading JSON file &#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="json_pointer_to_path">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.json_pointer_to_path">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">json_pointer_to_path</span><span class="p">(</span><span class="n">json_pointer</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">json_pointer</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">json_pointer</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;any JSON pointer&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="s2">&quot;][&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">json_pointer</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:])</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="resolve_json_pointer">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.resolve_json_pointer">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">resolve_json_pointer</span><span class="p">(</span><span class="n">json_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">json_pointer</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param json_data:</span>
+<span class="sd">    :param json_pointer:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">json_data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">json_pointer</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;any dict&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">json_pointer</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">json_pointer</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;any JSON pointer&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+    <span class="n">keys</span> <span class="o">=</span> <span class="n">json_pointer</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">relevant_data</span> <span class="o">=</span> <span class="n">json_data</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+        <span class="n">relevant_data</span> <span class="o">=</span> <span class="n">relevant_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">relevant_data</span></div>
+
+
+
+<div class="viewcode-block" id="load_list_from_database">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.load_list_from_database">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_list_from_database</span><span class="p">(</span><span class="n">fetched_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a list string into a list (e.g. [&quot;[&#39;6O7MpKrY91vlCd4Osi6XKs&#39;]&quot;, &quot;[&#39;2iLpvtffIrQ4bMYrFPRN4x&#39;]&quot;] -&gt; [[&#39;6O7MpKrY91vlCd4Osi6XKs&#39;], [&#39;2iLpvtffIrQ4bMYrFPRN4x&#39;]])</span>
+
+<span class="sd">    :param fetched_list: list of list-strings</span>
+<span class="sd">    :return: list containing flattened data</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    :raises CustomException: If Exception occurs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fetched_list</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">fetched_list</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;any list&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">loaded_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">fetched_list</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">flatten</span><span class="p">(</span><span class="n">loaded_list</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">CustomException</span><span class="p">(</span><span class="n">error_message</span><span class="o">=</span><span class="n">error</span><span class="p">,</span> <span class="n">more_infos</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Exception occurred while converting the list string &#39;</span><span class="si">{</span><span class="n">fetched_list</span><span class="si">}</span><span class="s2">&#39; into a list.&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="flatten">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.flatten">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">flatten</span><span class="p">(</span><span class="n">lst</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Recursively flatten a list</span>
+
+<span class="sd">    :param lst: multidimensional list</span>
+<span class="sd">    :return: one-dimensional list</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    :raises CustomException: If Exception occurs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">lst</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;valid list&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">lst</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">flatten</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">CustomException</span><span class="p">(</span><span class="n">error_message</span><span class="o">=</span><span class="n">error</span><span class="p">,</span> <span class="n">more_infos</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Exception occurred while flattening list &#39;</span><span class="si">{</span><span class="n">lst</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="remove_key_recursively">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.remove_key_recursively">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">remove_key_recursively</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">key_to_remove</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param d:</span>
+<span class="sd">    :param key_to_remove:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key_to_remove</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">key_to_remove</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;valid dict key&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>  <span class="c1"># If it&#39;s a dictionary, iterate through its keys</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">k</span><span class="p">:</span> <span class="n">remove_key_recursively</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">key_to_remove</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="n">key_to_remove</span>
+        <span class="p">}</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>  <span class="c1"># If it&#39;s a list, iterate through its elements</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">remove_key_recursively</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">key_to_remove</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">d</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># Base case: return value as is</span>
+        <span class="k">return</span> <span class="n">d</span></div>
+
+
+
+<div class="viewcode-block" id="check_base62">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.check_base62">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_base62</span><span class="p">(</span><span class="n">check_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if a string is a base62 encoded string</span>
+
+<span class="sd">    :param check_str: string to be checked</span>
+<span class="sd">    :return: True: string is base62 encoded; False: otherwise</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">check_str</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">check_str</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+    <span class="n">base62_alph</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">digits</span> <span class="o">+</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_letters</span>
+    <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">check_str</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">base62_alph</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="check_spotify_id">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.check_spotify_id">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_spotify_id</span><span class="p">(</span><span class="n">spotify_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">is_device</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">is_user</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if a spotify ID is valid</span>
+
+<span class="sd">    **Official Documentation:** https://developer.spotify.com/documentation/web-api/concepts/spotify-uris-ids</span>
+
+<span class="sd">    :param spotify_id: spotify ID to be checked</span>
+<span class="sd">    :param is_device: if the spotify ID is from a device</span>
+<span class="sd">    :param is_user: if the spotify ID is from a user</span>
+<span class="sd">    :return: True: id format is valid; False: otherwise</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spotify_id</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">spotify_id</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">is_device</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">is_device</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">is_user</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">is_user</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+
+    <span class="n">correct_encode</span> <span class="o">=</span> <span class="n">check_base62</span><span class="p">(</span><span class="n">spotify_id</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">is_device</span><span class="p">:</span>
+        <span class="n">correct_length</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">spotify_id</span><span class="p">)</span> <span class="o">==</span> <span class="mi">40</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">is_user</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">correct_length</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">spotify_id</span><span class="p">)</span> <span class="o">==</span> <span class="mi">22</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">correct_encode</span> <span class="ow">and</span> <span class="n">correct_length</span></div>
+
+
+
+<div class="viewcode-block" id="check_spotify_uri">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.check_spotify_uri">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_spotify_uri</span><span class="p">(</span><span class="n">spotify_uri</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if a spotify URI is valid</span>
+
+<span class="sd">    **Official Documentation:** https://developer.spotify.com/documentation/web-api/concepts/spotify-uris-ids</span>
+
+<span class="sd">    :param spotify_uri: spotify URI to be checked</span>
+<span class="sd">    :return: True: uri format is valid; False: otherwise</span>
+<span class="sd">    :raises InputException: if the spotify URI is invalid</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spotify_uri</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">spotify_uri</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">spotify_uri</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;strings in the from of </span><span class="se">\&#39;</span><span class="s2">spotify:$</span><span class="si">{type}</span><span class="s2">:$</span><span class="si">{id}</span><span class="se">\&#39;</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+    <span class="n">spotify_</span><span class="p">,</span> <span class="n">spotify_type</span><span class="p">,</span> <span class="n">spotify_id</span> <span class="o">=</span> <span class="n">spotify_uri</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+    <span class="n">correct_format</span> <span class="o">=</span> <span class="p">(</span><span class="n">spotify_</span> <span class="o">==</span> <span class="s2">&quot;spotify&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">spotify_type</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;album&quot;</span><span class="p">,</span> <span class="s2">&quot;artist&quot;</span><span class="p">,</span> <span class="s2">&quot;playlist&quot;</span><span class="p">,</span> <span class="s2">&quot;track&quot;</span><span class="p">,</span> <span class="s2">&quot;user&quot;</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">spotify_type</span> <span class="o">==</span> <span class="s2">&quot;user&quot;</span><span class="p">:</span>
+        <span class="n">correct_id</span> <span class="o">=</span> <span class="n">check_spotify_id</span><span class="p">(</span><span class="n">spotify_id</span><span class="p">,</span> <span class="n">is_user</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">correct_id</span> <span class="o">=</span> <span class="n">check_spotify_id</span><span class="p">(</span><span class="n">spotify_id</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">correct_format</span> <span class="ow">and</span> <span class="n">correct_id</span></div>
+
+
+
+<div class="viewcode-block" id="check_spotify_ids">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.check_spotify_ids">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_spotify_ids</span><span class="p">(</span><span class="n">spotify_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if a list contains valid spotify IDs (not working for user)</span>
+
+<span class="sd">    :param spotify_ids: list containing spotify IDs to be checked</span>
+<span class="sd">    :return: True: spotify ID formats are valid; False: otherwise</span>
+<span class="sd">    :raises InputException: if the spotify IDs are invalid</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spotify_ids</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">spotify_ids</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">spotify_ids</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;list containing strings&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">check_spotify_id</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">spotify_ids</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="check_spotify_user_ids">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.check_spotify_user_ids">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_spotify_user_ids</span><span class="p">(</span><span class="n">spotify_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if a list contains valid spotify user IDs</span>
+
+<span class="sd">    :param spotify_ids: list containing spotify user IDs to be checked</span>
+<span class="sd">    :return: True: spotify user ID formats are valid; False: otherwise</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spotify_ids</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">spotify_ids</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">spotify_ids</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;list containing strings&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="c1"># Note: always returns True</span>
+    <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">check_spotify_id</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">is_user</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">spotify_ids</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="check_spotify_device_ids">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.check_spotify_device_ids">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_spotify_device_ids</span><span class="p">(</span><span class="n">spotify_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if a list contains valid spotify device IDs</span>
+
+<span class="sd">    :param spotify_ids: list containing spotify device IDs to be checked</span>
+<span class="sd">    :return: True: spotify device ID formats are valid; False: otherwise</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spotify_ids</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">spotify_ids</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">spotify_ids</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;list containing strings&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">check_spotify_id</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">is_device</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">spotify_ids</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="check_spotify_uris">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.check_spotify_uris">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_spotify_uris</span><span class="p">(</span><span class="n">spotify_uris</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if a list contains valid spotify URIs</span>
+
+<span class="sd">    :param spotify_uris: list containing spotify URIs to be checked</span>
+<span class="sd">    :return: True: spotify URI formats are valid; False: otherwise</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spotify_uris</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">spotify_uris</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">spotify_uris</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;list containing strings&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">check_spotify_uri</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">spotify_uris</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_invalid_spotify_ids">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.get_invalid_spotify_ids">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_invalid_spotify_ids</span><span class="p">(</span><span class="n">spotify_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get invalid spotify IDs (not working for user)</span>
+
+<span class="sd">    :param spotify_ids: list containing spotify IDs to be checked</span>
+<span class="sd">    :return: invalid spotify IDs</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spotify_ids</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">spotify_ids</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">spotify_ids</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;list containing strings&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">spotify_ids</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">check_spotify_id</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span></div>
+
+
+
+<div class="viewcode-block" id="get_invalid_spotify_uris">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.get_invalid_spotify_uris">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_invalid_spotify_uris</span><span class="p">(</span><span class="n">spotify_uris</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get invalid spotify URIs</span>
+
+<span class="sd">    :param spotify_uris: list containing spotify URIs to be checked</span>
+<span class="sd">    :return: invalid spotify URIs</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spotify_uris</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">spotify_uris</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">spotify_uris</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;list containing strings&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">spotify_uris</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">check_spotify_uri</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Atomdonat.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

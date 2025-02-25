@@ -1,0 +1,481 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>code_backend.main_app &mdash; MusicPlayer 1.15.6 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=1f24c071"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            MusicPlayer
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">MusicPlayer</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">MusicPlayer</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">code_backend.main_app</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for code_backend.main_app</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">code_backend.shared_config</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">code_backend.organize_playlist</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">organize</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">code_backend.spotify_web_api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">spotify</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">code_backend.database_access</span><span class="w"> </span><span class="kn">import</span> <span class="n">APP_DATABASE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">code_backend.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpotifyApiException</span><span class="p">,</span> <span class="n">HttpException</span><span class="p">,</span> <span class="n">InputException</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">code_backend.music_classes</span><span class="w"> </span><span class="kn">import</span> <span class="n">Album</span><span class="p">,</span> <span class="n">Artist</span><span class="p">,</span> <span class="n">Device</span><span class="p">,</span> <span class="n">Playlist</span><span class="p">,</span> <span class="n">Track</span><span class="p">,</span> <span class="n">User</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">code_backend.secondary_methods</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">uri_to_id</span><span class="p">,</span> <span class="n">load_json</span><span class="p">,</span> <span class="n">url_to_uri</span><span class="p">,</span> <span class="n">key_from_dict</span><span class="p">,</span> <span class="n">check_limits</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="Player">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.main_app.Player">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Player</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">player</span> <span class="o">=</span> <span class="n">spotify</span><span class="o">.</span><span class="n">get_playback_state</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">player</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">match</span> <span class="bp">self</span><span class="o">.</span><span class="n">player</span><span class="p">[</span><span class="s1">&#39;context&#39;</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">]:</span>
+                <span class="k">case</span> <span class="s1">&#39;album&#39;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">current_collection</span> <span class="o">=</span> <span class="n">Album</span><span class="p">(</span><span class="n">uri_to_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">player</span><span class="p">[</span><span class="s1">&#39;context&#39;</span><span class="p">][</span><span class="s1">&#39;uri&#39;</span><span class="p">]))</span>
+                <span class="k">case</span> <span class="s1">&#39;artist&#39;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">current_collection</span> <span class="o">=</span> <span class="n">Artist</span><span class="p">(</span><span class="n">uri_to_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">player</span><span class="p">[</span><span class="s1">&#39;context&#39;</span><span class="p">][</span><span class="s1">&#39;uri&#39;</span><span class="p">]))</span>
+                <span class="k">case</span> <span class="s1">&#39;playlist&#39;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">current_collection</span> <span class="o">=</span> <span class="n">Playlist</span><span class="p">(</span><span class="n">uri_to_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">player</span><span class="p">[</span><span class="s1">&#39;context&#39;</span><span class="p">][</span><span class="s1">&#39;uri&#39;</span><span class="p">]))</span>
+                <span class="k">case</span> <span class="s1">&#39;track&#39;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">current_collection</span> <span class="o">=</span> <span class="n">Track</span><span class="p">(</span><span class="n">uri_to_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">player</span><span class="p">[</span><span class="s1">&#39;context&#39;</span><span class="p">][</span><span class="s1">&#39;uri&#39;</span><span class="p">]))</span>
+                <span class="k">case</span> <span class="s1">&#39;user&#39;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">current_collection</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">uri_to_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">player</span><span class="p">[</span><span class="s1">&#39;context&#39;</span><span class="p">][</span><span class="s1">&#39;uri&#39;</span><span class="p">]))</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_album</span> <span class="o">=</span> <span class="n">Album</span><span class="p">(</span><span class="n">album_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">player</span><span class="p">[</span><span class="s1">&#39;item&#39;</span><span class="p">][</span><span class="s1">&#39;album&#39;</span><span class="p">][</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_artist</span> <span class="o">=</span> <span class="n">Artist</span><span class="p">(</span><span class="n">artist_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">player</span><span class="p">[</span><span class="s1">&#39;item&#39;</span><span class="p">][</span><span class="s1">&#39;artists&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_track</span> <span class="o">=</span> <span class="n">Track</span><span class="p">(</span><span class="n">track_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">player</span><span class="p">[</span><span class="s1">&#39;item&#39;</span><span class="p">][</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_device</span> <span class="o">=</span> <span class="n">Device</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">player</span><span class="p">[</span><span class="s1">&#39;device&#39;</span><span class="p">][</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dummy_player</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_device</span><span class="o">.</span><span class="n">device_id</span> <span class="o">==</span> <span class="s2">&quot;0000000000000000000000000000000000000000&quot;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">is_playing</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">player</span><span class="p">[</span><span class="s1">&#39;is_playing&#39;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">repeat_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">player</span><span class="p">[</span><span class="s1">&#39;repeat_state&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">shuffle_state</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">player</span><span class="p">[</span><span class="s1">&#39;shuffle_state&#39;</span><span class="p">])</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">player</span> <span class="o">=</span> <span class="n">load_json</span><span class="p">(</span><span class="s2">&quot;Databases/JSON_Files/spotify_player_dummy.json&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_album</span> <span class="o">=</span> <span class="n">Album</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">player</span><span class="p">[</span><span class="s2">&quot;current_album_id&quot;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_artist</span> <span class="o">=</span> <span class="n">Artist</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">player</span><span class="p">[</span><span class="s2">&quot;current_artist_id&quot;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_collection</span> <span class="o">=</span> <span class="n">Playlist</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">player</span><span class="p">[</span><span class="s2">&quot;current_collection_id&quot;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_device</span> <span class="o">=</span> <span class="n">Device</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">player</span><span class="p">[</span><span class="s2">&quot;current_device_id&quot;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dummy_player</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_device</span><span class="o">.</span><span class="n">device_id</span> <span class="o">==</span> <span class="s2">&quot;0000000000000000000000000000000000000000&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_track</span> <span class="o">=</span> <span class="n">Track</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">player</span><span class="p">[</span><span class="s2">&quot;current_track_id&quot;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">is_playing</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">player</span><span class="p">[</span><span class="s2">&quot;is_playing&quot;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">repeat_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">player</span><span class="p">[</span><span class="s2">&quot;repeat_state&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">shuffle_state</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">player</span><span class="p">[</span><span class="s2">&quot;shuffle_state&quot;</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">skip_blacklisted_items</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Player.change_playing_state">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.main_app.Player.change_playing_state">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">change_playing_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Switch the current playing state of Spotify Player</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        :raises HttpException: if request response code is not good</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">dummy_player</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_playing</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">spotify</span><span class="o">.</span><span class="n">pause_playback</span><span class="p">()</span>
+                    <span class="c1"># returns Error 403 if playback is already paused</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">is_playing</span> <span class="o">=</span> <span class="kc">False</span>
+
+                <span class="k">except</span> <span class="n">HttpException</span><span class="p">:</span>
+                    <span class="n">spotify</span><span class="o">.</span><span class="n">start_or_resume_playback</span><span class="p">(</span><span class="n">target_device_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">current_device</span><span class="o">.</span><span class="n">device_id</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">is_playing</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">spotify</span><span class="o">.</span><span class="n">start_or_resume_playback</span><span class="p">(</span><span class="n">target_device_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">current_device</span><span class="o">.</span><span class="n">device_id</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">is_playing</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="Player.initialize_player">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.main_app.Player.initialize_player">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">initialize_player</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get Information of the current Player state of Spotify (updates attributes)</span>
+
+<span class="sd">        :raises SpotifyApiException: if Exception related to Spotify API occurs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">spotify</span><span class="o">.</span><span class="n">get_playback_state</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SpotifyApiException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No Spotify instance found</span><span class="se">\n</span><span class="si">{</span><span class="n">CCYAN</span><span class="si">}</span><span class="s2">Please start Spotify and retry</span><span class="si">{</span><span class="n">TEXTCOLOR</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">progress</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the current progress of the playing track or episode</span>
+
+<span class="sd">        :return: progress in milliseconds</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">dummy_player</span><span class="p">:</span>
+            <span class="n">playback_data</span> <span class="o">=</span> <span class="n">spotify</span><span class="o">.</span><span class="n">get_currently_playing_track</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">playback_data</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">playback_data</span><span class="p">[</span><span class="s2">&quot;progress_ms&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+
+    <span class="nd">@progress</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">progress</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position_ms</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param position_ms:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        :raises InputException: if input is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">position_ms</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">position_ms</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;positive integer&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">dummy_player</span><span class="p">:</span>
+            <span class="n">spotify</span><span class="o">.</span><span class="n">seek_to_position</span><span class="p">(</span><span class="n">position_ms</span><span class="o">=</span><span class="n">position_ms</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">progress</span> <span class="o">=</span> <span class="n">position_ms</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">progress</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+<div class="viewcode-block" id="Player.change_repeat_state">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.main_app.Player.change_repeat_state">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">change_repeat_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_state</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;context&#39;</span><span class="p">,</span> <span class="s1">&#39;track&#39;</span><span class="p">,</span> <span class="s1">&#39;off&#39;</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Change the current playing state of Spotify Player</span>
+
+<span class="sd">        :param new_state: &#39;off&#39;: off, &#39;context&#39;: on, &#39;track&#39;: only repeat current track</span>
+<span class="sd">        :raises InputException: if input is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_state</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="n">new_state</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;context&#39;</span><span class="p">,</span> <span class="s1">&#39;track&#39;</span><span class="p">,</span> <span class="s1">&#39;off&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">new_state</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;context&#39;</span><span class="p">,</span> <span class="s1">&#39;track&#39;</span><span class="p">,</span> <span class="s1">&#39;off&#39;</span><span class="p">),</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">dummy_player</span><span class="p">:</span>
+            <span class="n">spotify</span><span class="o">.</span><span class="n">set_repeat_mode</span><span class="p">(</span><span class="n">new_repeat_mode</span><span class="o">=</span><span class="n">new_state</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">repeat_state</span> <span class="o">=</span> <span class="n">new_state</span></div>
+
+
+<div class="viewcode-block" id="Player.next_track">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.main_app.Player.next_track">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">next_track</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Skips current track</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">dummy_player</span><span class="p">:</span>
+            <span class="n">spotify</span><span class="o">.</span><span class="n">skip_to_next</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Player.prev_track">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.main_app.Player.prev_track">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prev_track</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Go to previous track (progress=0) or track start (progress&gt;0)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">dummy_player</span><span class="p">:</span>
+            <span class="n">spotify</span><span class="o">.</span><span class="n">skip_to_previous</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Player.change_shuffle_state">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.main_app.Player.change_shuffle_state">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">change_shuffle_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">dummy_player</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">shuffle_state</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">shuffle_state</span>
+            <span class="n">spotify</span><span class="o">.</span><span class="n">toggle_playback_shuffle</span><span class="p">(</span><span class="n">new_state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shuffle_state</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Player.set_volume">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.main_app.Player.set_volume">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_volume</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param new_volume:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        :raises InputException: if input is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_volume</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">100</span> <span class="o">&lt;</span> <span class="n">new_volume</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">new_volume</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;0 &lt;= new_volume &lt;= 100&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">dummy_player</span><span class="p">:</span>
+            <span class="n">spotify</span><span class="o">.</span><span class="n">set_playback_volume</span><span class="p">(</span><span class="n">new_volume</span><span class="o">=</span><span class="n">new_volume</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Player.skip_blacklisted_items">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.main_app.Player.skip_blacklisted_items">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">skip_blacklisted_items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Skip Item if it is blacklisted in the Database</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dummy_player</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">collection_id</span><span class="p">,</span> <span class="n">collection_type</span> <span class="o">=</span> <span class="n">uri_to_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">player</span><span class="p">[</span><span class="s1">&#39;context&#39;</span><span class="p">][</span><span class="s1">&#39;uri&#39;</span><span class="p">],</span> <span class="n">get_type</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">collection_is_blacklisted</span> <span class="o">=</span> <span class="n">APP_DATABASE</span><span class="o">.</span><span class="n">fetch_row</span><span class="p">(</span>
+            <span class="n">table_name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">collection_type</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">,</span>
+            <span class="n">item_id</span><span class="o">=</span><span class="n">collection_id</span><span class="p">,</span>
+            <span class="n">table_column</span><span class="o">=</span><span class="s2">&quot;blacklisted&quot;</span>
+        <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">album_is_blacklisted</span> <span class="o">=</span> <span class="n">APP_DATABASE</span><span class="o">.</span><span class="n">fetch_row</span><span class="p">(</span>
+            <span class="n">table_name</span><span class="o">=</span><span class="s1">&#39;albums&#39;</span><span class="p">,</span>
+            <span class="n">item_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">current_album</span><span class="o">.</span><span class="n">album_id</span><span class="p">,</span>
+            <span class="n">table_column</span><span class="o">=</span><span class="s2">&quot;blacklisted&quot;</span>
+        <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">artist_is_blacklisted</span> <span class="o">=</span> <span class="n">APP_DATABASE</span><span class="o">.</span><span class="n">fetch_row</span><span class="p">(</span>
+            <span class="n">table_name</span><span class="o">=</span><span class="s1">&#39;artists&#39;</span><span class="p">,</span>
+            <span class="n">item_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">current_artist</span><span class="o">.</span><span class="n">artist_id</span><span class="p">,</span>
+            <span class="n">table_column</span><span class="o">=</span><span class="s2">&quot;blacklisted&quot;</span>
+        <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">track_is_blacklisted</span> <span class="o">=</span> <span class="n">APP_DATABASE</span><span class="o">.</span><span class="n">fetch_row</span><span class="p">(</span>
+            <span class="n">table_name</span><span class="o">=</span><span class="s1">&#39;tracks&#39;</span><span class="p">,</span>
+            <span class="n">item_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">current_track</span><span class="o">.</span><span class="n">track_id</span><span class="p">,</span>
+            <span class="n">table_column</span><span class="o">=</span><span class="s2">&quot;blacklisted&quot;</span>
+        <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">album_is_blacklisted</span><span class="p">,</span> <span class="n">collection_is_blacklisted</span><span class="p">,</span> <span class="n">artist_is_blacklisted</span><span class="p">,</span> <span class="n">track_is_blacklisted</span><span class="p">]):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">next_track</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="SpotifyApp">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.main_app.SpotifyApp">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SpotifyApp</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :raises SpotifyApiException: if Exception related to Spotify API occurs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">available_markets</span> <span class="o">=</span> <span class="n">spotify</span><span class="o">.</span><span class="n">get_available_markets</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">MARKET</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">available_markets</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SpotifyApiException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Market &#39;</span><span class="si">{</span><span class="n">MARKET</span><span class="si">}</span><span class="s2">&#39; not available</span><span class="se">\n</span><span class="si">{</span><span class="n">CCYAN</span><span class="si">}</span><span class="s2">Available markets: </span><span class="si">{</span><span class="n">available_markets</span><span class="si">}{</span><span class="n">TEXTCOLOR</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">player</span> <span class="o">=</span> <span class="n">Player</span><span class="p">()</span>
+
+<div class="viewcode-block" id="SpotifyApp.find_object">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.main_app.SpotifyApp.find_object">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_object</span><span class="p">(</span>
+        <span class="n">search_query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">item_type</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;album&quot;</span><span class="p">,</span> <span class="s2">&quot;artist&quot;</span><span class="p">,</span> <span class="s2">&quot;playlist&quot;</span><span class="p">,</span> <span class="s2">&quot;track&quot;</span><span class="p">]],</span>
+        <span class="n">select_correct</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span>
+        <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get Spotify catalog information about albums, artists, playlists, tracks, shows, episodes or audiobooks that match a keyword string.</span>
+
+<span class="sd">        **Better Search queries:**</span>
+<span class="sd">        (1) You can narrow down your search using field filters. The available filters are album, artist, track, year, upc, tag:hipster, tag:new, isrc, and genre. Each field filter only applies to certain result types.</span>
+<span class="sd">        (2) The artist and year filters can be used while searching albums, artists and tracks. You can filter on a single year or a range (e.g. 1955-1960).</span>
+<span class="sd">        (3) The album filter can be used while searching albums and tracks.</span>
+<span class="sd">        (4) The genre filter can be used while searching artists and tracks.</span>
+<span class="sd">        (5) The isrc and track filters can be used while searching tracks.</span>
+<span class="sd">        (6) The upc, tag:new and tag:hipster filters can only be used while searching albums. The tag:new filter will return albums released in the past two weeks and tag:hipster can be used to return only albums with the lowest 10% popularity.</span>
+
+<span class="sd">        :param search_query: Your search query.</span>
+<span class="sd">        :param item_type: A comma-separated list of item types to search across. Search results include hits from all the specified item types. For example: &#39;q=abacab&amp;type=album,track&#39; returns both albums and tracks matching &quot;abacab&quot;.</span>
+<span class="sd">        :param select_correct: True: Select correct item with CLI; False: return all items.</span>
+<span class="sd">        :param limit: The maximum number of results to return in each item type. Default: 20. Minimum: 1. Maximum: 50.</span>
+<span class="sd">        :param offset: The index of the first result to return. Use with limit to get the next page of search results. Default: 0. Minimum: 0. Maximum: 1000-limit.</span>
+<span class="sd">        :return: Dict containing the Search response, in the form of {item_uri: item}</span>
+<span class="sd">        :raises InputException: if input is invalid</span>
+<span class="sd">        :raises LimitException: if limit is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="n">spotify</span><span class="o">.</span><span class="n">search_for_item</span><span class="p">(</span>
+            <span class="n">search_query</span><span class="o">=</span><span class="n">search_query</span><span class="p">,</span>
+            <span class="n">item_type</span><span class="o">=</span><span class="p">[</span><span class="n">item_type</span><span class="p">],</span>
+            <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span>
+            <span class="n">offset</span><span class="o">=</span><span class="n">offset</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Choose right one</span>
+        <span class="k">if</span> <span class="n">select_correct</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">TEXTCOLOR</span><span class="si">}</span><span class="s2">These items are found by your search </span><span class="si">{</span><span class="n">search_query</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+            <span class="n">item_counter</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">item_uri</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">_</span><span class="p">,</span> <span class="n">item_type</span> <span class="o">=</span> <span class="n">uri_to_id</span><span class="p">(</span><span class="n">spotify_uri</span><span class="o">=</span><span class="n">item_uri</span><span class="p">,</span> <span class="n">get_type</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="k">match</span> <span class="n">item_type</span><span class="p">:</span>
+                    <span class="k">case</span> <span class="s2">&quot;album&quot;</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">item_counter</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">limit</span><span class="p">)))</span><span class="si">}</span><span class="s2"> Album: </span><span class="si">{</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> by </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">current_artist</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">current_artist</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;artists&#39;</span><span class="p">]])</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">case</span> <span class="s2">&quot;artist&quot;</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">item_counter</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">limit</span><span class="p">)))</span><span class="si">}</span><span class="s2"> Artist: </span><span class="si">{</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">case</span> <span class="s1">&#39;playlist&#39;</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">item_counter</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">limit</span><span class="p">)))</span><span class="si">}</span><span class="s2"> Playlist: </span><span class="si">{</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> by </span><span class="si">{</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;owner&#39;</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">case</span> <span class="s2">&quot;track&quot;</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">item_counter</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">limit</span><span class="p">)))</span><span class="si">}</span><span class="s2"> Track: </span><span class="si">{</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;album&#39;</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">) by </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">current_artist</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">current_artist</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;artists&#39;</span><span class="p">]])</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="n">item_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">item_index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Enter the index of the item to return [0-</span><span class="si">{</span><span class="n">limit</span><span class="o">-</span><span class="mi">1</span><span class="si">}</span><span class="s2">]: &quot;</span><span class="p">))</span>
+            <span class="n">correct_item_uri</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="n">item_index</span><span class="p">]</span>
+            <span class="k">return</span> <span class="p">{</span><span class="n">correct_item_uri</span><span class="p">:</span> <span class="n">results</span><span class="p">[</span><span class="n">correct_item_uri</span><span class="p">]}</span>
+
+        <span class="k">return</span> <span class="n">results</span></div>
+
+
+
+<div class="viewcode-block" id="SpotifyApp.random_tracks_by_genre">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.main_app.SpotifyApp.random_tracks_by_genre">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">random_tracks_by_genre</span><span class="p">(</span><span class="n">genre_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">track_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">create_playlist</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get random tracks by genre and either return them as a dict or create a new playlist with them.</span>
+
+<span class="sd">        :param genre_name: what genre to search for</span>
+<span class="sd">        :param track_count: how many tracks to return</span>
+<span class="sd">        :param create_playlist: whether to create a new playlist</span>
+<span class="sd">        :return: Dict containing Spotify Tracks, in the form of {track_uri: track} or (playlist_id, playlist_name)</span>
+<span class="sd">        :raises InputException: if input is invalid</span>
+<span class="sd">        :raises SpotifyApiException: if Exception related to Spotify API occurs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">genre_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">genre_name</span><span class="p">,</span><span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;suitable string&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">track_count</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">track_count</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">track_count</span><span class="p">,</span><span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;positive integer&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">create_playlist</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">create_playlist</span><span class="p">,</span><span class="n">valid_values</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+        <span class="n">random_tracks</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+        <span class="n">anti_loop</span> <span class="o">=</span> <span class="n">track_count</span>
+        <span class="n">tracks_per_request</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">track_count</span><span class="p">)</span>
+        <span class="k">while</span> <span class="n">anti_loop</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">random_tracks</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">track_count</span><span class="p">:</span>
+            <span class="n">random_offset</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="o">-</span><span class="n">tracks_per_request</span><span class="p">)</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="n">spotify</span><span class="o">.</span><span class="n">search_for_item</span><span class="p">(</span>
+                <span class="n">search_query</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;genre:</span><span class="si">{</span><span class="n">genre_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">item_type</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;track&quot;</span><span class="p">],</span>
+                <span class="n">limit</span><span class="o">=</span><span class="n">tracks_per_request</span><span class="p">,</span>
+                <span class="n">offset</span><span class="o">=</span><span class="n">random_offset</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">results</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">SpotifyApiException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error occurred while searching for tracks in genre: </span><span class="si">{</span><span class="n">genre_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">current_track_uri</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">current_track_uri</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">random_tracks</span><span class="p">:</span>
+                    <span class="n">random_tracks</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">current_track_uri</span><span class="p">)</span>
+
+            <span class="n">anti_loop</span> <span class="o">-=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">random_tracks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">create_playlist</span><span class="p">:</span>
+                <span class="n">current_user_uri</span> <span class="o">=</span> <span class="n">key_from_dict</span><span class="p">(</span><span class="n">spotify</span><span class="o">.</span><span class="n">get_current_users_profile</span><span class="p">())</span>
+                <span class="n">current_user</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">uri_to_id</span><span class="p">(</span><span class="n">spotify_uri</span><span class="o">=</span><span class="n">current_user_uri</span><span class="p">,</span> <span class="n">get_type</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+                <span class="n">new_playlist</span> <span class="o">=</span> <span class="n">spotify</span><span class="o">.</span><span class="n">create_playlist</span><span class="p">(</span>
+                    <span class="n">user_id</span><span class="o">=</span><span class="n">current_user</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span>
+                    <span class="n">name</span><span class="o">=</span><span class="n">genre_name</span><span class="p">,</span>
+                    <span class="n">public</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">collaborative</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">description</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">track_count</span><span class="si">}</span><span class="s2"> randomly selected tracks within the genre &#39;</span><span class="si">{</span><span class="n">genre_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+                <span class="p">)</span>
+                <span class="n">playlist_id</span> <span class="o">=</span> <span class="n">uri_to_id</span><span class="p">(</span><span class="n">key_from_dict</span><span class="p">(</span><span class="n">new_playlist</span><span class="p">))</span>
+                <span class="n">spotify</span><span class="o">.</span><span class="n">add_items_to_playlist</span><span class="p">(</span>
+                    <span class="n">playlist_id</span><span class="o">=</span><span class="n">playlist_id</span><span class="p">,</span>
+                    <span class="n">track_uris</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">random_tracks</span><span class="p">),</span>
+                <span class="p">)</span>
+
+                <span class="c1"># Todo: add custom genre image</span>
+
+                <span class="k">return</span> <span class="n">playlist_id</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;genre:</span><span class="si">{</span><span class="n">genre_name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">random_tracks</span><span class="p">,</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No tracks found&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+</div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Atomdonat.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

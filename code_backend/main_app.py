@@ -53,6 +53,7 @@ class Player:
     def change_playing_state(self):
         """
         Switch the current playing state of Spotify Player
+
         :return:
         :raises HttpException: if request response code is not good
         """
@@ -74,6 +75,7 @@ class Player:
     def initialize_player(self):
         """
         Get Information of the current Player state of Spotify (updates attributes)
+
         :raises SpotifyApiException: if Exception related to Spotify API occurs
         """
         if spotify.get_playback_state() is None:
@@ -84,6 +86,7 @@ class Player:
     def progress(self) -> int:
         """
         Get the current progress of the playing track or episode
+
         :return: progress in milliseconds
         """
         if not self.dummy_player:
@@ -113,6 +116,7 @@ class Player:
     def change_repeat_state(self, new_state: Literal['context', 'track', 'off']):
         """
         Change the current playing state of Spotify Player
+
         :param new_state: 'off': off, 'context': on, 'track': only repeat current track
         :raises InputException: if input is invalid
         """
@@ -213,13 +217,16 @@ class SpotifyApp:
     ) -> dict | None:
         """
         Get Spotify catalog information about albums, artists, playlists, tracks, shows, episodes or audiobooks that match a keyword string.
+
+        **Better Search queries:**
+        (1) You can narrow down your search using field filters. The available filters are album, artist, track, year, upc, tag:hipster, tag:new, isrc, and genre. Each field filter only applies to certain result types.
+        (2) The artist and year filters can be used while searching albums, artists and tracks. You can filter on a single year or a range (e.g. 1955-1960).
+        (3) The album filter can be used while searching albums and tracks.
+        (4) The genre filter can be used while searching artists and tracks.
+        (5) The isrc and track filters can be used while searching tracks.
+        (6) The upc, tag:new and tag:hipster filters can only be used while searching albums. The tag:new filter will return albums released in the past two weeks and tag:hipster can be used to return only albums with the lowest 10% popularity.
+
         :param search_query: Your search query.
-            You can narrow down your search using field filters. The available filters are album, artist, track, year, upc, tag:hipster, tag:new, isrc, and genre. Each field filter only applies to certain result types.
-            The artist and year filters can be used while searching albums, artists and tracks. You can filter on a single year or a range (e.g. 1955-1960).
-            The album filter can be used while searching albums and tracks.
-            The genre filter can be used while searching artists and tracks.
-            The isrc and track filters can be used while searching tracks.
-            The upc, tag:new and tag:hipster filters can only be used while searching albums. The tag:new filter will return albums released in the past two weeks and tag:hipster can be used to return only albums with the lowest 10% popularity.
         :param item_type: A comma-separated list of item types to search across. Search results include hits from all the specified item types. For example: 'q=abacab&type=album,track' returns both albums and tracks matching "abacab".
         :param select_correct: True: Select correct item with CLI; False: return all items.
         :param limit: The maximum number of results to return in each item type. Default: 20. Minimum: 1. Maximum: 50.
@@ -264,6 +271,7 @@ class SpotifyApp:
     def random_tracks_by_genre(genre_name: str, track_count: int = 10, create_playlist: bool = False) -> dict | None:
         """
         Get random tracks by genre and either return them as a dict or create a new playlist with them.
+
         :param genre_name: what genre to search for
         :param track_count: how many tracks to return
         :param create_playlist: whether to create a new playlist

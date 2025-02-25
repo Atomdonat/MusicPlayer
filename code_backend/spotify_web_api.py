@@ -116,6 +116,7 @@ def request_regular_token(use_credentials: bool = False, force_new_token: bool =
     def automated_request_handling():
         """
         Request a new Access Token from spotify
+
         :return:
         :raises CustomException: If Exception occurs
         """
@@ -194,6 +195,7 @@ def refresh_access_token():
     A refresh token is a security credential that allows client applications to obtain new access tokens without requiring users to reauthorize the application.
     Access tokens are intentionally configured to have a limited lifespan (1 hour), at the end of which, new tokens can be obtained by providing the original refresh token acquired during the authorization token request response.
     Official Documentation: https://developer.spotify.com/documentation/web-api/tutorials/refreshing-tokens
+
     :return: update REGULAR_TOKEN (and AUTHORIZED_SCOPES) in .env
     :raises HttpException: if request response code is not good
     :raises CustomException: If Exception occurs
@@ -280,6 +282,7 @@ def request_extended_token() -> None:
     """
     Using https://www.chosic.com/spotify-playlist-analyzer/ to request temporary extended-token, that can be used to request Web API Data. After 1 hour a new token needs to be requested.
     This implementation extracts the Spotify Web API token after one default request out of the local Storage value `plAnalyzerToken` (hopefully not violating Terms of Services).
+
     :raises CustomException: If Exception occurs
     """
     driver = webdriver.Firefox()
@@ -322,6 +325,7 @@ def api_request_data(
 ) -> dict | list | None:
     """
     Transferring data from or to a server using Curl commands via [requests](https://docs.python-requests.org/en/latest/index.html). Currently supported HTTP regular_api_methods are `GET`, `POST`, `PUT` and `DELETE` (This implementation is designed for Spotify API requests)
+
     :param url: url to curl from/to
     :param request_type: HTTP request method
     :param json_data: JSON data to send
@@ -469,6 +473,7 @@ def get_album(album_id: str, ignore_market: bool = False) -> dict:
     **Needed Scopes:** None
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/get-an-album
+
     :param album_id: The Spotify ID of the album.
     :param ignore_market: Whether to ignore market.
     :return: Dict containing Spotify Albums, in the form of {album_uri: album}
@@ -498,6 +503,7 @@ def get_several_albums(album_ids: list[str], ignore_market: bool = False) -> dic
     **Needed Scopes:** None
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/get-multiple-albums
+
     :param album_ids: A comma-separated list of the Spotify IDs for the albums.
     :param ignore_market: Whether to ignore market.
     :return: Dict containing Spotify Albums, in the form of {album_uri: album}
@@ -534,6 +540,7 @@ def get_album_tracks(album_id: str, get_duration: bool = False, ignore_market: b
     **Needed Scopes:** None
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/get-an-albums-tracks
+
     :param album_id: The Spotify ID of the album.
     :param get_duration: If to get the Playlist duration in seconds. Default: False.
     :param ignore_market: Whether to ignore market.
@@ -592,6 +599,7 @@ def get_users_saved_albums() -> dict | None:
     **Needed Scopes:** user-library-read
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/get-users-saved-albums
+
     :return: Dict containing Saved Spotify Albums, in the form of {album_uri: album}
     """
 
@@ -632,6 +640,7 @@ def check_users_saved_albums(album_ids: list[str]) -> dict | None:
     **Needed Scopes:** user-library-read
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/check-users-saved-albums
+
     :param album_ids: A comma-separated list of the Spotify IDs for the albums. Maximum: 20 IDs.
     :return: Dict containing if Spotify Albums are saved by User, in the form of {album_uri: exists?}
     :raises SpotifyIdException: if spotify id is invalid
@@ -664,6 +673,7 @@ def get_artist(artist_id: str) -> dict | None:
     **Needed Scopes:** None
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/get-an-artist
+
     :param artist_id: The Spotify ID of the artist.
     :return: Dict containing Spotify Artists, in the form of {artist_uri: artist}
     :raises SpotifyIdException: if spotify id is invalid
@@ -688,6 +698,7 @@ def get_several_artists(artist_ids: list[str]) -> dict | None:
     **Needed Scopes:** None
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/get-multiple-artists
+
     :param artist_ids: A comma-separated list of the Spotify IDs for the artists.
     :return: Dict containing Spotify Artists, in the form of {artist_uri: artist}
     :raises SpotifyIdException: if spotify id is invalid
@@ -719,6 +730,7 @@ def get_artists_albums(artist_id: str, limit: int = 20) -> dict | None:
     **Needed Scopes:** None
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/get-an-artists-albums
+
     :param artist_id: The Spotify ID of the artist.
     :param limit: The maximum number of items to return.
     :return: Dict containing Spotify Albums, in the form of {album_uri: album}
@@ -767,6 +779,7 @@ def get_artists_top_tracks(artist_id: str) -> dict | None:
     **Needed Scopes:** None
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/get-an-artists-top-tracks
+
     :param artist_id: The Spotify ID of the artist.
     :return: Dict containing Spotify Tracks, in the form of {track_uri: track}
     :raises SpotifyIdException: if spotify id is invalid
@@ -792,6 +805,7 @@ def get_available_markets():
     **Needed Scopes:** None
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/get-available-markets
+
     Country Codes: https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
     :return: List of available markets.
     """
@@ -807,9 +821,10 @@ def get_playback_state() -> dict:
     """
     Get information about the user’s current playback state, including track or episode, progress, and active device.
     
-    **Needed Scopes:** ['user-read-playback-state']
+    **Needed Scopes:** user-read-playback-state'
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/get-information-about-the-users-current-playback
+
     :return: Dict containing information about playback
     """
     response = api_request_data(
@@ -824,9 +839,10 @@ def transfer_playback(new_device_id: str, playback_state: bool = False) -> None:
     """
     Transfer playback to a new device and optionally begin playback. This API only works for users who have Spotify Premium. The order of execution is not guaranteed when you use this API with other Player API endpoints.
     
-    **Needed Scopes:** ['user-modify-playback-state']
+    **Needed Scopes:** user-modify-playback-state'
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/transfer-a-users-playback
+
     :param new_device_id: Spotify device ID
     :param playback_state: True: ensure playback happens on new device; False: keep the current playback state.
     :raises InputException: if input is invalid
@@ -855,9 +871,10 @@ def get_available_devices():
     """
     Get information about a user’s available Spotify Connect devices. Some device models are not supported and will not be listed in the API response.
     
-    **Needed Scopes:** ['user-read-playback-state']
+    **Needed Scopes:** user-read-playback-state'
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/get-a-users-available-devices
+
     :return: Dict containing information about available devices, in the form of {device_uri: device} (Device uri is NOT official)
     """
     response = api_request_data(
@@ -872,7 +889,8 @@ def get_device(device_id: str) -> dict | None:
     """
     Get information about a user’s Spotify Connect device. Some device models are not supported and will not be listed in the API response.
     
-    **Needed Scopes:** ['user-read-playback-state']
+    **Needed Scopes:** user-read-playback-state
+
     :param device_id: what device to get information about
     :return: Dict containing information about the device, in the form of {device_uri: device} (Device uri is NOT official)
     :raises SpotifyIdException: if spotify id is invalid
@@ -890,10 +908,11 @@ def get_currently_playing_track() -> dict:
     """
     Get the object currently being played on the user's Spotify account.
     
-    **Needed Scopes:** ['user-read-currently-playing']
+    **Needed Scopes:** user-read-currently-playing'
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/get-the-users-currently-playing-track
-    return: Dict containing information about currently playing track
+
+    :return: Dict containing information about currently playing track
     """
     response = api_request_data(
         url=f"https://api.spotify.com/v1/me/player/currently-playing?market={MARKET}",
@@ -907,10 +926,10 @@ def start_or_resume_playback(target_device_id: str = None) -> None:
     """
     Start a new context or resume current playback on the user's active device. This API only works for users who have Spotify Premium. The order of execution is not guaranteed when you use this API with other Player API endpoints.
     
-    **Needed Scopes:** ['user-modify-playback-state']
+    **Needed Scopes:** user-modify-playback-state'
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/start-a-users-playback
-    Note: raises Error if Spotify is currently playing
+
     :param target_device_id: Spotify Device ID (If not supplied, the user's currently active device is the target)
     :raises SpotifyIdException: if spotify id is invalid
     """
@@ -934,7 +953,7 @@ def pause_playback() -> None:
     """
     Pause playback on the user's account. This API only works for users who have Spotify Premium. The order of execution is not guaranteed when you use this API with other Player API endpoints.
     
-    **Needed Scopes:** ['user-modify-playback-state']
+    **Needed Scopes:** user-modify-playback-state'
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/pause-a-users-playback
     """
@@ -950,9 +969,10 @@ def skip_to_next(target_device_id: str = None) -> None:
     """
     Skips to next track in the user’s queue. This API only works for users who have Spotify Premium. The order of execution is not guaranteed when you use this API with other Player API endpoints.
     
-    **Needed Scopes:** ['user-modify-playback-state']
+    **Needed Scopes:** user-modify-playback-state'
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/skip-users-playback-to-next-track
+
     :param target_device_id: Spotify Device ID (If not supplied, the user's currently active device is the target)
     :raises SpotifyIdException: if spotify id is invalid
     """
@@ -974,9 +994,10 @@ def skip_to_previous(target_device_id: str = None) -> None:
     """
     Skips to previous track in the user’s queue. This API only works for users who have Spotify Premium. The order of execution is not guaranteed when you use this API with other Player API endpoints.
     
-    **Needed Scopes:** ['user-modify-playback-state']
+    **Needed Scopes:** user-modify-playback-state'
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/skip-users-playback-to-previous-track
+
     :param target_device_id: Spotify Device ID (If not supplied, the user's currently active device is the target)
     :raises SpotifyIdException: if spotify id is invalid
     """
@@ -998,9 +1019,10 @@ def seek_to_position(position_ms: int, target_device_id: str = None):
     """
     Seeks to the given position in the user’s currently playing track. This API only works for users who have Spotify Premium. The order of execution is not guaranteed when you use this API with other Player API endpoints.
     
-    **Needed Scopes:** ['user-modify-playback-state']
+    **Needed Scopes:** user-modify-playback-state'
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/seek-to-position-in-currently-playing-track
+
     :param position_ms: The position in milliseconds to seek to. Must be a positive number. Passing in a position that is greater than the length of the track will cause the player to start playing the next song.
     :param target_device_id: Spotify Device ID (If not supplied, the user's currently active device is the target)
     :raises InputException: if input is invalid
@@ -1034,9 +1056,10 @@ def set_repeat_mode(new_repeat_mode: Literal["track", "context", "off"], target_
     """
     Set the repeat mode for the user's playback. This API only works for users who have Spotify Premium. The order of execution is not guaranteed when you use this API with other Player API endpoints.
     
-    **Needed Scopes:** ['user-modify-playback-state']
+    **Needed Scopes:** user-modify-playback-state'
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/set-repeat-mode-on-users-playback
+
     :param new_repeat_mode: track: will repeat the current track; context: will repeat the current context; off: will turn repeat off.
     :param target_device_id: Spotify Device ID (If not supplied, the user's currently active device is the target)
     :raises InputException: if input is invalid
@@ -1071,9 +1094,10 @@ def set_playback_volume(new_volume: int, target_device_id: str = None) -> None:
     """
     Set the volume for the user’s current playback device. This API only works for users who have Spotify Premium. The order of execution is not guaranteed when you use this API with other Player API endpoints.
     
-    **Needed Scopes:** ['user-modify-playback-state']
+    **Needed Scopes:** user-modify-playback-state'
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/set-volume-for-users-playback
+
     :param new_volume: The volume to set. Must be a value from 0 to 100 inclusive.
     :param target_device_id: Spotify Device ID (If not supplied, the user's currently active device is the target)
     :raises InputException: if input is invalid
@@ -1100,9 +1124,10 @@ def toggle_playback_shuffle(new_state: bool, target_device_id: str = None) -> No
     """
     Toggle shuffle on or off for user’s playback. This API only works for users who have Spotify Premium. The order of execution is not guaranteed when you use this API with other Player API endpoints.
     
-    **Needed Scopes:** ['user-modify-playback-state']
+    **Needed Scopes:** user-modify-playback-state'
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/toggle-shuffle-for-users-playback
+
     :param new_state: True: Shuffle user's playback; False: Do not shuffle user's playback.
     :param target_device_id: Spotify Device ID (If not supplied, the user's currently active device is the target)
     :raises InputException: if input is invalid
@@ -1129,9 +1154,10 @@ def get_recently_played_tracks(limit: int, after: int = None, before: int = None
     """
     Get tracks from the current user's recently played tracks. Note: Currently doesn't support podcast episodes.
     
-    **Needed Scopes:** ['user-read-recently-played']
+    **Needed Scopes:** user-read-recently-played'
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/get-recently-played
+
     :param limit: The maximum number of items to return. Default: 20. Minimum: 1. Maximum: 50.
     :param after: A Unix timestamp in milliseconds. Returns all items after (but not including) this cursor position. If after is specified, before must not be specified.
     :param before: A Unix timestamp in milliseconds. Returns all items before (but not including) this cursor position. If before is specified, after must not be specified.
@@ -1179,9 +1205,10 @@ def get_the_users_queue() -> dict:
     """
     Get the list of objects that make up the user's queue.
     
-    **Needed Scopes:** ['user-read-currently-playing', 'user-read-playback-state']
+    **Needed Scopes:** user-read-currently-playing', 'user-read-playback-state'
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/get-queue
+
     :return: ordered Dict containing Spotify queued Tracks, in the form of {track_uri: track}
     """
     response = api_request_data(
@@ -1201,9 +1228,10 @@ def add_item_to_playback_queue(track_uri: str, target_device_id: str = None) -> 
     """
     Add an item to the end of the user's current playback queue. This API only works for users who have Spotify Premium. The order of execution is not guaranteed when you use this API with other Player API endpoints.
     
-    **Needed Scopes:** ['user-modify-playback-state']
+    **Needed Scopes:** user-modify-playback-state'
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/add-to-queue
+
     :param track_uri: The Spotify Track URIs to be queued.
     :param target_device_id: Spotify Device ID (If not supplied, the user's currently active device is the target)
     :raises SpotifyIdException: if spotify id is invalid
@@ -1230,6 +1258,7 @@ def add_item_to_playback_queue(track_uri: str, target_device_id: str = None) -> 
 def add_several_items_to_playback_queue(track_uris: list[str], target_device_id: str = None) -> None:
     """
     Add multiple items to the end of the user's current playback queue. This API only works for users who have Spotify Premium. The order of execution is not guaranteed when you use this API with other Player API endpoints.
+
     :param track_uris: A list of the Spotify Track URIs to be queued.
     :param target_device_id: Spotify Device ID (If not supplied, the user's currently active device is the target)
     :raises SpotifyIdException: if spotify id is invalid
@@ -1262,6 +1291,7 @@ def get_playlist(playlist_id: str) -> dict | None:
     **Needed Scopes:** None
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/get-playlist
+
     :param playlist_id: The Spotify ID of the playlist.
     :return: Dict containing Spotify Playlists, in the form of {playlist_id: playlist}
     :raises SpotifyIdException: if spotify id is invalid
@@ -1287,6 +1317,7 @@ def get_several_playlists(playlist_ids: list) -> dict | None:
     **Needed Scopes:** None
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/get-several-tracks
+
     :param playlist_ids: A list of the Spotify IDs to be checked.
     :return: Dict containing Spotify Tracks, in the form of {track_uri: track}
     :raises SpotifyIdException: if spotify id is invalid
@@ -1317,6 +1348,7 @@ def change_playlist_details(playlist_id: str, name: str, public: bool, collabora
     **Needed Scopes:** playlist-modify-public, playlist-modify-private
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/change-playlist-details
+
     :param playlist_id: The Spotify ID of the playlist.
     :param name: The new name for the playlist, for example "My New Playlist Title"
     :param public: The playlist's public/private status (if it should be added to the user's profile or not): true the playlist will be public, false the playlist will be private, null the playlist status is not relevant. For more about public/private status, see [Working with Playlists](https://developer.spotify.com/documentation/web-api/concepts/playlists)
@@ -1363,6 +1395,7 @@ def get_playlist_items(playlist_id: str, get_duration: bool = False, ignore_mark
     **Needed Scopes:** playlist-read-private
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/get-playlists-tracks
+
     :param playlist_id: The Spotify ID of the playlist.
     :param get_duration: If to get the Playlist duration in seconds. Default: False.
     :param ignore_market: Whether to ignore market.
@@ -1424,6 +1457,7 @@ def update_playlist_items(playlist_id: str, track_uris: list[str]) -> None:
     Own implementation to update a Playlist
     
     **Needed Scopes:** playlist-read-private, playlist-modify-public, playlist-modify-private
+
     :param playlist_id: The Spotify ID of the playlist.
     :param track_uris: A comma-separated list of Spotify URIs to add.
     :return: Updates Playlist in App
@@ -1460,6 +1494,7 @@ def add_items_to_playlist(playlist_id: str, track_uris: list[str]) -> None:
     **Needed Scopes:** playlist-modify-public, playlist-modify-private
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/add-tracks-to-playlist
+
     :param playlist_id: The Spotify ID of the playlist.
     :param track_uris: A list of Spotify URIs to add
     :return: Updates Playlist in App
@@ -1498,6 +1533,7 @@ def remove_playlist_items(playlist_id: str, track_uris: list[str]) -> None:
     **Needed Scopes:** playlist-modify-public, playlist-modify-private
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/remove-tracks-playlist
+
     :param playlist_id: The Spotify ID of the playlist.
     :param track_uris: An array of objects containing Spotify URIs of the tracks or episodes to remove.
     :return: Updates Playlist in App
@@ -1533,6 +1569,7 @@ def get_current_users_playlists(limit: int = 20) -> dict | None:
     **Needed Scopes:** playlist-read-private
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/get-a-list-of-current-users-playlists
+
     :param limit: The maximum number of items to return.  If `limit=None` **all** Top Playlists get returned. Default: 20. Minimum: 1.
     :return: Dict containing Spotify Playlists, in the form of {playlist_uri: playlist}
     :raises LimitException: if limit is invalid
@@ -1579,6 +1616,7 @@ def get_users_playlists(user_id: str, limit: int | None = 20) -> dict | None:
     **Needed Scopes:** playlist-read-private, playlist-read-collaborative
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/get-list-users-playlists
+
     :param user_id: The user's Spotify ID.
     :param limit: The maximum number of items to return.  If `limit=None` **all** Top Playlists get returned. Default: 20. Minimum: 1.
     :return: Dict containing Spotify Playlists, in the form of {playlist_uri: playlist}
@@ -1633,6 +1671,7 @@ def create_playlist(user_id: str, name: str, public: bool = True, collaborative:
     **Needed Scopes:** playlist-modify-public, playlist-modify-private
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/create-playlist
+
     :param user_id: The user's Spotify ID.
     :param name: The name for the new playlist, for example "Your Coolest Playlist". This name does not need to be unique; a user may have several playlists with the same name.
     :param public: Defaults to true. The playlist's public/private status (if it should be added to the user's profile or not): true the playlist will be public, false the playlist will be private. To be able to create private playlists, the user must have granted the "playlist-modify-private" scope. For more about public/private status, see Working with Playlists
@@ -1679,6 +1718,7 @@ def get_playlist_cover_image(playlist_id: str) -> ImageFile:
     **Needed Scopes:** None
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/get-playlist-cover
+
     :param playlist_id: The Spotify ID of the playlist.
     :return: Playlist Cover Image loaded as Pillow Image
     :raises SpotifyIdException: if spotify id is invalid
@@ -1702,6 +1742,7 @@ def add_custom_playlist_cover_image(playlist_id: str, b64_image: str) -> None:
     **Needed Scopes:** ugc-image-upload, playlist-modify-private, playlist-modify-public
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/upload-custom-playlist-cover
+
     :param playlist_id: The Spotify ID of the playlist.
     :param b64_image: Base64 encoded JPEG image data, maximum payload size is 256 KB.
     :return: Updates Playlist in App
@@ -1735,6 +1776,7 @@ def add_custom_playlist_cover_image(playlist_id: str, b64_image: str) -> None:
 def save_playlist_state(playlist_id: str, filepath: str) -> None:
     """
     Save Collection state as a Dict in the form of {playlist_uri: playlist, track_uri: track} to file
+
     :param playlist_id: Spotify Playlist id
     :param filepath: where to save playlist state
     :raises InputException: if input is invalid
@@ -1770,13 +1812,16 @@ def search_for_item(
     **Needed Scopes:** None
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/search
+
+    **Better Search queries:**
+        (1) You can narrow down your search using field filters. The available filters are album, artist, track, year, upc, tag:hipster, tag:new, isrc, and genre. Each field filter only applies to certain result types.
+        (2) The artist and year filters can be used while searching albums, artists and tracks. You can filter on a single year or a range (e.g. 1955-1960).
+        (3) The album filter can be used while searching albums and tracks.
+        (4) The genre filter can be used while searching artists and tracks.
+        (5) The isrc and track filters can be used while searching tracks.
+        (6) The upc, tag:new and tag:hipster filters can only be used while searching albums. The tag:new filter will return albums released in the past two weeks and tag:hipster can be used to return only albums with the lowest 10% popularity.
+
     :param search_query: Your search query.
-        You can narrow down your search using field filters. The available filters are album, artist, track, year, upc, tag:hipster, tag:new, isrc, and genre. Each field filter only applies to certain result types.
-        The artist and year filters can be used while searching albums, artists and tracks. You can filter on a single year or a range (e.g. 1955-1960).
-        The album filter can be used while searching albums and tracks.
-        The genre filter can be used while searching artists and tracks.
-        The isrc and track filters can be used while searching tracks.
-        The upc, tag:new and tag:hipster filters can only be used while searching albums. The tag:new filter will return albums released in the past two weeks and tag:hipster can be used to return only albums with the lowest 10% popularity.
     :param item_type: A comma-separated list of item types to search across. Search results include hits from all the specified item types. For example: 'q=abacab&type=album,track' returns both albums and tracks matching "abacab".
     :param limit: The maximum number of results to return in each item type. Default: 20. Minimum: 1. Maximum: 50.
     :param offset: The index of the first result to return. Use with limit to get the next page of search results. Default: 0. Minimum: 0. Maximum: 1000-limit.
@@ -1817,6 +1862,7 @@ def get_track(track_id: str, ignore_market: bool = False) -> dict:
     **Needed Scopes:** None
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/get-track
+
     :param track_id: The Spotify ID for the track.
     :param ignore_market: Whether to ignore market.
     :return: Dict containing Spotify Tracks, in the form of {track_uri: track}
@@ -1845,6 +1891,7 @@ def get_several_tracks(track_ids: list[str], ignore_market: bool = False) -> dic
     **Needed Scopes:** None
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/get-several-tracks
+
     :param track_ids: A list of the Spotify IDs to be checked.
     :return: Dict containing Spotify Tracks, in the form of {track_uri: track}
     :raises SpotifyIdException: if spotify id is invalid
@@ -1882,6 +1929,7 @@ def get_users_saved_tracks(limit: int = 20, ignore_market: bool = False) -> dict
     **Needed Scopes:** user-library-read
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/get-users-saved-tracks
+
     :param limit: The maximum number of items to return. If `limit=None` **all** Saved Tracks get returned. Default: 20. Minimum: 1.
     :param ignore_market: Whether to ignore market.
     :return: Dict containing Saved Spotify Tracks, in the form of {track_uri: track}
@@ -1930,6 +1978,7 @@ def check_users_saved_tracks(track_ids: list[str]) -> dict | None:
     **Needed Scopes:** user-library-read
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/check-users-saved-tracks
+
     :param track_ids: A list of the Spotify IDs to be checked.
     :return: Dict containing Saved Spotify Tracks, in the form of {track_uri: bool}
     :raises SpotifyIdException: if spotify id is invalid
@@ -1963,6 +2012,7 @@ def get_tracks_audio_features(track_id: str):
     **Needed Scopes:** None
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/get-audio-features
+
     :param track_id: The Spotify ID for the track.
     :return: Dict containing Audio Features, in the form of {track_uri: audio_features}
     :raises SpotifyIdException: if spotify id is invalid
@@ -1987,6 +2037,7 @@ def get_several_tracks_audio_features(track_ids: list[str]) -> dict | None:
     **Needed Scopes:** None
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/get-several-audio-features
+
     :param track_ids: A comma-separated list of the Spotify IDs for the tracks.
     :return: Dict containing Audio Features, in the form of {track_uri: audio_features}
     :raises SpotifyIdException: if spotify id is invalid
@@ -2028,7 +2079,6 @@ def get_original_tracks(tracks: dict) -> dict | None:
 
     :param tracks: Dict containing Spotify Tracks, in the form of {track_uri: track}
     :return: Dict containing original Spotify Tracks, in the form of {track_uri: track}
-
     :raises SpotifyIdException: if spotify id is invalid
     :raises InputException: if input is invalid
     """
@@ -2061,6 +2111,7 @@ def get_current_users_profile() -> dict:
     **Needed Scopes:** user-read-private, user-read-email
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/get-current-users-profile
+
     :return: Dict containing Spotify Users, in the form of {user_uri: user}
     """
 
@@ -2083,6 +2134,7 @@ def get_users_top_items(
     **Needed Scopes:** user-top-read
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/get-users-top-artists-and-tracks
+
     :param item_type: The type of entity to return. Valid values: "artists" or "tracks"
     :param time_range: Over what time frame the affinities are computed. Valid values: "long_term" (calculated from ~1 year of data and including all new data as it becomes available), "medium_term" (approximately last 6 months), "short_term" (approximately last 4 weeks). Default: medium_term
     :param limit: The maximum number of items to return. If `limit=None` **all** Top Tracks get returned. Default: 20. Minimum: 1.
@@ -2135,6 +2187,7 @@ def get_users_profile(user_id: str) -> dict:
     **Needed Scopes:** None
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/get-users-profile
+
     :param user_id: The user's Spotify user ID.
     :return: Dict containing Spotify Users, in the form of {user_uri: user}
     :raises SpotifyIdException: if spotify id is invalid
@@ -2156,6 +2209,7 @@ def get_several_users(user_ids: list) -> dict | None:
     Get Spotify catalog information for multiple user based on their Spotify IDs.
     
     **Needed Scopes:** None
+
     :param user_ids: A list of the Spotify IDs to be checked.
     :return: Dict containing Spotify User, in the form of {user_uri: user}
     :raises SpotifyIdException: if spotify id is invalid
@@ -2183,6 +2237,7 @@ def get_followed_artists(get_type: str = "artist") -> dict | None:
     **Needed Scopes:** user-follow-read
     
     **Official API Documentation:** https://developer.spotify.com/documentation/web-api/reference/get-followed
+
     :param get_type: The ID type: currently only artist is supported.
     :return: Dict containing Spotify Artists, in the form of {artist_uri: artist}
     :raises InputException: if input is invalid

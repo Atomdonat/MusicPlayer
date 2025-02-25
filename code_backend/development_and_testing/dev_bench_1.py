@@ -1,5 +1,7 @@
 """
 File to develop and debug methods, class and more
+
+Currently developing: Generating Documentation from Docstrings
 """
 from random import shuffle
 
@@ -13,4 +15,3 @@ from code_backend.organize_playlist import all_shuffle
 
 if __name__ == '__main__':
     """"""
-    print(type(None))

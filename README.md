@@ -123,16 +123,6 @@ by Niki Tonsky (https://mastodon.online/@nikitonsky/113691789641950263)
 
 ### Backend related
 
-* [x] Error handling
-  * Error handling if input type mismatched
-    * what should terminate and what not 
-    * use custom Exceptions and try except
-  * [x] database_access.py
-  * [x] main_app.py
-  * [x] music_classes.py
-  * [x] organize_playlist.py
-  * [x] secondary_methods.py
-  * [x] spotify_web_api.py
 * [ ] add CLI interaction for `main_app.py`
   * headless App (e.g. for servers 24/7 app access)
   * [ ] method to print docstrings as manpage
@@ -188,3 +178,5 @@ by Niki Tonsky (https://mastodon.online/@nikitonsky/113691789641950263)
 * [Markdown](https://www.markdownguide.org/basic-syntax/)
 * [Docstring Conventions](https://peps.python.org/pep-0257/)
 * [Sphinx reStructuredText](https://www.sphinx-doc.org/en/master/index.html)
+* Generating Documentation
+  * [Tutorial](https://www.youtube.com/watch?v=BWIrhgCAae0)

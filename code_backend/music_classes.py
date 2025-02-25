@@ -30,6 +30,7 @@ class _SpotifyObject:
     def genre_names(self) -> list[str]:
         """
         Not Implemented Yet
+
         :return: list of genre names
         """
         genres = []
@@ -314,6 +315,7 @@ class ItemQueues:
     def update_queues(self) -> None:
         """
         Call `fetch_new_ids_from_database()` for every possible case to update all queues with the new URIs
+
         :return: updates queues
         """
 
@@ -323,6 +325,7 @@ class ItemQueues:
         ) -> set | None:
             """
             Get the Items that have no Database entry, but are mentioned in the IDs (lists) from other tables. (e.g. Get to database unknown artists mentioned in albums artist_ids)
+
             :param table_name: source table name (e.g. albums)
             :param target_type: what type of items to return (e.g. artists)
             :return: Set containing Spotify Items IDs

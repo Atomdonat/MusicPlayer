@@ -1,0 +1,327 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>code_backend.organize_playlist &mdash; MusicPlayer 1.15.6 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=1f24c071"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            MusicPlayer
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">MusicPlayer</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">MusicPlayer</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">code_backend.organize_playlist</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for code_backend.organize_playlist</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">code_backend.shared_config</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">code_backend.secondary_methods</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">image_to_b64</span><span class="p">,</span> <span class="n">url_to_uri</span><span class="p">,</span> <span class="n">split_list_into_chunks</span><span class="p">,</span> <span class="n">uri_to_id</span><span class="p">,</span>
+    <span class="n">load_json</span><span class="p">,</span> <span class="n">value_from_dict</span><span class="p">,</span> <span class="n">key_from_dict</span><span class="p">,</span><span class="n">print_debug</span><span class="p">,</span> <span class="n">check_spotify_uris</span><span class="p">,</span> <span class="n">check_spotify_uri</span>
+<span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">code_backend.spotify_web_api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">spotify</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">code_backend.spotify_web_api</span><span class="w"> </span><span class="kn">import</span> <span class="n">save_playlist_state</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">code_backend.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">InputException</span><span class="p">,</span> <span class="n">CustomException</span><span class="p">,</span> <span class="n">SpotifyUriException</span><span class="p">,</span> <span class="n">SpotifyApiException</span>
+
+
+<span class="n">DEFAULT_IMAGE</span> <span class="o">=</span> <span class="n">image_to_b64</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">NO_IMAGE_PATH</span><span class="p">),</span> <span class="s1">&#39;PNG&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="all_shuffle">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.organize_playlist.all_shuffle">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">all_shuffle</span><span class="p">(</span><span class="n">collection_tracks</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Shuffles the given list using the PRNG random.randint(). Every item will occur exactly once.</span>
+
+<span class="sd">    :param collection_tracks: list to be shuffled</span>
+<span class="sd">    :return: shuffled list</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    :raises CustomException: If Exception occurs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">collection_tracks</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">collection_tracks</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;not empty list&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">shuffled_collection</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">shuffle_track_ids</span> <span class="o">=</span> <span class="n">collection_tracks</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">shuffle_track_ids</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">random_position</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">shuffle_track_ids</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">current_track_id</span> <span class="o">=</span> <span class="n">shuffle_track_ids</span><span class="p">[</span><span class="n">random_position</span><span class="p">]</span>
+            <span class="n">shuffled_collection</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_track_id</span><span class="p">)</span>
+            <span class="n">shuffle_track_ids</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">random_position</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">shuffled_collection</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">CustomException</span><span class="p">(</span><span class="n">error_message</span><span class="o">=</span><span class="n">error</span><span class="p">,</span> <span class="n">more_infos</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Exception occurred while shuffling collection: &#39;</span><span class="si">{</span><span class="n">collection_tracks</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="all_shuffle_dict">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.organize_playlist.all_shuffle_dict">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">all_shuffle_dict</span><span class="p">(</span><span class="n">collection_tracks</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Shuffles the given dict using the PRNG random.randint(). Every item will occur exactly once.</span>
+
+<span class="sd">    :param collection_tracks: dict to be shuffled</span>
+<span class="sd">    :return: shuffled dict</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    :raises CustomException: If Exception occurs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">collection_tracks</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">collection_tracks</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;any dict&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">shuffle_track_uris</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">collection_tracks</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="n">shuffled_track_uris</span> <span class="o">=</span> <span class="n">all_shuffle</span><span class="p">(</span><span class="n">shuffle_track_uris</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">current_track_uri</span><span class="p">:</span> <span class="n">collection_tracks</span><span class="p">[</span><span class="n">current_track_uri</span><span class="p">]</span> <span class="k">for</span> <span class="n">current_track_uri</span> <span class="ow">in</span> <span class="n">shuffled_track_uris</span><span class="p">}</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">CustomException</span><span class="p">(</span><span class="n">error_message</span><span class="o">=</span><span class="n">error</span><span class="p">,</span> <span class="n">more_infos</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Exception occurred while shuffling collection:</span><span class="se">\n</span><span class="s2">&#39;</span><span class="si">{</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">collection_tracks</span><span class="p">,</span><span class="w"> </span><span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="remove_duplicates">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.organize_playlist.remove_duplicates">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">remove_duplicates</span><span class="p">(</span><span class="n">tracks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">get_removed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">set</span><span class="p">,</span> <span class="nb">set</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Removes duplicate tracks (name and artist are the same) from a list of dicts</span>
+
+<span class="sd">    :param tracks: list of tracks in the form of {&quot;uri&quot;: ..., &quot;name&quot;: ..., &quot;artist&quot;: ...}</span>
+<span class="sd">    :param get_removed: True: (no duplicates, removed duplicates); False: no duplicates</span>
+<span class="sd">    :return: Set of unique Tracks (optional with the removed duplicates)</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    :raises CustomException: If Exception occurs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tracks</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tracks</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">tracks</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;list containing dicts&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">get_removed</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">get_removed</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">current_track</span> <span class="ow">in</span> <span class="n">tracks</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">current_track</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">==</span> <span class="p">{</span><span class="s2">&quot;uri&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;artist&quot;</span><span class="p">}:</span>
+            <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">current_track</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;{&#39;uri&#39;: ..., &#39;name&#39;: ..., &#39;artist&#39;: ...}&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">uniques</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">current_track</span> <span class="ow">in</span> <span class="n">tracks</span><span class="p">:</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">current_track</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">current_track</span><span class="p">[</span><span class="s2">&quot;artist&quot;</span><span class="p">]</span>
+            <span class="c1"># Hash produces unique identifiers, if a collision occurs, the URI gets overwritten by the new one -&gt; no collisions/duplicates</span>
+            <span class="n">uniques</span><span class="p">[</span><span class="n">sha256</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()]</span> <span class="o">=</span> <span class="n">current_track</span><span class="p">[</span><span class="s2">&quot;uri&quot;</span><span class="p">]</span>
+
+        <span class="n">all_tracks</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;uri&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tracks</span><span class="p">])</span>
+        <span class="n">keep_tracks</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">uniques</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="n">remove_tracks</span> <span class="o">=</span> <span class="n">all_tracks</span> <span class="o">-</span> <span class="n">keep_tracks</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">keep_tracks</span><span class="p">,</span> <span class="n">remove_tracks</span><span class="p">)</span> <span class="k">if</span> <span class="n">get_removed</span> <span class="k">else</span> <span class="n">keep_tracks</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">CustomException</span><span class="p">(</span><span class="n">error_message</span><span class="o">=</span><span class="n">error</span><span class="p">,</span> <span class="n">more_infos</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Exception occurred while removing duplicates: &#39;[</span><span class="se">\n</span><span class="si">{</span><span class="s2">&quot;,</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">tracks</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&#39;&#39;&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="organize_collection">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.organize_playlist.organize_collection">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">organize_collection</span><span class="p">(</span><span class="n">collection_uri</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reorganizes the given Playlist and either creates new Playlist or updates existing Playlist. (If successful either new Playlist appears in Spotify or Playlist Content changed)</span>
+
+<span class="sd">    :param collection_uri: Spotify Collection URI to organize</span>
+<span class="sd">    :param kwargs: valid kwargs:</span>
+<span class="sd">        - &quot;shuffle=...&quot; -&gt; shuffle collection tracks;</span>
+<span class="sd">        - &quot;remove=[&#39;duplicate&#39;]&quot; -&gt; remove duplicate tracks;</span>
+<span class="sd">        - &quot;remove=[&#39;remove_string&#39;]&quot; &amp;rarr; removes tracks containing &#39;remove_string&#39; (supports regex pattern)</span>
+<span class="sd">    :return: New/Updated Playlist in Spotify</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    :raises SpotifyApiException: if Exception related to Spotify API occurs</span>
+<span class="sd">    :raises SpotifyUriException: if spotify uri is invalid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">check_spotify_uri</span><span class="p">(</span><span class="n">collection_uri</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">SpotifyUriException</span><span class="p">(</span><span class="n">invalid_uri</span><span class="o">=</span><span class="n">collection_uri</span><span class="p">)</span>
+
+    <span class="n">collection_id</span><span class="p">,</span> <span class="n">collection_type</span> <span class="o">=</span> <span class="n">uri_to_id</span><span class="p">(</span><span class="n">spotify_uri</span><span class="o">=</span><span class="n">collection_uri</span><span class="p">,</span> <span class="n">get_type</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Process Keyword Arguments</span>
+    <span class="n">shuffle_tracks</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="s2">&quot;shuffle&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;shuffle&quot;</span><span class="p">])</span>  <span class="c1"># shuffle exists and is True</span>
+    <span class="n">remove_tracks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;remove&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="s2">&quot;remove&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">else</span> <span class="p">[])</span>
+
+    <span class="c1"># Fetch tracks from collection</span>
+    <span class="k">match</span> <span class="n">collection_type</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">&quot;album&quot;</span><span class="p">:</span>
+            <span class="n">collection_tracks</span> <span class="o">=</span> <span class="n">spotify</span><span class="o">.</span><span class="n">get_album_tracks</span><span class="p">(</span><span class="n">album_id</span><span class="o">=</span><span class="n">collection_id</span><span class="p">)</span>
+        <span class="k">case</span> <span class="s2">&quot;playlist&quot;</span><span class="p">:</span>
+            <span class="n">collection_tracks</span> <span class="o">=</span> <span class="n">spotify</span><span class="o">.</span><span class="n">get_playlist_items</span><span class="p">(</span><span class="n">playlist_id</span><span class="o">=</span><span class="n">collection_id</span><span class="p">)</span>
+        <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">collection_uri</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;album&quot;</span><span class="p">,</span> <span class="s2">&quot;playlist&quot;</span><span class="p">),</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">collection_tracks</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SpotifyApiException</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Could not fetch items of &#39;</span><span class="si">{</span><span class="n">collection_uri</span><span class="si">}</span><span class="s2">&#39; while organizing collection&quot;</span><span class="p">)</span>
+
+    <span class="c1"># get relevant Collection Data</span>
+    <span class="k">match</span> <span class="n">collection_type</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">&quot;album&quot;</span><span class="p">:</span>
+            <span class="n">collection</span> <span class="o">=</span> <span class="n">spotify</span><span class="o">.</span><span class="n">get_album</span><span class="p">(</span><span class="n">album_id</span><span class="o">=</span><span class="n">collection_id</span><span class="p">)</span>
+            <span class="n">collection_owner_id</span> <span class="o">=</span> <span class="p">[</span><span class="n">current_artist</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">current_artist</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">[</span><span class="s1">&#39;artists&#39;</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">collection_owner_name</span> <span class="o">=</span> <span class="n">collection</span><span class="p">[</span><span class="s2">&quot;artists&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+            <span class="n">collection_owner_type</span> <span class="o">=</span> <span class="s2">&quot;Artist&quot;</span>
+        <span class="k">case</span> <span class="s2">&quot;playlist&quot;</span><span class="p">:</span>
+            <span class="n">collection</span> <span class="o">=</span> <span class="n">spotify</span><span class="o">.</span><span class="n">get_playlist</span><span class="p">(</span><span class="n">playlist_id</span><span class="o">=</span><span class="n">collection_id</span><span class="p">)</span>
+            <span class="n">collection_owner_id</span> <span class="o">=</span> <span class="n">collection</span><span class="p">[</span><span class="n">collection_uri</span><span class="p">][</span><span class="s1">&#39;owner&#39;</span><span class="p">][</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+            <span class="n">collection_owner_name</span> <span class="o">=</span> <span class="n">collection</span><span class="p">[</span><span class="n">collection_uri</span><span class="p">][</span><span class="s1">&#39;owner&#39;</span><span class="p">][</span><span class="s1">&#39;display_name&#39;</span><span class="p">]</span>
+            <span class="n">collection_owner_type</span> <span class="o">=</span> <span class="s2">&quot;User&quot;</span>
+            <span class="n">old_description</span> <span class="o">=</span> <span class="n">collection</span><span class="p">[</span><span class="n">collection_uri</span><span class="p">][</span><span class="s1">&#39;description&#39;</span><span class="p">]</span>
+
+    <span class="c1"># create Playlist if not yours</span>
+    <span class="n">current_user_id</span> <span class="o">=</span> <span class="n">value_from_dict</span><span class="p">(</span><span class="n">spotify</span><span class="o">.</span><span class="n">get_current_users_profile</span><span class="p">())[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">collection_owner_id</span> <span class="o">!=</span> <span class="n">current_user_id</span><span class="p">:</span>
+        <span class="n">new_playlist</span> <span class="o">=</span> <span class="n">spotify</span><span class="o">.</span><span class="n">create_playlist</span><span class="p">(</span>
+            <span class="n">user_id</span><span class="o">=</span><span class="n">current_user_id</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">collection</span><span class="p">[</span><span class="n">collection_uri</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="si">}</span><span class="s2"> (Shuffled)&quot;</span><span class="p">,</span>
+            <span class="n">public</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">collaborative</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;reshuffled Playlist of &#39;</span><span class="si">{</span><span class="n">collection</span><span class="p">[</span><span class="n">collection_uri</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39; created by </span><span class="si">{</span><span class="n">collection_owner_type</span><span class="si">}</span><span class="s2"> &#39;</span><span class="si">{</span><span class="n">collection_owner_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+        <span class="p">)</span>
+
+        <span class="n">collection_id</span> <span class="o">=</span> <span class="n">uri_to_id</span><span class="p">(</span><span class="n">key_from_dict</span><span class="p">(</span><span class="n">new_playlist</span><span class="p">))</span>
+        <span class="n">spotify</span><span class="o">.</span><span class="n">add_custom_playlist_cover_image</span><span class="p">(</span><span class="n">playlist_id</span><span class="o">=</span><span class="n">collection_id</span><span class="p">,</span> <span class="n">b64_image</span><span class="o">=</span><span class="n">DEFAULT_IMAGE</span><span class="p">)</span>
+
+    <span class="c1"># update Playlist name if it is yours (optional step)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">new_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">collection</span><span class="p">[</span><span class="n">collection_uri</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="si">}</span><span class="s2"> (Shuffled)&quot;</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">(</span><span class="n">collection</span><span class="p">[</span><span class="n">collection_uri</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;(Shuffled)&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">collection</span><span class="p">[</span><span class="n">collection_uri</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+        <span class="n">new_description</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;reshuffled Playlist&quot;</span> <span class="k">if</span> <span class="n">old_description</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="n">old_description</span>
+
+        <span class="n">spotify</span><span class="o">.</span><span class="n">change_playlist_details</span><span class="p">(</span>
+            <span class="n">playlist_id</span><span class="o">=</span><span class="n">collection_id</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">new_name</span><span class="p">,</span>
+            <span class="n">public</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">collaborative</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="n">new_description</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Shuffle Tracks if wanted (get RNG on what duplicated tracks to remove)</span>
+    <span class="k">if</span> <span class="n">shuffle_tracks</span><span class="p">:</span>
+        <span class="n">collection_tracks</span> <span class="o">=</span> <span class="n">all_shuffle_dict</span><span class="p">(</span><span class="n">collection_tracks</span><span class="p">)</span>
+
+    <span class="c1"># Remove unwanted Tracks</span>
+    <span class="n">tracks_to_keep</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">collection_tracks</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">remove_tracks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">remove_tracks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;duplicate&quot;</span><span class="p">:</span>
+            <span class="c1"># Two Tracks are duplicates, if both track name and artist ID match</span>
+            <span class="n">hashable_collection_tracks</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;uri&quot;</span><span class="p">:</span> <span class="n">current_track_uri</span> <span class="p">,</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">current_track</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="s2">&quot;artist&quot;</span><span class="p">:</span> <span class="n">current_track</span><span class="p">[</span><span class="s2">&quot;artists&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]}</span> <span class="k">for</span> <span class="n">current_track_uri</span><span class="p">,</span> <span class="n">current_track</span> <span class="ow">in</span> <span class="n">collection_tracks</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+            <span class="n">tracks_to_keep</span> <span class="o">=</span> <span class="n">remove_duplicates</span><span class="p">(</span><span class="n">tracks</span><span class="o">=</span><span class="n">hashable_collection_tracks</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">current_track_uri</span><span class="p">,</span> <span class="n">current_track</span> <span class="ow">in</span> <span class="n">collection_tracks</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="c1"># remove track if pattern matches</span>
+                <span class="c1"># Note: Can remove Tracks &quot;unintentionally&quot; e.g. if pattern is &quot;Live in&quot; (Live/Concert Version), &quot;Live in the moment&quot; by &#39;Portugal. The Man&#39; gets removed</span>
+                <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="n">remove_tracks</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">string</span><span class="o">=</span><span class="n">current_track</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">):</span>
+                    <span class="n">tracks_to_keep</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">current_track_uri</span><span class="p">)</span>
+
+        <span class="n">remove_tracks</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">tracks_to_keep</span><span class="p">:</span>
+        <span class="n">collection_tracks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tracks_to_keep</span><span class="p">)</span>
+
+    <span class="c1"># Shuffle Tracks if wanted (Shuffle again, to avoid &quot;bias&quot; after removing multiple tracks)</span>
+    <span class="k">if</span> <span class="n">shuffle_tracks</span><span class="p">:</span>
+        <span class="n">collection_tracks</span> <span class="o">=</span> <span class="n">all_shuffle</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">collection_tracks</span><span class="p">))</span>
+
+    <span class="n">spotify</span><span class="o">.</span><span class="n">update_playlist_items</span><span class="p">(</span><span class="n">playlist_id</span><span class="o">=</span><span class="n">collection_id</span><span class="p">,</span> <span class="n">track_uris</span><span class="o">=</span><span class="n">collection_tracks</span><span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+    <span class="n">collection_uri</span> <span class="o">=</span> <span class="n">url_to_uri</span><span class="p">(</span><span class="s2">&quot;https://open.spotify.com/playlist/5PPHCyClHIW1SgHWuRQLqh?si=ec3447c1b8af4d55&quot;</span><span class="p">)</span>
+    <span class="c1"># collection_uri = url_to_uri(input(&quot;Enter Collection URL: &quot;))</span>
+    <span class="n">organize_collection</span><span class="p">(</span><span class="n">collection_uri</span><span class="o">=</span><span class="n">collection_uri</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Atomdonat.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

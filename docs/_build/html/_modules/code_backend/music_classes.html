@@ -1,0 +1,849 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>code_backend.music_classes &mdash; MusicPlayer 1.15.6 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=1f24c071"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            MusicPlayer
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">MusicPlayer</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">MusicPlayer</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">code_backend.music_classes</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for code_backend.music_classes</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">File to develop and debug methods, class and more</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">code_backend.shared_config</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">code_backend.secondary_methods</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">uri_to_id</span><span class="p">,</span> <span class="n">list_from_id_string</span><span class="p">,</span> <span class="n">file_image_bytes</span><span class="p">,</span>
+    <span class="n">spotify_image_bytes</span><span class="p">,</span> <span class="n">url_to_uri</span><span class="p">,</span> <span class="n">exclude_from_dict</span><span class="p">,</span> <span class="n">id_to_uri</span><span class="p">,</span>
+    <span class="n">check_token_expired</span><span class="p">,</span> <span class="n">load_json</span><span class="p">,</span> <span class="n">debug_json</span><span class="p">,</span> <span class="n">print_debug</span><span class="p">,</span>
+    <span class="n">load_list_from_database</span><span class="p">,</span> <span class="n">value_from_dict</span><span class="p">,</span>
+    <span class="n">check_spotify_uri</span><span class="p">,</span> <span class="n">check_spotify_uris</span><span class="p">,</span> <span class="n">check_spotify_id</span><span class="p">,</span> <span class="n">check_spotify_ids</span><span class="p">,</span>
+    <span class="n">check_limits</span>
+<span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">code_backend.spotify_web_api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">spotify</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">code_backend.database_access</span><span class="w"> </span><span class="kn">import</span> <span class="n">APP_DATABASE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">code_backend.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SpotifyApiException</span><span class="p">,</span> <span class="n">SpotifyUriException</span><span class="p">,</span> <span class="n">SpotifyIdException</span><span class="p">,</span>
+    <span class="n">InputException</span><span class="p">,</span> <span class="n">CustomException</span>
+<span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_SpotifyObject</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">popularity</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">MAX_POPULARITY</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blacklisted</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">genre_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Not Implemented Yet</span>
+
+<span class="sd">        :return: list of genre names</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">genres</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># TODO: implement genre_names</span>
+
+        <span class="k">return</span> <span class="n">genres</span>
+    
+
+<div class="viewcode-block" id="NewAlbum">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.music_classes.NewAlbum">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">NewAlbum</span><span class="p">(</span><span class="n">_SpotifyObject</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spotify_album</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param spotify_album: Dict containing Spotify Albums, in the form of {album_uri: album}</span>
+<span class="sd">        :raises InputException: if input is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spotify_album</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">spotify_album</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;{album_uri: album}&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">album_json</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">value_from_dict</span><span class="p">(</span><span class="n">spotify_album</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">album_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">album_json</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">album_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">album_json</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">album_uri</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">album_json</span><span class="p">[</span><span class="s1">&#39;uri&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">album_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">album_json</span><span class="p">[</span><span class="s1">&#39;external_urls&#39;</span><span class="p">][</span><span class="s1">&#39;spotify&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s1">&#39;url&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">album_json</span><span class="p">[</span><span class="s1">&#39;images&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">album_image</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">file_image_bytes</span><span class="p">(</span><span class="n">NO_IMAGE_PATH</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">album_image</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">spotify_image_bytes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">album_json</span><span class="p">[</span><span class="s1">&#39;images&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;url&#39;</span><span class="p">])</span>
+
+        <span class="n">tracks</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_duration</span> <span class="o">=</span> <span class="n">spotify</span><span class="o">.</span><span class="n">get_album_tracks</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">album_id</span><span class="p">,</span> <span class="n">get_duration</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">track_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">album_json</span><span class="p">[</span><span class="s1">&#39;total_tracks&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">artist_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">current_artist</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">current_artist</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">album_json</span><span class="p">[</span><span class="s1">&#39;artists&#39;</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">track_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">uri_to_id</span><span class="p">(</span><span class="n">current_track</span><span class="p">)</span> <span class="k">for</span> <span class="n">current_track</span> <span class="ow">in</span> <span class="n">tracks</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+
+        <span class="n">APP_DATABASE</span><span class="o">.</span><span class="n">add_item_to_table</span><span class="p">(</span>
+            <span class="n">table_name</span><span class="o">=</span><span class="s1">&#39;albums&#39;</span><span class="p">,</span>
+            <span class="n">album_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">album_id</span><span class="p">,</span>
+            <span class="n">album_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">album_name</span><span class="p">,</span>
+            <span class="n">album_uri</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">album_uri</span><span class="p">,</span>
+            <span class="n">album_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">album_url</span><span class="p">,</span>
+            <span class="n">album_image</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">album_image</span><span class="p">,</span>
+            <span class="n">genre_names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">genre_names</span><span class="p">,</span>
+            <span class="n">total_duration</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">total_duration</span><span class="p">,</span>
+            <span class="n">track_count</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">track_count</span><span class="p">,</span>
+            <span class="n">artist_ids</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">artist_ids</span><span class="p">,</span>
+            <span class="n">track_ids</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">track_ids</span><span class="p">,</span>
+            <span class="n">popularity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">popularity</span><span class="p">,</span>
+            <span class="n">blacklisted</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">blacklisted</span><span class="p">,</span>
+            <span class="n">album_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">album_json</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="NewArtist">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.music_classes.NewArtist">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">NewArtist</span><span class="p">(</span><span class="n">_SpotifyObject</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spotify_artist</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param spotify_artist: Dict containing Spotify Artists, in the form of {artist_uri: artist}</span>
+<span class="sd">        :raises InputException: if input is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spotify_artist</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">spotify_artist</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s1">&#39;{artist_uri: artist}&#39;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">artist_json</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">value_from_dict</span><span class="p">(</span><span class="n">spotify_artist</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">artist_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">artist_json</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">artist_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">artist_json</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">artist_uri</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">artist_json</span><span class="p">[</span><span class="s1">&#39;uri&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">artist_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">artist_json</span><span class="p">[</span><span class="s1">&#39;external_urls&#39;</span><span class="p">][</span><span class="s1">&#39;spotify&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s1">&#39;url&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">artist_json</span><span class="p">[</span><span class="s1">&#39;images&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">artist_image</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">file_image_bytes</span><span class="p">(</span><span class="n">NO_IMAGE_PATH</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">artist_image</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">spotify_image_bytes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">artist_json</span><span class="p">[</span><span class="s1">&#39;images&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;url&#39;</span><span class="p">])</span>
+
+        <span class="n">albums</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">spotify</span><span class="o">.</span><span class="n">get_artists_albums</span><span class="p">(</span><span class="n">artist_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">artist_id</span><span class="p">)</span>
+        <span class="n">top_tracks</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">spotify</span><span class="o">.</span><span class="n">get_artists_top_tracks</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">artist_id</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">follower</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">artist_json</span><span class="p">[</span><span class="s1">&#39;followers&#39;</span><span class="p">][</span><span class="s1">&#39;total&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">album_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">uri_to_id</span><span class="p">(</span><span class="n">current_album</span><span class="p">)</span> <span class="k">for</span> <span class="n">current_album</span> <span class="ow">in</span> <span class="n">albums</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+        <span class="c1"># Todo: Playlist ID gets added when the Playlist() is instantiated</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">playlist_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">top_track_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">uri_to_id</span><span class="p">(</span><span class="n">current_track</span><span class="p">)</span> <span class="k">for</span> <span class="n">current_track</span> <span class="ow">in</span> <span class="n">top_tracks</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+
+        <span class="n">APP_DATABASE</span><span class="o">.</span><span class="n">add_item_to_table</span><span class="p">(</span>
+            <span class="n">table_name</span><span class="o">=</span><span class="s1">&#39;artists&#39;</span><span class="p">,</span>
+            <span class="n">artist_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">artist_id</span><span class="p">,</span>
+            <span class="n">artist_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">artist_name</span><span class="p">,</span>
+            <span class="n">artist_uri</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">artist_uri</span><span class="p">,</span>
+            <span class="n">artist_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">artist_url</span><span class="p">,</span>
+            <span class="n">artist_image</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">artist_image</span><span class="p">,</span>
+            <span class="n">genre_names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">genre_names</span><span class="p">,</span>
+            <span class="n">follower</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">follower</span><span class="p">,</span>
+            <span class="n">album_ids</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">album_ids</span><span class="p">,</span>
+            <span class="n">playlist_ids</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">playlist_ids</span><span class="p">,</span>
+            <span class="n">top_track_ids</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">top_track_ids</span><span class="p">,</span>
+            <span class="n">popularity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">popularity</span><span class="p">,</span>
+            <span class="n">blacklisted</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">blacklisted</span><span class="p">,</span>
+            <span class="n">artist_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">artist_json</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="NewPlaylist">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.music_classes.NewPlaylist">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">NewPlaylist</span><span class="p">(</span><span class="n">_SpotifyObject</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spotify_playlist</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param spotify_playlist: Dict containing Spotify Playlists, in the form of {playlist_uri: playlist}</span>
+<span class="sd">        :raises InputException: if input is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spotify_playlist</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">spotify_playlist</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s1">&#39;{playlist_uri: playlist}&#39;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">playlist_json</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">value_from_dict</span><span class="p">(</span><span class="n">spotify_playlist</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">playlist_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">playlist_json</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">playlist_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">playlist_json</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">playlist_uri</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">playlist_json</span><span class="p">[</span><span class="s1">&#39;uri&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">playlist_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">playlist_json</span><span class="p">[</span><span class="s1">&#39;external_urls&#39;</span><span class="p">][</span><span class="s1">&#39;spotify&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s1">&#39;url&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">playlist_json</span><span class="p">[</span><span class="s1">&#39;images&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">playlist_image</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">file_image_bytes</span><span class="p">(</span><span class="n">NO_IMAGE_PATH</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">playlist_image</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">spotify_image_bytes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">playlist_json</span><span class="p">[</span><span class="s1">&#39;images&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;url&#39;</span><span class="p">])</span>
+
+        <span class="n">playlist_items</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_duration</span> <span class="o">=</span> <span class="n">spotify</span><span class="o">.</span><span class="n">get_playlist_items</span><span class="p">(</span><span class="n">playlist_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">playlist_id</span><span class="p">,</span> <span class="n">get_duration</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">track_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">playlist_json</span><span class="p">[</span><span class="s1">&#39;tracks&#39;</span><span class="p">][</span><span class="s1">&#39;total&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">owner_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">playlist_json</span><span class="p">[</span><span class="s1">&#39;owner&#39;</span><span class="p">][</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">track_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">uri_to_id</span><span class="p">(</span><span class="n">current_track</span><span class="p">)</span> <span class="k">for</span> <span class="n">current_track</span> <span class="ow">in</span> <span class="n">playlist_items</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+
+        <span class="n">APP_DATABASE</span><span class="o">.</span><span class="n">add_item_to_table</span><span class="p">(</span>
+            <span class="n">table_name</span><span class="o">=</span><span class="s1">&#39;playlists&#39;</span><span class="p">,</span>
+            <span class="n">playlist_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">playlist_id</span><span class="p">,</span>
+            <span class="n">playlist_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">playlist_name</span><span class="p">,</span>
+            <span class="n">playlist_uri</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">playlist_uri</span><span class="p">,</span>
+            <span class="n">playlist_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">playlist_url</span><span class="p">,</span>
+            <span class="n">playlist_image</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">playlist_image</span><span class="p">,</span>
+            <span class="n">genre_names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">genre_names</span><span class="p">,</span>
+            <span class="n">total_duration</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">total_duration</span><span class="p">,</span>
+            <span class="n">track_count</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">track_count</span><span class="p">,</span>
+            <span class="n">owner_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">owner_id</span><span class="p">,</span>
+            <span class="n">track_ids</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">track_ids</span><span class="p">,</span>
+            <span class="n">popularity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">popularity</span><span class="p">,</span>
+            <span class="n">blacklisted</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">blacklisted</span><span class="p">,</span>
+            <span class="n">playlist_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">playlist_json</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="NewTrack">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.music_classes.NewTrack">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">NewTrack</span><span class="p">(</span><span class="n">_SpotifyObject</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spotify_track</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param spotify_track: Dict containing Spotify Tracks, in the form of {track_uri: track}</span>
+<span class="sd">        :raises InputException: if input is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spotify_track</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">spotify_track</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s1">&#39;{track_uri: track}&#39;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">track_json</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">value_from_dict</span><span class="p">(</span><span class="n">spotify_track</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">track_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">track_json</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">track_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">track_json</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">track_uri</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">track_json</span><span class="p">[</span><span class="s1">&#39;uri&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">track_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">track_json</span><span class="p">[</span><span class="s1">&#39;external_urls&#39;</span><span class="p">][</span><span class="s1">&#39;spotify&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s1">&#39;images&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">track_json</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">track_image</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">spotify_image_bytes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">track_json</span><span class="p">[</span><span class="s1">&#39;album&#39;</span><span class="p">][</span><span class="s1">&#39;images&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;url&#39;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">track_image</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">file_image_bytes</span><span class="p">(</span><span class="n">NO_IMAGE_PATH</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">track_duration</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">track_json</span><span class="p">[</span><span class="s1">&#39;duration_ms&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">album_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">track_json</span><span class="p">[</span><span class="s1">&#39;album&#39;</span><span class="p">][</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">artist_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">current_artist</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">current_artist</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">track_json</span><span class="p">[</span><span class="s1">&#39;artists&#39;</span><span class="p">]]</span>
+        <span class="c1"># Todo: Playlist ID gets added when the Playlist() is instantiated</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">playlist_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">APP_DATABASE</span><span class="o">.</span><span class="n">add_item_to_table</span><span class="p">(</span>
+            <span class="n">table_name</span><span class="o">=</span><span class="s1">&#39;tracks&#39;</span><span class="p">,</span>
+            <span class="n">track_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">track_id</span><span class="p">,</span>
+            <span class="n">track_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">track_name</span><span class="p">,</span>
+            <span class="n">track_uri</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">track_uri</span><span class="p">,</span>
+            <span class="n">track_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">track_url</span><span class="p">,</span>
+            <span class="n">track_image</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">track_image</span><span class="p">,</span>
+            <span class="n">genre_names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">genre_names</span><span class="p">,</span>
+            <span class="n">track_duration</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">track_duration</span><span class="p">,</span>
+            <span class="n">artist_ids</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">artist_ids</span><span class="p">,</span>
+            <span class="n">album_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">album_id</span><span class="p">,</span>
+            <span class="n">playlist_ids</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">playlist_ids</span><span class="p">,</span>
+            <span class="n">popularity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">popularity</span><span class="p">,</span>
+            <span class="n">blacklisted</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">blacklisted</span><span class="p">,</span>
+            <span class="n">track_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">track_json</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="NewUser">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.music_classes.NewUser">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">NewUser</span><span class="p">(</span><span class="n">_SpotifyObject</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spotify_user</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param spotify_user: Dict containing Spotify Tracks, in the form of {user_uri: user}</span>
+<span class="sd">        :raises InputException: if input is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spotify_user</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">spotify_user</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s1">&#39;{user_uri: user}&#39;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_json</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">value_from_dict</span><span class="p">(</span><span class="n">spotify_user</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_json</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_json</span><span class="p">[</span><span class="s1">&#39;display_name&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_uri</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_json</span><span class="p">[</span><span class="s1">&#39;uri&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_json</span><span class="p">[</span><span class="s1">&#39;external_urls&#39;</span><span class="p">][</span><span class="s1">&#39;spotify&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s1">&#39;url&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_json</span><span class="p">[</span><span class="s1">&#39;images&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">user_image</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">file_image_bytes</span><span class="p">(</span><span class="n">NO_IMAGE_PATH</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">user_image</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">spotify_image_bytes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user_json</span><span class="p">[</span><span class="s1">&#39;images&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;url&#39;</span><span class="p">])</span>
+
+        <span class="n">top_artists</span><span class="p">:</span> <span class="nb">dict</span><span class="o">=</span> <span class="n">spotify</span><span class="o">.</span><span class="n">get_users_top_items</span><span class="p">(</span><span class="n">item_type</span><span class="o">=</span><span class="s2">&quot;artists&quot;</span><span class="p">,</span> <span class="n">time_range</span><span class="o">=</span><span class="s2">&quot;medium_term&quot;</span><span class="p">)</span>
+        <span class="n">playlists</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">spotify</span><span class="o">.</span><span class="n">get_users_playlists</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">top_tracks</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">spotify</span><span class="o">.</span><span class="n">get_users_top_items</span><span class="p">(</span><span class="n">item_type</span><span class="o">=</span><span class="s2">&quot;tracks&quot;</span><span class="p">,</span> <span class="n">time_range</span><span class="o">=</span><span class="s2">&quot;medium_term&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">follower</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_json</span><span class="p">[</span><span class="s1">&#39;followers&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">playlist_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">uri_to_id</span><span class="p">(</span><span class="n">current_playlist</span><span class="p">)</span> <span class="k">for</span> <span class="n">current_playlist</span> <span class="ow">in</span> <span class="n">playlists</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">top_track_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">uri_to_id</span><span class="p">(</span><span class="n">current_track</span><span class="p">)</span> <span class="k">for</span> <span class="n">current_track</span> <span class="ow">in</span> <span class="n">top_tracks</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">top_artist_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">uri_to_id</span><span class="p">(</span><span class="n">current_artist</span><span class="p">)</span> <span class="k">for</span> <span class="n">current_artist</span> <span class="ow">in</span> <span class="n">top_artists</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+
+        <span class="n">APP_DATABASE</span><span class="o">.</span><span class="n">add_item_to_table</span><span class="p">(</span>
+            <span class="n">table_name</span><span class="o">=</span><span class="s1">&#39;users&#39;</span><span class="p">,</span>
+            <span class="n">user_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span>
+            <span class="n">user_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">user_name</span><span class="p">,</span>
+            <span class="n">user_uri</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">user_uri</span><span class="p">,</span>
+            <span class="n">user_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">user_url</span><span class="p">,</span>
+            <span class="n">user_image</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">user_image</span><span class="p">,</span>
+            <span class="n">follower</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">follower</span><span class="p">,</span>
+            <span class="n">playlist_ids</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">playlist_ids</span><span class="p">,</span>
+            <span class="n">top_track_ids</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">top_track_ids</span><span class="p">,</span>
+            <span class="n">top_artist_ids</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">top_artist_ids</span><span class="p">,</span>
+            <span class="n">top_genre_names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">top_genre_names</span><span class="p">,</span>
+            <span class="n">popularity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">popularity</span><span class="p">,</span>
+            <span class="n">blacklisted</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">blacklisted</span><span class="p">,</span>
+            <span class="n">user_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">user_json</span>
+        <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">top_genre_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :return: list of top genre names</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">top_genres</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># TODO: figure out what to do here</span>
+
+        <span class="k">return</span> <span class="n">top_genres</span></div>
+
+
+
+<div class="viewcode-block" id="ItemQueues">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.music_classes.ItemQueues">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ItemQueues</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">album_queue</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">artist_queue</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">playlist_queue</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">track_queue</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_queue</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="ItemQueues.update_queues">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.music_classes.ItemQueues.update_queues">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_queues</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Call `fetch_new_ids_from_database()` for every possible case to update all queues with the new URIs</span>
+
+<span class="sd">        :return: updates queues</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">fetch_new_ids_from_database</span><span class="p">(</span>
+                <span class="n">table_name</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;albums&#39;</span><span class="p">,</span> <span class="s1">&#39;artists&#39;</span><span class="p">,</span> <span class="s1">&#39;tracks&#39;</span><span class="p">,</span> <span class="s1">&#39;playlists&#39;</span><span class="p">,</span> <span class="s1">&#39;users&#39;</span><span class="p">],</span>
+                <span class="n">target_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;album&#39;</span><span class="p">,</span> <span class="s1">&#39;artist&#39;</span><span class="p">,</span> <span class="s1">&#39;playlist&#39;</span><span class="p">,</span> <span class="s1">&#39;track&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">]</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Get the Items that have no Database entry, but are mentioned in the IDs (lists) from other tables. (e.g. Get to database unknown artists mentioned in albums artist_ids)</span>
+
+<span class="sd">            :param table_name: source table name (e.g. albums)</span>
+<span class="sd">            :param target_type: what type of items to return (e.g. artists)</span>
+<span class="sd">            :return: Set containing Spotify Items IDs</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">type_id_map</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;albums&#39;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;artist&quot;</span><span class="p">:</span> <span class="s2">&quot;artist_ids&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;track&quot;</span><span class="p">:</span> <span class="s2">&quot;track_ids&quot;</span>
+                <span class="p">},</span>
+                <span class="s2">&quot;artists&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;album&quot;</span><span class="p">:</span> <span class="s2">&quot;album_ids&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;playlist&quot;</span><span class="p">:</span> <span class="s2">&quot;playlist_ids&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;track&quot;</span><span class="p">:</span> <span class="s2">&quot;top_track_ids&quot;</span>
+                <span class="p">},</span>
+                <span class="s2">&quot;playlists&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;track&quot;</span><span class="p">:</span> <span class="s2">&quot;track_ids&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="s2">&quot;owner_id&quot;</span>
+                <span class="p">},</span>
+                <span class="s2">&quot;tracks&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;album&quot;</span><span class="p">:</span> <span class="s2">&quot;album_id&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;artist&quot;</span><span class="p">:</span> <span class="s2">&quot;artist_ids&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;playlist&quot;</span><span class="p">:</span> <span class="s2">&quot;playlist_ids&quot;</span>
+                <span class="p">},</span>
+                <span class="s2">&quot;users&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;artist&quot;</span><span class="p">:</span> <span class="s2">&quot;top_artist_ids&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;playlist&quot;</span><span class="p">:</span> <span class="s2">&quot;playlist_ids&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;track&quot;</span><span class="p">:</span> <span class="s2">&quot;top_track_ids&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+
+            <span class="c1"># get IDs from target column</span>
+            <span class="n">unknown_ids</span> <span class="o">=</span> <span class="n">APP_DATABASE</span><span class="o">.</span><span class="n">fetch_column</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="n">table_name</span><span class="p">,</span> <span class="n">table_column</span><span class="o">=</span><span class="n">type_id_map</span><span class="p">[</span><span class="n">table_name</span><span class="p">][</span><span class="n">target_type</span><span class="p">])</span>
+            <span class="n">target_list</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">load_list_from_database</span><span class="p">(</span><span class="n">unknown_ids</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">row</span> <span class="o">!=</span> <span class="s1">&#39;[]&#39;</span><span class="p">:</span>
+                    <span class="n">target_list</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+            <span class="c1"># fetch existing IDs from Database</span>
+
+            <span class="n">existing_items</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">APP_DATABASE</span><span class="o">.</span><span class="n">fetch_column</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">target_type</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">,</span> <span class="n">table_column</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">target_type</span><span class="si">}</span><span class="s1">_id&#39;</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">target_list</span> <span class="o">-</span> <span class="n">existing_items</span>
+
+        <span class="c1"># update albums</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">album_queue</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fetch_new_ids_from_database</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;artists&quot;</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s2">&quot;album&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">album_queue</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fetch_new_ids_from_database</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;tracks&quot;</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s2">&quot;album&quot;</span><span class="p">))</span>
+
+        <span class="c1"># update artists</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">artist_queue</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fetch_new_ids_from_database</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;albums&quot;</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s2">&quot;artist&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">artist_queue</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fetch_new_ids_from_database</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;tracks&quot;</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s2">&quot;artist&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">artist_queue</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fetch_new_ids_from_database</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;users&quot;</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s2">&quot;artist&quot;</span><span class="p">))</span>
+
+        <span class="c1"># update playlists</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">playlist_queue</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fetch_new_ids_from_database</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;artists&quot;</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s2">&quot;playlist&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">playlist_queue</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fetch_new_ids_from_database</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;tracks&quot;</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s2">&quot;playlist&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">playlist_queue</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fetch_new_ids_from_database</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;users&quot;</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s2">&quot;playlist&quot;</span><span class="p">))</span>
+
+        <span class="c1"># update tracks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">track_queue</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fetch_new_ids_from_database</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;albums&quot;</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s2">&quot;track&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">track_queue</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fetch_new_ids_from_database</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;artists&quot;</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s2">&quot;track&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">track_queue</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fetch_new_ids_from_database</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;playlists&quot;</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s2">&quot;track&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">track_queue</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fetch_new_ids_from_database</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;users&quot;</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s2">&quot;track&quot;</span><span class="p">))</span>
+
+        <span class="c1"># update users</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_queue</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fetch_new_ids_from_database</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;playlists&quot;</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="ItemQueues.process_all_queues">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.music_classes.ItemQueues.process_all_queues">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">process_all_queues</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        iterates through every queue and adds the items to the database</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">album_queue</span><span class="p">:</span>
+            <span class="n">albums</span> <span class="o">=</span> <span class="n">spotify</span><span class="o">.</span><span class="n">get_several_albums</span><span class="p">(</span><span class="n">album_ids</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">album_queue</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">uri</span><span class="p">,</span> <span class="n">current_album</span> <span class="ow">in</span> <span class="n">albums</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">NewAlbum</span><span class="p">(</span><span class="n">spotify_album</span><span class="o">=</span><span class="n">current_album</span><span class="p">)</span>
+                <span class="c1"># print(f&quot;{CGREEN}created Album for {uri}{TEXTCOLOR}&quot;)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">album_queue</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="k">return</span>
+
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">artist_queue</span><span class="p">:</span>
+            <span class="n">artists</span> <span class="o">=</span> <span class="n">spotify</span><span class="o">.</span><span class="n">get_several_artists</span><span class="p">(</span><span class="n">artist_ids</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">artist_queue</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">uri</span><span class="p">,</span> <span class="n">current_artist</span> <span class="ow">in</span> <span class="n">artists</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">NewArtist</span><span class="p">(</span><span class="n">spotify_artist</span><span class="o">=</span><span class="n">current_artist</span><span class="p">)</span>
+                <span class="c1"># print(f&quot;{CGREEN}created Artist for {uri}{TEXTCOLOR}&quot;)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">artist_queue</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">playlist_queue</span><span class="p">:</span>
+            <span class="n">playlists</span> <span class="o">=</span> <span class="n">spotify</span><span class="o">.</span><span class="n">get_several_playlists</span><span class="p">(</span><span class="n">playlist_ids</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">playlist_queue</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">uri</span><span class="p">,</span> <span class="n">current_playlist</span> <span class="ow">in</span> <span class="n">playlists</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">NewPlaylist</span><span class="p">(</span><span class="n">spotify_playlist</span><span class="o">=</span><span class="n">current_playlist</span><span class="p">)</span>
+                <span class="c1"># print(f&quot;{CGREEN}created Playlist for {uri}{TEXTCOLOR}&quot;)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">playlist_queue</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">track_queue</span><span class="p">:</span>
+            <span class="n">tracks</span> <span class="o">=</span> <span class="n">spotify</span><span class="o">.</span><span class="n">get_several_tracks</span><span class="p">(</span><span class="n">track_ids</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">track_queue</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">uri</span><span class="p">,</span> <span class="n">current_track</span> <span class="ow">in</span> <span class="n">tracks</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">NewTrack</span><span class="p">(</span><span class="n">spotify_track</span><span class="o">=</span><span class="n">current_track</span><span class="p">)</span>
+                <span class="c1"># print(f&quot;{CGREEN}created Track for {uri}{TEXTCOLOR}&quot;)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">track_queue</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_queue</span><span class="p">:</span>
+            <span class="n">users</span> <span class="o">=</span> <span class="n">spotify</span><span class="o">.</span><span class="n">get_several_users</span><span class="p">(</span><span class="n">user_ids</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user_queue</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">uri</span><span class="p">,</span> <span class="n">current_user</span> <span class="ow">in</span> <span class="n">users</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">NewUser</span><span class="p">(</span><span class="n">spotify_user</span><span class="o">=</span><span class="n">current_user</span><span class="p">)</span>
+                <span class="c1"># print(f&quot;{CGREEN}created User for {uri}{TEXTCOLOR}&quot;)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">user_queue</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="NewDevice">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.music_classes.NewDevice">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">NewDevice</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spotify_device</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param spotify_device: Dict containing Spotify Device, in the form of {device_uri: device}</span>
+<span class="sd">        :raises InputException: if input is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spotify_device</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">spotify_device</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s1">&#39;{device_uri: device}&#39;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">device_json</span> <span class="o">=</span> <span class="n">value_from_dict</span><span class="p">(</span><span class="n">spotify_device</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">device_json</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">device_json</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">device_json</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_active</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device_json</span><span class="p">[</span><span class="s1">&#39;is_active&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_private_session</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device_json</span><span class="p">[</span><span class="s1">&#39;is_private_session&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_restricted</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device_json</span><span class="p">[</span><span class="s1">&#39;is_restricted&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">supports_volume</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device_json</span><span class="p">[</span><span class="s1">&#39;supports_volume&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">volume_percent</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device_json</span><span class="p">[</span><span class="s1">&#39;volume_percent&#39;</span><span class="p">])</span>
+
+        <span class="n">APP_DATABASE</span><span class="o">.</span><span class="n">add_item_to_table</span><span class="p">(</span>
+            <span class="n">table_name</span><span class="o">=</span><span class="s1">&#39;devices&#39;</span><span class="p">,</span>
+            <span class="n">device_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device_id</span><span class="p">,</span>
+            <span class="n">device_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device_name</span><span class="p">,</span>
+            <span class="n">device_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device_type</span><span class="p">,</span>
+            <span class="n">is_active</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">is_active</span><span class="p">,</span>
+            <span class="n">is_private_session</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">is_private_session</span><span class="p">,</span>
+            <span class="n">is_restricted</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">is_restricted</span><span class="p">,</span>
+            <span class="n">supports_volume</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">supports_volume</span><span class="p">,</span>
+            <span class="n">volume_percent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">volume_percent</span><span class="p">,</span>
+            <span class="n">device_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device_json</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Album">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.music_classes.Album">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Album</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">album_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param album_id:</span>
+<span class="sd">        :raises SpotifyIdException: if spotify id is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">check_spotify_id</span><span class="p">(</span><span class="n">album_id</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SpotifyIdException</span><span class="p">(</span><span class="n">invalid_id</span><span class="o">=</span><span class="n">album_id</span><span class="p">,</span> <span class="n">id_type</span><span class="o">=</span><span class="s2">&quot;album&quot;</span><span class="p">)</span>
+
+        <span class="n">album_from_db</span> <span class="o">=</span> <span class="n">APP_DATABASE</span><span class="o">.</span><span class="n">fetch_row</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;albums&quot;</span><span class="p">,</span> <span class="n">item_id</span><span class="o">=</span><span class="n">album_id</span><span class="p">,</span> <span class="n">table_column</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">album_from_db</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">CCYAN</span><span class="si">}</span><span class="s2">Album with id &#39;</span><span class="si">{</span><span class="n">album_id</span><span class="si">}</span><span class="s2">&#39; does not exist in database, requesting now ...</span><span class="si">{</span><span class="n">TEXTCOLOR</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">_album</span> <span class="o">=</span> <span class="n">spotify</span><span class="o">.</span><span class="n">get_album</span><span class="p">(</span><span class="n">album_id</span><span class="o">=</span><span class="n">album_id</span><span class="p">)</span>
+            <span class="n">NewAlbum</span><span class="p">(</span><span class="n">_album</span><span class="p">)</span>
+            <span class="n">album_from_db</span> <span class="o">=</span> <span class="n">APP_DATABASE</span><span class="o">.</span><span class="n">fetch_row</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;albums&quot;</span><span class="p">,</span> <span class="n">item_id</span><span class="o">=</span><span class="n">album_id</span><span class="p">,</span> <span class="n">table_column</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">album_id</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">album_name</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">album_uri</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">album_url</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">album_image</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">genre_names</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">total_duration</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">track_count</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">artist_ids</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">track_ids</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">popularity</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">blacklisted</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">album_json</span> <span class="o">=</span> <span class="n">album_from_db</span></div>
+
+
+
+<div class="viewcode-block" id="Artist">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.music_classes.Artist">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Artist</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">artist_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param artist_id:</span>
+<span class="sd">        :raises SpotifyIdException: if spotify id is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">check_spotify_id</span><span class="p">(</span><span class="n">artist_id</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SpotifyIdException</span><span class="p">(</span><span class="n">invalid_id</span><span class="o">=</span><span class="n">artist_id</span><span class="p">,</span> <span class="n">id_type</span><span class="o">=</span><span class="s2">&quot;artist&quot;</span><span class="p">)</span>
+
+        <span class="n">artist_from_db</span> <span class="o">=</span> <span class="n">APP_DATABASE</span><span class="o">.</span><span class="n">fetch_row</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;artists&quot;</span><span class="p">,</span> <span class="n">item_id</span><span class="o">=</span><span class="n">artist_id</span><span class="p">,</span> <span class="n">table_column</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">artist_from_db</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">CCYAN</span><span class="si">}</span><span class="s2">Artist with id &#39;</span><span class="si">{</span><span class="n">artist_id</span><span class="si">}</span><span class="s2">&#39; does not exist in database, requesting now ...</span><span class="si">{</span><span class="n">TEXTCOLOR</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">_artist</span> <span class="o">=</span> <span class="n">spotify</span><span class="o">.</span><span class="n">get_artist</span><span class="p">(</span><span class="n">artist_id</span><span class="o">=</span><span class="n">artist_id</span><span class="p">)</span>
+            <span class="n">NewArtist</span><span class="p">(</span><span class="n">_artist</span><span class="p">)</span>
+            <span class="n">artist_from_db</span> <span class="o">=</span> <span class="n">APP_DATABASE</span><span class="o">.</span><span class="n">fetch_row</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;artists&quot;</span><span class="p">,</span> <span class="n">item_id</span><span class="o">=</span><span class="n">artist_id</span><span class="p">,</span> <span class="n">table_column</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">artist_id</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">artist_name</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">artist_uri</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">artist_url</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">artist_image</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">genre_names</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">follower</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">album_ids</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">playlist_ids</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">top_track_ids</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">popularity</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">blacklisted</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">artist_json</span> <span class="o">=</span> <span class="n">artist_from_db</span></div>
+
+
+
+<div class="viewcode-block" id="Device">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.music_classes.Device">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Device</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param device_id:</span>
+<span class="sd">        :raises SpotifyIdException: if spotify id is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">check_spotify_id</span><span class="p">(</span><span class="n">device_id</span><span class="p">,</span> <span class="n">is_device</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SpotifyIdException</span><span class="p">(</span><span class="n">invalid_id</span><span class="o">=</span><span class="n">device_id</span><span class="p">,</span> <span class="n">id_type</span><span class="o">=</span><span class="s2">&quot;device&quot;</span><span class="p">)</span>
+
+        <span class="n">device_from_db</span> <span class="o">=</span> <span class="n">APP_DATABASE</span><span class="o">.</span><span class="n">fetch_row</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;devices&quot;</span><span class="p">,</span> <span class="n">item_id</span><span class="o">=</span><span class="n">device_id</span><span class="p">,</span> <span class="n">table_column</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">device_from_db</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">CCYAN</span><span class="si">}</span><span class="s2">Device with id &#39;</span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s2">&#39; does not exist in database, requesting now ...</span><span class="si">{</span><span class="n">TEXTCOLOR</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">_device</span> <span class="o">=</span> <span class="n">spotify</span><span class="o">.</span><span class="n">get_device</span><span class="p">(</span><span class="n">device_id</span><span class="o">=</span><span class="n">device_id</span><span class="p">)</span>
+            <span class="n">NewDevice</span><span class="p">(</span><span class="n">_device</span><span class="p">)</span>
+            <span class="n">device_from_db</span> <span class="o">=</span> <span class="n">APP_DATABASE</span><span class="o">.</span><span class="n">fetch_row</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;devices&quot;</span><span class="p">,</span> <span class="n">item_id</span><span class="o">=</span><span class="n">device_id</span><span class="p">,</span> <span class="n">table_column</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">device_id</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">device_name</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">device_type</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">is_active</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">is_private_session</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">is_restricted</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">supports_volume</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">volume_percent</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">device_json</span> <span class="o">=</span> <span class="n">device_from_db</span></div>
+
+
+
+<div class="viewcode-block" id="Playlist">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.music_classes.Playlist">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Playlist</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">playlist_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param playlist_id:</span>
+<span class="sd">        :raises SpotifyIdException: if spotify id is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">check_spotify_id</span><span class="p">(</span><span class="n">playlist_id</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SpotifyIdException</span><span class="p">(</span><span class="n">invalid_id</span><span class="o">=</span><span class="n">playlist_id</span><span class="p">,</span> <span class="n">id_type</span><span class="o">=</span><span class="s2">&quot;playlist&quot;</span><span class="p">)</span>
+
+        <span class="n">playlist_from_db</span> <span class="o">=</span> <span class="n">APP_DATABASE</span><span class="o">.</span><span class="n">fetch_row</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;playlists&quot;</span><span class="p">,</span> <span class="n">item_id</span><span class="o">=</span><span class="n">playlist_id</span><span class="p">,</span> <span class="n">table_column</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">playlist_from_db</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">CCYAN</span><span class="si">}</span><span class="s2">Playlist with id &#39;</span><span class="si">{</span><span class="n">playlist_id</span><span class="si">}</span><span class="s2">&#39; does not exist in database, requesting now ...</span><span class="si">{</span><span class="n">TEXTCOLOR</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">_playlist</span> <span class="o">=</span> <span class="n">spotify</span><span class="o">.</span><span class="n">get_playlist</span><span class="p">(</span><span class="n">playlist_id</span><span class="o">=</span><span class="n">playlist_id</span><span class="p">)</span>
+            <span class="n">NewPlaylist</span><span class="p">(</span><span class="n">_playlist</span><span class="p">)</span>
+            <span class="n">playlist_from_db</span> <span class="o">=</span> <span class="n">APP_DATABASE</span><span class="o">.</span><span class="n">fetch_row</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;playlists&quot;</span><span class="p">,</span> <span class="n">item_id</span><span class="o">=</span><span class="n">playlist_id</span><span class="p">,</span> <span class="n">table_column</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">playlist_id</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">playlist_name</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">playlist_uri</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">playlist_url</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">playlist_image</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">genre_names</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">total_duration</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">track_count</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">owner_id</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">track_ids</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">popularity</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">blacklisted</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">playlist_json</span> <span class="o">=</span> <span class="n">playlist_from_db</span></div>
+
+
+
+<div class="viewcode-block" id="Track">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.music_classes.Track">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Track</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">track_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param track_id:</span>
+<span class="sd">        :raises SpotifyIdException: if spotify id is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">check_spotify_id</span><span class="p">(</span><span class="n">track_id</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SpotifyIdException</span><span class="p">(</span><span class="n">invalid_id</span><span class="o">=</span><span class="n">track_id</span><span class="p">,</span> <span class="n">id_type</span><span class="o">=</span><span class="s2">&quot;track&quot;</span><span class="p">)</span>
+
+        <span class="n">track_from_db</span> <span class="o">=</span> <span class="n">APP_DATABASE</span><span class="o">.</span><span class="n">fetch_row</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;tracks&quot;</span><span class="p">,</span> <span class="n">item_id</span><span class="o">=</span><span class="n">track_id</span><span class="p">,</span> <span class="n">table_column</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">track_from_db</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">CCYAN</span><span class="si">}</span><span class="s2">Track with id &#39;</span><span class="si">{</span><span class="n">track_id</span><span class="si">}</span><span class="s2">&#39; does not exist in database, requesting now ...</span><span class="si">{</span><span class="n">TEXTCOLOR</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">_track</span> <span class="o">=</span> <span class="n">spotify</span><span class="o">.</span><span class="n">get_track</span><span class="p">(</span><span class="n">track_id</span><span class="o">=</span><span class="n">track_id</span><span class="p">)</span>
+            <span class="n">NewTrack</span><span class="p">(</span><span class="n">_track</span><span class="p">)</span>
+            <span class="n">track_from_db</span> <span class="o">=</span> <span class="n">APP_DATABASE</span><span class="o">.</span><span class="n">fetch_row</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;tracks&quot;</span><span class="p">,</span> <span class="n">item_id</span><span class="o">=</span><span class="n">track_id</span><span class="p">,</span> <span class="n">table_column</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">track_id</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">track_name</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">track_uri</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">track_url</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">track_image</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">genre_names</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">track_duration</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">artist_ids</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">album_id</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">playlist_ids</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">popularity</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">blacklisted</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">track_json</span> <span class="o">=</span> <span class="n">track_from_db</span></div>
+
+
+
+<div class="viewcode-block" id="User">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.music_classes.User">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">User</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param user_id:</span>
+<span class="sd">        :raises SpotifyIdException: if spotify id is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">check_spotify_id</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">is_user</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SpotifyIdException</span><span class="p">(</span><span class="n">invalid_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">,</span> <span class="n">id_type</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">)</span>
+
+        <span class="n">user_from_db</span> <span class="o">=</span> <span class="n">APP_DATABASE</span><span class="o">.</span><span class="n">fetch_row</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;users&quot;</span><span class="p">,</span> <span class="n">item_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">,</span> <span class="n">table_column</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">user_from_db</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">CCYAN</span><span class="si">}</span><span class="s2">User with id &#39;</span><span class="si">{</span><span class="n">user_id</span><span class="si">}</span><span class="s2">&#39; does not exist in database, requesting now ...</span><span class="si">{</span><span class="n">TEXTCOLOR</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">_user</span> <span class="o">=</span> <span class="n">spotify</span><span class="o">.</span><span class="n">get_users_profile</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">)</span>
+            <span class="n">NewUser</span><span class="p">(</span><span class="n">_user</span><span class="p">)</span>
+            <span class="n">user_from_db</span> <span class="o">=</span> <span class="n">APP_DATABASE</span><span class="o">.</span><span class="n">fetch_row</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;users&quot;</span><span class="p">,</span> <span class="n">item_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">,</span> <span class="n">table_column</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">user_name</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">user_uri</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">user_url</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">user_image</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">follower</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">playlist_ids</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">top_track_ids</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">top_artist_ids</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">top_genre_names</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">popularity</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">blacklisted</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">user_json</span> <span class="o">=</span> <span class="n">user_from_db</span></div>
+
+
+
+
+<span class="c1"># Note: Code snippets for the future:</span>
+<span class="c1"># APP_DATABASE.add_item_to_table(</span>
+<span class="c1"># 	table_name=&#39;genres&#39;,</span>
+<span class="c1"># 	genre_name=self.genre_name,</span>
+<span class="c1"># 	acousticness_lower_limit=self.acousticness_lower_limit,</span>
+<span class="c1"># 	acousticness_upper_limit=self.acousticness_upper_limit,</span>
+<span class="c1"># 	danceability_lower_limit=self.danceability_lower_limit,</span>
+<span class="c1"># 	danceability_upper_limit=self.danceability_upper_limit,</span>
+<span class="c1"># 	duration_ms=self.duration_ms,</span>
+<span class="c1"># 	energy_lower_limit=self.energy_lower_limit,</span>
+<span class="c1"># 	energy_upper_limit=self.energy_upper_limit,</span>
+<span class="c1"># 	instrumentalness_lower_limit=self.instrumentalness_lower_limit,</span>
+<span class="c1"># 	instrumentalness_upper_limit=self.instrumentalness_upper_limit,</span>
+<span class="c1"># 	key_lower_limit=self.key_lower_limit,</span>
+<span class="c1"># 	key_upper_limit=self.key_upper_limit,</span>
+<span class="c1"># 	liveness_lower_limit=self.liveness_lower_limit,</span>
+<span class="c1"># 	liveness_upper_limit=self.liveness_upper_limit,</span>
+<span class="c1"># 	loudness_lower_limit=self.loudness_lower_limit,</span>
+<span class="c1"># 	loudness_upper_limit=self.loudness_upper_limit,</span>
+<span class="c1"># 	mode_lower_limit=self.mode_lower_limit,</span>
+<span class="c1"># 	mode_upper_limit=self.mode_upper_limit,</span>
+<span class="c1"># 	speechiness_lower_limit=self.speechiness_lower_limit,</span>
+<span class="c1"># 	speechiness_upper_limit=self.speechiness_upper_limit,</span>
+<span class="c1"># 	tempo_lower_limit=self.tempo_lower_limit,</span>
+<span class="c1"># 	tempo_upper_limit=self.tempo_upper_limit,</span>
+<span class="c1"># 	valence_lower_limit=self.valence_lower_limit,</span>
+<span class="c1"># 	valence_upper_limit=self.valence_upper_limit,</span>
+<span class="c1"># 	popularity=self.popularity,</span>
+<span class="c1"># 	blacklisted=self.blacklisted,</span>
+<span class="c1"># )</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Atomdonat.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

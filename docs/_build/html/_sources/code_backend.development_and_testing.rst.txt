@@ -1,0 +1,45 @@
+code\_backend.development\_and\_testing package
+===============================================
+
+Submodules
+----------
+
+code\_backend.development\_and\_testing.debugging module
+--------------------------------------------------------
+
+.. automodule:: code_backend.development_and_testing.debugging
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+code\_backend.development\_and\_testing.dev\_bench\_1 module
+------------------------------------------------------------
+
+.. automodule:: code_backend.development_and_testing.dev_bench_1
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+code\_backend.development\_and\_testing.dev\_bench\_2 module
+------------------------------------------------------------
+
+.. automodule:: code_backend.development_and_testing.dev_bench_2
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+code\_backend.development\_and\_testing.dev\_bench\_3 module
+------------------------------------------------------------
+
+.. automodule:: code_backend.development_and_testing.dev_bench_3
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: code_backend.development_and_testing
+   :members:
+   :show-inheritance:
+   :undoc-members:
