@@ -1,19 +1,16 @@
-from tkinter import *
-from tkinter import ttk
-from tkinter.font import Font
-from PIL.ImageTk import PhotoImage
-
-# import local files
-from zz_deprecated import backend
-from zz_deprecated.backend import Artist, Album, Playlist, Track
-
 import os
 import re
-from typing import *
+import requests
 
 from PIL import ImageTk
-import requests
-from tkinter import PhotoImage
+from PIL.ImageTk import PhotoImage
+from tkinter import *
+from tkinter import ttk, PhotoImage
+from tkinter.font import Font
+from typing import *
 
-textcolor = '#fff'
-backcolor = '#222'
+# import local files
+
+
+UI_TEXTCOLOR = '#fff'
+UI_BACKCOLOR = '#222'

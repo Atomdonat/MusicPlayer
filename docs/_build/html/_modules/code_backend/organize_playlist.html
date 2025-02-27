@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>code_backend.organize_playlist &mdash; MusicPlayer 1.15.6 documentation</title>
+  <title>code_backend.organize_playlist &mdash; MusicPlayer 1.15.7 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=1f24c071"></script>
+      <script src="../../_static/documentation_options.js?v=bb5c4468"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -186,10 +186,7 @@
 <span class="sd">    Reorganizes the given Playlist and either creates new Playlist or updates existing Playlist. (If successful either new Playlist appears in Spotify or Playlist Content changed)</span>
 
 <span class="sd">    :param collection_uri: Spotify Collection URI to organize</span>
-<span class="sd">    :param kwargs: valid kwargs:</span>
-<span class="sd">        - &quot;shuffle=...&quot; -&gt; shuffle collection tracks;</span>
-<span class="sd">        - &quot;remove=[&#39;duplicate&#39;]&quot; -&gt; remove duplicate tracks;</span>
-<span class="sd">        - &quot;remove=[&#39;remove_string&#39;]&quot; &amp;rarr; removes tracks containing &#39;remove_string&#39; (supports regex pattern)</span>
+<span class="sd">    :param kwargs: valid kwargs: ``shuffle=...`` -&gt; shuffle collection tracks; ``remove=[&#39;duplicate&#39;]`` -&gt; remove duplicate tracks; ``remove=[&#39;remove_string&#39;]`` -&gt; removes tracks containing &#39;remove_string&#39; (supports regex pattern)</span>
 <span class="sd">    :return: New/Updated Playlist in Spotify</span>
 <span class="sd">    :raises InputException: if input is invalid</span>
 <span class="sd">    :raises SpotifyApiException: if Exception related to Spotify API occurs</span>

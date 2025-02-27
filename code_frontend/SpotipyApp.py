@@ -1,7 +1,10 @@
 # import libraries
-from code_backend.music_classes import NewAlbum, NewArtist, Device, Genre, Player, NewPlaylist, NewTrack, TrackAnalysis, NewUser
+import code_backend.spotify_web_api as spotify
+
+from code_frontend.shared_config import *
 from code_backend.secondary_methods import *
-from shared_config import *
+from code_backend.music_classes import Album, Artist, Device, Playlist, Track, User 
+from code_backend.main_app import Player, SpotifyApp 
 
 button_image_size = 20
 window_size = '800x400'
@@ -60,7 +63,7 @@ class SpotifyAppWindow:
         self.progress_sec = IntVar(value=self.player.progress)  # int in seconds
 
         self.mainframe = Frame(master)
-        self.mainframe.config(bg=backcolor)
+        self.mainframe.config(bg=UI_BACKCOLOR)
 
         self.bold_font = Font(family="Helvetica", size=12, weight="bold")
         self.normal_font = Font(family="Helvetica", size=12)
@@ -70,9 +73,9 @@ class SpotifyAppWindow:
         self.progress_bar_style.theme_use("clam")
         self.progress_bar_style.configure(
             style="design.Horizontal.TProgressbar",
-            background=backcolor,
-            troughcolor=textcolor,
-            bordercolor=backcolor
+            background=UI_BACKCOLOR,
+            troughcolor=UI_TEXTCOLOR,
+            bordercolor=UI_BACKCOLOR
         )
 
         global image_shuffle_off
@@ -98,56 +101,56 @@ class SpotifyAppWindow:
         image_add_queue = tk_image_from_file(file_path=add_queue)
 
         # Player Interactions
-        self.player_label = Label(self.mainframe, text='Player:', fg=textcolor, bg=backcolor, font=self.bold_font)
-        self.shuffle_button = Button(self.mainframe, image=image_shuffle_off, fg=textcolor, bg=backcolor,
+        self.player_label = Label(self.mainframe, text='Player:', fg=UI_TEXTCOLOR, bg=UI_BACKCOLOR, font=self.bold_font)
+        self.shuffle_button = Button(self.mainframe, image=image_shuffle_off, fg=UI_TEXTCOLOR, bg=UI_BACKCOLOR,
                                      command=lambda: self.change_shuffle_state())
-        self.prev_button = Button(self.mainframe, image=image_prev_track, fg=textcolor, bg=backcolor,
+        self.prev_button = Button(self.mainframe, image=image_prev_track, fg=UI_TEXTCOLOR, bg=UI_BACKCOLOR,
                                   command=lambda: self.prev_track())
-        self.pause_button = Button(self.mainframe, image=image_pause, fg=textcolor, bg=backcolor,
+        self.pause_button = Button(self.mainframe, image=image_pause, fg=UI_TEXTCOLOR, bg=UI_BACKCOLOR,
                                    command=lambda: self.pause())
-        self.next_button = Button(self.mainframe, image=image_next_track, fg=textcolor, bg=backcolor,
+        self.next_button = Button(self.mainframe, image=image_next_track, fg=UI_TEXTCOLOR, bg=UI_BACKCOLOR,
                                   command=lambda: self.next_track())
-        self.repeat_button = Button(self.mainframe, image=image_repeat_off, fg=textcolor, bg=backcolor,
+        self.repeat_button = Button(self.mainframe, image=image_repeat_off, fg=UI_TEXTCOLOR, bg=UI_BACKCOLOR,
                                     command=lambda: self.new_repeat_state())
 
-        self.progress_label = Label(self.mainframe, text='Progress (sec):', fg=textcolor, bg=backcolor,
+        self.progress_label = Label(self.mainframe, text='Progress (sec):', fg=UI_TEXTCOLOR, bg=UI_BACKCOLOR,
                                     font=self.bold_font)
-        self.progress_entry = Entry(self.mainframe, fg=textcolor, bg=backcolor, insertbackground='white',
+        self.progress_entry = Entry(self.mainframe, fg=UI_TEXTCOLOR, bg=UI_BACKCOLOR, insertbackground='white',
                                     font=self.input_font)
         self.progress_bar = ttk.Progressbar(self.mainframe, length=100, orient='horizontal',
                                             style='design.Horizontal.TProgressbar', variable=self.progress_sec)
 
-        self.volume_label = Label(self.mainframe, text='Volume (%):', fg=textcolor, bg=backcolor, font=self.bold_font)
-        # self.volume_entry = Entry(self.mainframe, fg=textcolor, bg=backcolor, insertbackground='white', font=self.input_font)
+        self.volume_label = Label(self.mainframe, text='Volume (%):', fg=UI_TEXTCOLOR, bg=UI_BACKCOLOR, font=self.bold_font)
+        # self.volume_entry = Entry(self.mainframe, fg=UI_TEXTCOLOR, bg=UI_BACKCOLOR, insertbackground='white', font=self.input_font)
         self.volume_entry = Scale(self.mainframe, variable=self.current_volume, from_=0, to=100, orient=HORIZONTAL,
-                                  command=self.update_volume, fg=textcolor, bg=backcolor, troughcolor=backcolor,
+                                  command=self.update_volume, fg=UI_TEXTCOLOR, bg=UI_BACKCOLOR, troughcolor=UI_BACKCOLOR,
                                   highlightthickness=0, font=self.normal_font)
 
         # Search Frame
-        self.search_entry = Entry(self.mainframe, fg=textcolor, bg=backcolor, insertbackground='white',
+        self.search_entry = Entry(self.mainframe, fg=UI_TEXTCOLOR, bg=UI_BACKCOLOR, insertbackground='white',
                                   font=self.input_font)
-        self.current_object_name = Label(self.mainframe, anchor='w', fg=textcolor, bg=backcolor)
-        self.current_object_info = Label(self.mainframe, anchor='w', fg=textcolor, bg=backcolor)
-        self.current_object_image = Label(self.mainframe, fg=textcolor, bg=backcolor)
+        self.current_object_name = Label(self.mainframe, anchor='w', fg=UI_TEXTCOLOR, bg=UI_BACKCOLOR)
+        self.current_object_info = Label(self.mainframe, anchor='w', fg=UI_TEXTCOLOR, bg=UI_BACKCOLOR)
+        self.current_object_image = Label(self.mainframe, fg=UI_TEXTCOLOR, bg=UI_BACKCOLOR)
 
         self.current_right_one_button = None
         self.current_false_one_button = None
 
         # Track Information
-        self.track_label = Label(self.mainframe, text='Track:', fg=textcolor, bg=backcolor, font=self.bold_font)
-        self.track_name = Label(self.mainframe, fg=textcolor, bg=backcolor, anchor='w')
-        self.artist_label = Label(self.mainframe, text='Artist:', fg=textcolor, bg=backcolor, font=self.bold_font)
-        self.artist_name = Label(self.mainframe, fg=textcolor, bg=backcolor, anchor='w')
-        self.album_label = Label(self.mainframe, text='Album:', fg=textcolor, bg=backcolor, font=self.bold_font)
-        self.album_name = Label(self.mainframe, fg=textcolor, bg=backcolor, anchor='w')
-        self.image_label = Label(self.mainframe, bg=backcolor)
+        self.track_label = Label(self.mainframe, text='Track:', fg=UI_TEXTCOLOR, bg=UI_BACKCOLOR, font=self.bold_font)
+        self.track_name = Label(self.mainframe, fg=UI_TEXTCOLOR, bg=UI_BACKCOLOR, anchor='w')
+        self.artist_label = Label(self.mainframe, text='Artist:', fg=UI_TEXTCOLOR, bg=UI_BACKCOLOR, font=self.bold_font)
+        self.artist_name = Label(self.mainframe, fg=UI_TEXTCOLOR, bg=UI_BACKCOLOR, anchor='w')
+        self.album_label = Label(self.mainframe, text='Album:', fg=UI_TEXTCOLOR, bg=UI_BACKCOLOR, font=self.bold_font)
+        self.album_name = Label(self.mainframe, fg=UI_TEXTCOLOR, bg=UI_BACKCOLOR, anchor='w')
+        self.image_label = Label(self.mainframe, bg=UI_BACKCOLOR)
 
         # Searched Instance Options
-        self.instance_option_1 = Button(self.mainframe, fg=textcolor, bg=backcolor)
-        self.instance_option_2 = Button(self.mainframe, fg=textcolor, bg=backcolor)
-        self.instance_option_3 = Button(self.mainframe, fg=textcolor, bg=backcolor)
-        self.instance_option_4 = Button(self.mainframe, fg=textcolor, bg=backcolor)
-        self.instance_option_5 = Button(self.mainframe, fg=textcolor, bg=backcolor)
+        self.instance_option_1 = Button(self.mainframe, fg=UI_TEXTCOLOR, bg=UI_BACKCOLOR)
+        self.instance_option_2 = Button(self.mainframe, fg=UI_TEXTCOLOR, bg=UI_BACKCOLOR)
+        self.instance_option_3 = Button(self.mainframe, fg=UI_TEXTCOLOR, bg=UI_BACKCOLOR)
+        self.instance_option_4 = Button(self.mainframe, fg=UI_TEXTCOLOR, bg=UI_BACKCOLOR)
+        self.instance_option_5 = Button(self.mainframe, fg=UI_TEXTCOLOR, bg=UI_BACKCOLOR)
 
         self.organize_elements()
         self.update_labels()
@@ -265,16 +268,16 @@ class SpotifyAppWindow:
             self.current_right_one_button = Button(
                 self.mainframe,
                 text='Y',
-                fg=textcolor,
-                bg=backcolor,
+                fg=UI_TEXTCOLOR,
+                bg=UI_BACKCOLOR,
                 font=self.normal_font,
                 command=lambda: self.yes_button_pressed.set(1)
             )
             self.current_false_one_button = Button(
                 self.mainframe,
                 text='N',
-                fg=textcolor,
-                bg=backcolor,
+                fg=UI_TEXTCOLOR,
+                bg=UI_BACKCOLOR,
                 font=self.normal_font,
                 command=lambda: self.yes_button_pressed.set(2)
             )

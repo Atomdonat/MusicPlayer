@@ -50,6 +50,15 @@
 
 [//]: # (- )
 
+## [1.15.7] - 27.02.2025 - minor Documentation fix
+
+### Changes in Frontend Code
+- removed sphinx Warnings
+
+### other files
+- added .readthedocs.yaml for Read the Docs publication
+
+
 ## [1.15.6] - 25.02.2025 - generated Documentation
 
 ### Changes in Backend Code

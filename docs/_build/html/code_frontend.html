@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>code_frontend package &mdash; MusicPlayer 1.15.6 documentation</title>
+  <title>code_frontend package &mdash; MusicPlayer 1.15.7 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=1f24c071"></script>
+      <script src="_static/documentation_options.js?v=bb5c4468"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -47,8 +47,12 @@
 <li class="toctree-l2"><a class="reference internal" href="code_backend.html">code_backend package</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">code_frontend package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#code-frontend-spotipyapp-module">code_frontend.SpotipyApp module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#code-frontend-shared-config-module">code_frontend.shared_config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-code_frontend.SpotipyApp">code_frontend.SpotipyApp module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#code_frontend.SpotipyApp.SpotifyAppWindow"><code class="docutils literal notranslate"><span class="pre">SpotifyAppWindow</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#code_frontend.SpotipyApp.get_tk_image_icons"><code class="docutils literal notranslate"><span class="pre">get_tk_image_icons()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-code_frontend.shared_config">code_frontend.shared_config module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-code_frontend">Module contents</a></li>
 </ul>
 </li>
@@ -86,11 +90,142 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
-<section id="code-frontend-spotipyapp-module">
-<h2>code_frontend.SpotipyApp module<a class="headerlink" href="#code-frontend-spotipyapp-module" title="Link to this heading"></a></h2>
+<section id="module-code_frontend.SpotipyApp">
+<span id="code-frontend-spotipyapp-module"></span><h2>code_frontend.SpotipyApp module<a class="headerlink" href="#module-code_frontend.SpotipyApp" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="code_frontend.SpotipyApp.SpotifyAppWindow">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">code_frontend.SpotipyApp.</span></span><span class="sig-name descname"><span class="pre">SpotifyAppWindow</span></span><a class="reference internal" href="_modules/code_frontend/SpotipyApp.html#SpotifyAppWindow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_frontend.SpotipyApp.SpotifyAppWindow" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="code_frontend.SpotipyApp.SpotifyAppWindow.add_track_to_blacklist">
+<span class="sig-name descname"><span class="pre">add_track_to_blacklist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">track</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="code_backend.html#code_backend.music_classes.Track" title="code_backend.music_classes.Track"><span class="pre">Track</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_frontend/SpotipyApp.html#SpotifyAppWindow.add_track_to_blacklist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_frontend.SpotipyApp.SpotifyAppWindow.add_track_to_blacklist" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="code_frontend.SpotipyApp.SpotifyAppWindow.add_track_to_favourites">
+<span class="sig-name descname"><span class="pre">add_track_to_favourites</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">track</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="code_backend.html#code_backend.music_classes.Track" title="code_backend.music_classes.Track"><span class="pre">Track</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_frontend/SpotipyApp.html#SpotifyAppWindow.add_track_to_favourites"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_frontend.SpotipyApp.SpotifyAppWindow.add_track_to_favourites" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="code_frontend.SpotipyApp.SpotifyAppWindow.add_track_to_queue">
+<span class="sig-name descname"><span class="pre">add_track_to_queue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">track</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="code_backend.html#code_backend.music_classes.Track" title="code_backend.music_classes.Track"><span class="pre">Track</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_frontend/SpotipyApp.html#SpotifyAppWindow.add_track_to_queue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_frontend.SpotipyApp.SpotifyAppWindow.add_track_to_queue" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="code_frontend.SpotipyApp.SpotifyAppWindow.bind_entries">
+<span class="sig-name descname"><span class="pre">bind_entries</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_frontend/SpotipyApp.html#SpotifyAppWindow.bind_entries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_frontend.SpotipyApp.SpotifyAppWindow.bind_entries" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="code_frontend.SpotipyApp.SpotifyAppWindow.change_shuffle_state">
+<span class="sig-name descname"><span class="pre">change_shuffle_state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_frontend/SpotipyApp.html#SpotifyAppWindow.change_shuffle_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_frontend.SpotipyApp.SpotifyAppWindow.change_shuffle_state" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="code_frontend.SpotipyApp.SpotifyAppWindow.find_object">
+<span class="sig-name descname"><span class="pre">find_object</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'album'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'artist'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'playlist'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'track'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'user'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">''</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_frontend/SpotipyApp.html#SpotifyAppWindow.find_object"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_frontend.SpotipyApp.SpotifyAppWindow.find_object" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="code_frontend.SpotipyApp.SpotifyAppWindow.get_track_image">
+<span class="sig-name descname"><span class="pre">get_track_image</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_frontend/SpotipyApp.html#SpotifyAppWindow.get_track_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_frontend.SpotipyApp.SpotifyAppWindow.get_track_image" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="code_frontend.SpotipyApp.SpotifyAppWindow.instance_options_buttons">
+<span class="sig-name descname"><span class="pre">instance_options_buttons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_instance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="code_backend.html#code_backend.music_classes.Track" title="code_backend.music_classes.Track"><span class="pre">Track</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/code_frontend/SpotipyApp.html#SpotifyAppWindow.instance_options_buttons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_frontend.SpotipyApp.SpotifyAppWindow.instance_options_buttons" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="code_frontend.SpotipyApp.SpotifyAppWindow.new_instance_options">
+<span class="sig-name descname"><span class="pre">new_instance_options</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_instance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="code_backend.html#code_backend.music_classes.Album" title="code_backend.music_classes.Album"><span class="pre">Album</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="code_backend.html#code_backend.music_classes.Artist" title="code_backend.music_classes.Artist"><span class="pre">Artist</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="code_backend.html#code_backend.music_classes.Playlist" title="code_backend.music_classes.Playlist"><span class="pre">Playlist</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="code_backend.html#code_backend.music_classes.Track" title="code_backend.music_classes.Track"><span class="pre">Track</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_frontend/SpotipyApp.html#SpotifyAppWindow.new_instance_options"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_frontend.SpotipyApp.SpotifyAppWindow.new_instance_options" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="code_frontend.SpotipyApp.SpotifyAppWindow.new_repeat_state">
+<span class="sig-name descname"><span class="pre">new_repeat_state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_frontend/SpotipyApp.html#SpotifyAppWindow.new_repeat_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_frontend.SpotipyApp.SpotifyAppWindow.new_repeat_state" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="code_frontend.SpotipyApp.SpotifyAppWindow.next_track">
+<span class="sig-name descname"><span class="pre">next_track</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_frontend/SpotipyApp.html#SpotifyAppWindow.next_track"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_frontend.SpotipyApp.SpotifyAppWindow.next_track" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="code_frontend.SpotipyApp.SpotifyAppWindow.not_implemented">
+<span class="sig-name descname"><span class="pre">not_implemented</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_frontend/SpotipyApp.html#SpotifyAppWindow.not_implemented"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_frontend.SpotipyApp.SpotifyAppWindow.not_implemented" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="code_frontend.SpotipyApp.SpotifyAppWindow.organize_elements">
+<span class="sig-name descname"><span class="pre">organize_elements</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_frontend/SpotipyApp.html#SpotifyAppWindow.organize_elements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_frontend.SpotipyApp.SpotifyAppWindow.organize_elements" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="code_frontend.SpotipyApp.SpotifyAppWindow.pause">
+<span class="sig-name descname"><span class="pre">pause</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_frontend/SpotipyApp.html#SpotifyAppWindow.pause"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_frontend.SpotipyApp.SpotifyAppWindow.pause" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="code_frontend.SpotipyApp.SpotifyAppWindow.play_track">
+<span class="sig-name descname"><span class="pre">play_track</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">track</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="code_backend.html#code_backend.music_classes.Track" title="code_backend.music_classes.Track"><span class="pre">Track</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_frontend/SpotipyApp.html#SpotifyAppWindow.play_track"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_frontend.SpotipyApp.SpotifyAppWindow.play_track" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="code_frontend.SpotipyApp.SpotifyAppWindow.prev_track">
+<span class="sig-name descname"><span class="pre">prev_track</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_frontend/SpotipyApp.html#SpotifyAppWindow.prev_track"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_frontend.SpotipyApp.SpotifyAppWindow.prev_track" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="code_frontend.SpotipyApp.SpotifyAppWindow.search_object">
+<span class="sig-name descname"><span class="pre">search_object</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_frontend/SpotipyApp.html#SpotifyAppWindow.search_object"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_frontend.SpotipyApp.SpotifyAppWindow.search_object" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="code_frontend.SpotipyApp.SpotifyAppWindow.search_result_elements">
+<span class="sig-name descname"><span class="pre">search_result_elements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_instance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_frontend/SpotipyApp.html#SpotifyAppWindow.search_result_elements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_frontend.SpotipyApp.SpotifyAppWindow.search_result_elements" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="code_frontend.SpotipyApp.SpotifyAppWindow.track_tbn_method">
+<span class="sig-name descname"><span class="pre">track_tbn_method</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_frontend/SpotipyApp.html#SpotifyAppWindow.track_tbn_method"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_frontend.SpotipyApp.SpotifyAppWindow.track_tbn_method" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="code_frontend.SpotipyApp.SpotifyAppWindow.update_labels">
+<span class="sig-name descname"><span class="pre">update_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_frontend/SpotipyApp.html#SpotifyAppWindow.update_labels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_frontend.SpotipyApp.SpotifyAppWindow.update_labels" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="code_frontend.SpotipyApp.SpotifyAppWindow.update_progress">
+<span class="sig-name descname"><span class="pre">update_progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_frontend/SpotipyApp.html#SpotifyAppWindow.update_progress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_frontend.SpotipyApp.SpotifyAppWindow.update_progress" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="code_frontend.SpotipyApp.SpotifyAppWindow.update_progress_bar">
+<span class="sig-name descname"><span class="pre">update_progress_bar</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_frontend/SpotipyApp.html#SpotifyAppWindow.update_progress_bar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_frontend.SpotipyApp.SpotifyAppWindow.update_progress_bar" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="code_frontend.SpotipyApp.SpotifyAppWindow.update_search">
+<span class="sig-name descname"><span class="pre">update_search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_frontend/SpotipyApp.html#SpotifyAppWindow.update_search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_frontend.SpotipyApp.SpotifyAppWindow.update_search" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="code_frontend.SpotipyApp.SpotifyAppWindow.update_volume">
+<span class="sig-name descname"><span class="pre">update_volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_frontend/SpotipyApp.html#SpotifyAppWindow.update_volume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_frontend.SpotipyApp.SpotifyAppWindow.update_volume" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="code_frontend.SpotipyApp.get_tk_image_icons">
+<span class="sig-prename descclassname"><span class="pre">code_frontend.SpotipyApp.</span></span><span class="sig-name descname"><span class="pre">get_tk_image_icons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">&lt;module</span> <span class="pre">'PIL.ImageTk'</span> <span class="pre">from</span> <span class="pre">'E:\\Programmieren\\Github_Repositories\\MusicPlayer\\venv\\Lib\\site-packages\\PIL\\ImageTk.py'&gt;</span></span></span><a class="reference internal" href="_modules/code_frontend/SpotipyApp.html#get_tk_image_icons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_frontend.SpotipyApp.get_tk_image_icons" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 </section>
-<section id="code-frontend-shared-config-module">
-<h2>code_frontend.shared_config module<a class="headerlink" href="#code-frontend-shared-config-module" title="Link to this heading"></a></h2>
+<section id="module-code_frontend.shared_config">
+<span id="code-frontend-shared-config-module"></span><h2>code_frontend.shared_config module<a class="headerlink" href="#module-code_frontend.shared_config" title="Link to this heading"></a></h2>
 </section>
 <section id="module-code_frontend">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-code_frontend" title="Link to this heading"></a></h2>
