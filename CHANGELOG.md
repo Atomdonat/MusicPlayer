@@ -50,6 +50,12 @@
 
 [//]: # (- )
 
+## [1.15.8] - 27.02.2025 - minor Documentation fix
+
+### other files
+- fixed error in .readthedocs.yaml
+
+
 ## [1.15.7] - 27.02.2025 - minor Documentation fix
 
 ### Changes in Frontend Code
