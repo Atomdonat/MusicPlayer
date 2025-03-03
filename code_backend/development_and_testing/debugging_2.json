@@ -1,474 +1,724 @@
 {
-    "spotify:track:587nP9FS8o0p70Z3JS9Uem": {
-        "album": {
-            "album_type": "single",
-            "artists": [
-                {
-                    "external_urls": {
-                        "spotify": "https://open.spotify.com/artist/4FmJD0mpgQ70SNt2EKK8tq"
-                    },
-                    "href": "https://api.spotify.com/v1/artists/4FmJD0mpgQ70SNt2EKK8tq",
-                    "id": "4FmJD0mpgQ70SNt2EKK8tq",
-                    "name": "Miracle Of Sound",
-                    "type": "artist",
-                    "uri": "spotify:artist:4FmJD0mpgQ70SNt2EKK8tq"
-                }
-            ],
-            "available_markets": [],
-            "external_urls": {
-                "spotify": "https://open.spotify.com/album/2oaBBbAR8c78jxKHHHT1fS"
-            },
-            "href": "https://api.spotify.com/v1/albums/2oaBBbAR8c78jxKHHHT1fS",
-            "id": "2oaBBbAR8c78jxKHHHT1fS",
-            "images": [
-                {
-                    "url": "https://i.scdn.co/image/ab67616d0000b273985d67a911aade0b2701dc0a",
-                    "width": 640,
-                    "height": 640
-                },
-                {
-                    "url": "https://i.scdn.co/image/ab67616d00001e02985d67a911aade0b2701dc0a",
-                    "width": 300,
-                    "height": 300
-                },
-                {
-                    "url": "https://i.scdn.co/image/ab67616d00004851985d67a911aade0b2701dc0a",
-                    "width": 64,
-                    "height": 64
-                }
-            ],
-            "name": "Valhalla Calling",
-            "release_date": "2020-11-27",
-            "release_date_precision": "day",
-            "total_tracks": 1,
-            "type": "album",
-            "uri": "spotify:album:2oaBBbAR8c78jxKHHHT1fS"
+    "spotify:playlist:4r0nXktfzwMFLj6g8dIMx8": {
+        "collaborative": false,
+        "description": "Arcane | 奧術 | アーケイン | JINX | Enemy | 아케인 | 리그 오브 레전드",
+        "external_urls": {
+            "spotify": "https://open.spotify.com/playlist/4r0nXktfzwMFLj6g8dIMx8"
         },
-        "artists": [
+        "href": "https://api.spotify.com/v1/playlists/4r0nXktfzwMFLj6g8dIMx8",
+        "id": "4r0nXktfzwMFLj6g8dIMx8",
+        "images": [
             {
-                "external_urls": {
-                    "spotify": "https://open.spotify.com/artist/4FmJD0mpgQ70SNt2EKK8tq"
-                },
-                "href": "https://api.spotify.com/v1/artists/4FmJD0mpgQ70SNt2EKK8tq",
-                "id": "4FmJD0mpgQ70SNt2EKK8tq",
-                "name": "Miracle Of Sound",
-                "type": "artist",
-                "uri": "spotify:artist:4FmJD0mpgQ70SNt2EKK8tq"
+                "height": null,
+                "url": "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000d72ce6447fc6c9ebf7c07db49cc1",
+                "width": null
             }
         ],
-        "available_markets": [],
-        "disc_number": 1,
-        "duration_ms": 224006,
-        "explicit": false,
-        "external_ids": {
-            "isrc": "QZNWV2003617"
+        "name": "Arcane Season 1 & 2 Soundtrack (League Of Legends)",
+        "owner": {
+            "display_name": "Okka",
+            "external_urls": {
+                "spotify": "https://open.spotify.com/user/31xa5svntcpmtgnat2dd5sghcwbq"
+            },
+            "href": "https://api.spotify.com/v1/users/31xa5svntcpmtgnat2dd5sghcwbq",
+            "id": "31xa5svntcpmtgnat2dd5sghcwbq",
+            "type": "user",
+            "uri": "spotify:user:31xa5svntcpmtgnat2dd5sghcwbq"
         },
-        "external_urls": {
-            "spotify": "https://open.spotify.com/track/587nP9FS8o0p70Z3JS9Uem"
+        "primary_color": null,
+        "public": true,
+        "snapshot_id": "AAAALVCdUVxsCHCumXAyHMIjLcEb4TGz",
+        "tracks": {
+            "href": "https://api.spotify.com/v1/playlists/4r0nXktfzwMFLj6g8dIMx8/tracks",
+            "total": 51
         },
-        "href": "https://api.spotify.com/v1/tracks/587nP9FS8o0p70Z3JS9Uem",
-        "id": "587nP9FS8o0p70Z3JS9Uem",
-        "is_local": false,
-        "name": "Valhalla Calling",
-        "popularity": 5,
-        "preview_url": null,
-        "track_number": 1,
-        "type": "track",
-        "uri": "spotify:track:587nP9FS8o0p70Z3JS9Uem"
+        "type": "playlist",
+        "uri": "spotify:playlist:4r0nXktfzwMFLj6g8dIMx8"
     },
-    "spotify:track:6zrR8itT7IfAdl5aS7YQyt": {
-        "preview_url": null,
-        "is_playable": true,
-        "explicit": true,
-        "type": "track",
-        "episode": false,
-        "track": true,
-        "album": {
-            "is_playable": true,
-            "type": "album",
-            "album_type": "album",
-            "href": "https://api.spotify.com/v1/albums/7CI6R1kJLUMfBl4FOKP8nc",
-            "id": "7CI6R1kJLUMfBl4FOKP8nc",
-            "images": [
-                {
-                    "height": 640,
-                    "url": "https://i.scdn.co/image/ab67616d0000b27311ecca6bd4e5576dbf694e6c",
-                    "width": 640
-                },
-                {
-                    "height": 300,
-                    "url": "https://i.scdn.co/image/ab67616d00001e0211ecca6bd4e5576dbf694e6c",
-                    "width": 300
-                },
-                {
-                    "height": 64,
-                    "url": "https://i.scdn.co/image/ab67616d0000485111ecca6bd4e5576dbf694e6c",
-                    "width": 64
-                }
-            ],
-            "name": "Invincible",
-            "release_date": "2017-12-01",
-            "release_date_precision": "day",
-            "uri": "spotify:album:7CI6R1kJLUMfBl4FOKP8nc",
-            "artists": [
-                {
-                    "external_urls": {
-                        "spotify": "https://open.spotify.com/artist/2iLpvtffIrQ4bMYrFPRN4x"
-                    },
-                    "href": "https://api.spotify.com/v1/artists/2iLpvtffIrQ4bMYrFPRN4x",
-                    "id": "2iLpvtffIrQ4bMYrFPRN4x",
-                    "name": "Deuce",
-                    "type": "artist",
-                    "uri": "spotify:artist:2iLpvtffIrQ4bMYrFPRN4x"
-                }
-            ],
-            "external_urls": {
-                "spotify": "https://open.spotify.com/album/7CI6R1kJLUMfBl4FOKP8nc"
-            },
-            "total_tracks": 14
+    "spotify:playlist:7MehUcJ7LL6jnezB8ZpMLd": {
+        "collaborative": false,
+        "description": "Season 1 and 2 league of legends LoL soundtrack songs jinx vi caitlyn viktor jayce mel ekko heimerdinger silco vander salo isha powder silco vander",
+        "external_urls": {
+            "spotify": "https://open.spotify.com/playlist/7MehUcJ7LL6jnezB8ZpMLd"
         },
-        "artists": [
+        "href": "https://api.spotify.com/v1/playlists/7MehUcJ7LL6jnezB8ZpMLd",
+        "id": "7MehUcJ7LL6jnezB8ZpMLd",
+        "images": [
             {
-                "external_urls": {
-                    "spotify": "https://open.spotify.com/artist/2iLpvtffIrQ4bMYrFPRN4x"
-                },
-                "href": "https://api.spotify.com/v1/artists/2iLpvtffIrQ4bMYrFPRN4x",
-                "id": "2iLpvtffIrQ4bMYrFPRN4x",
-                "name": "Deuce",
-                "type": "artist",
-                "uri": "spotify:artist:2iLpvtffIrQ4bMYrFPRN4x"
+                "height": null,
+                "url": "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84ced51b3c2f05d5535ae3b438",
+                "width": null
             }
         ],
-        "disc_number": 1,
-        "track_number": 1,
-        "duration_ms": 184346,
-        "external_ids": {
-            "isrc": "USDPK1700182"
+        "name": "All Arcane Songs [in order]",
+        "owner": {
+            "display_name": "Mika",
+            "external_urls": {
+                "spotify": "https://open.spotify.com/user/31rmlqwn5a5qiayk4fbqf5cwui6i"
+            },
+            "href": "https://api.spotify.com/v1/users/31rmlqwn5a5qiayk4fbqf5cwui6i",
+            "id": "31rmlqwn5a5qiayk4fbqf5cwui6i",
+            "type": "user",
+            "uri": "spotify:user:31rmlqwn5a5qiayk4fbqf5cwui6i"
         },
-        "external_urls": {
-            "spotify": "https://open.spotify.com/track/6zrR8itT7IfAdl5aS7YQyt"
+        "primary_color": null,
+        "public": true,
+        "snapshot_id": "AAAAKQJtYsxz85u73azz5k+SzCxDl5ZQ",
+        "tracks": {
+            "href": "https://api.spotify.com/v1/playlists/7MehUcJ7LL6jnezB8ZpMLd/tracks",
+            "total": 34
         },
-        "href": "https://api.spotify.com/v1/tracks/6zrR8itT7IfAdl5aS7YQyt",
-        "id": "6zrR8itT7IfAdl5aS7YQyt",
-        "name": "Here I Come",
-        "popularity": 34,
-        "uri": "spotify:track:6zrR8itT7IfAdl5aS7YQyt",
-        "is_local": false
+        "type": "playlist",
+        "uri": "spotify:playlist:7MehUcJ7LL6jnezB8ZpMLd"
     },
-    "spotify:track:60a0Rd6pjrkxjPbaKzXjfq": {
-        "preview_url": null,
-        "is_playable": true,
-        "explicit": false,
-        "type": "track",
-        "episode": false,
-        "track": true,
-        "album": {
-            "is_playable": true,
-            "type": "album",
-            "album_type": "album",
-            "href": "https://api.spotify.com/v1/albums/6hPkbAV3ZXpGZBGUvL6jVM",
-            "id": "6hPkbAV3ZXpGZBGUvL6jVM",
-            "images": [
-                {
-                    "height": 640,
-                    "url": "https://i.scdn.co/image/ab67616d0000b273e2f039481babe23658fc719a",
-                    "width": 640
-                },
-                {
-                    "height": 300,
-                    "url": "https://i.scdn.co/image/ab67616d00001e02e2f039481babe23658fc719a",
-                    "width": 300
-                },
-                {
-                    "height": 64,
-                    "url": "https://i.scdn.co/image/ab67616d00004851e2f039481babe23658fc719a",
-                    "width": 64
-                }
-            ],
-            "name": "Hybrid Theory (Bonus Edition)",
-            "release_date": "2000-10-24",
-            "release_date_precision": "day",
-            "uri": "spotify:album:6hPkbAV3ZXpGZBGUvL6jVM",
-            "artists": [
-                {
-                    "external_urls": {
-                        "spotify": "https://open.spotify.com/artist/6XyY86QOPPrYVGvF9ch6wz"
-                    },
-                    "href": "https://api.spotify.com/v1/artists/6XyY86QOPPrYVGvF9ch6wz",
-                    "id": "6XyY86QOPPrYVGvF9ch6wz",
-                    "name": "Linkin Park",
-                    "type": "artist",
-                    "uri": "spotify:artist:6XyY86QOPPrYVGvF9ch6wz"
-                }
-            ],
-            "external_urls": {
-                "spotify": "https://open.spotify.com/album/6hPkbAV3ZXpGZBGUvL6jVM"
-            },
-            "total_tracks": 15
+    "spotify:playlist:7a5vVyYFPXIlE2q1LchCK1": {
+        "collaborative": false,
+        "description": "",
+        "external_urls": {
+            "spotify": "https://open.spotify.com/playlist/7a5vVyYFPXIlE2q1LchCK1"
         },
-        "artists": [
+        "href": "https://api.spotify.com/v1/playlists/7a5vVyYFPXIlE2q1LchCK1",
+        "id": "7a5vVyYFPXIlE2q1LchCK1",
+        "images": [
             {
-                "external_urls": {
-                    "spotify": "https://open.spotify.com/artist/6XyY86QOPPrYVGvF9ch6wz"
-                },
-                "href": "https://api.spotify.com/v1/artists/6XyY86QOPPrYVGvF9ch6wz",
-                "id": "6XyY86QOPPrYVGvF9ch6wz",
-                "name": "Linkin Park",
-                "type": "artist",
-                "uri": "spotify:artist:6XyY86QOPPrYVGvF9ch6wz"
+                "height": null,
+                "url": "https://image-cdn-fa.spotifycdn.com/image/ab67706c0000da847586073ef24f26ae00a5594f",
+                "width": null
             }
         ],
-        "disc_number": 1,
-        "track_number": 8,
-        "duration_ms": 216880,
-        "external_ids": {
-            "isrc": "USWB10002407"
+        "name": "Arcane Season 1 & 2 Soundtrack",
+        "owner": {
+            "display_name": "Cosmic Vibes",
+            "external_urls": {
+                "spotify": "https://open.spotify.com/user/13oolteni51eouik4j9k5h7s2"
+            },
+            "href": "https://api.spotify.com/v1/users/13oolteni51eouik4j9k5h7s2",
+            "id": "13oolteni51eouik4j9k5h7s2",
+            "type": "user",
+            "uri": "spotify:user:13oolteni51eouik4j9k5h7s2"
         },
-        "external_urls": {
-            "spotify": "https://open.spotify.com/track/60a0Rd6pjrkxjPbaKzXjfq"
+        "primary_color": null,
+        "public": true,
+        "snapshot_id": "AAADIny9noaZIWqrzBm7KTNn6Hu9NWxD",
+        "tracks": {
+            "href": "https://api.spotify.com/v1/playlists/7a5vVyYFPXIlE2q1LchCK1/tracks",
+            "total": 37
         },
-        "href": "https://api.spotify.com/v1/tracks/60a0Rd6pjrkxjPbaKzXjfq",
-        "id": "60a0Rd6pjrkxjPbaKzXjfq",
-        "name": "In the End",
-        "popularity": 83,
-        "uri": "spotify:track:60a0Rd6pjrkxjPbaKzXjfq",
-        "is_local": false
+        "type": "playlist",
+        "uri": "spotify:playlist:7a5vVyYFPXIlE2q1LchCK1"
     },
-    "spotify:track:3gVhsZtseYtY1fMuyYq06F": {
-        "preview_url": null,
-        "is_playable": true,
-        "explicit": false,
-        "type": "track",
-        "episode": false,
-        "track": true,
-        "album": {
-            "is_playable": true,
-            "type": "album",
-            "album_type": "album",
-            "href": "https://api.spotify.com/v1/albums/1CtTTpKbHU8KbHRB4LmBbv",
-            "id": "1CtTTpKbHU8KbHRB4LmBbv",
-            "images": [
-                {
-                    "height": 640,
-                    "url": "https://i.scdn.co/image/ab67616d0000b2738b2c42026277efc3e058855b",
-                    "width": 640
-                },
-                {
-                    "height": 300,
-                    "url": "https://i.scdn.co/image/ab67616d00001e028b2c42026277efc3e058855b",
-                    "width": 300
-                },
-                {
-                    "height": 64,
-                    "url": "https://i.scdn.co/image/ab67616d000048518b2c42026277efc3e058855b",
-                    "width": 64
-                }
-            ],
-            "name": "Mutter",
-            "release_date": "2001-04-02",
-            "release_date_precision": "day",
-            "uri": "spotify:album:1CtTTpKbHU8KbHRB4LmBbv",
-            "artists": [
-                {
-                    "external_urls": {
-                        "spotify": "https://open.spotify.com/artist/6wWVKhxIU2cEi0K81v7HvP"
-                    },
-                    "href": "https://api.spotify.com/v1/artists/6wWVKhxIU2cEi0K81v7HvP",
-                    "id": "6wWVKhxIU2cEi0K81v7HvP",
-                    "name": "Rammstein",
-                    "type": "artist",
-                    "uri": "spotify:artist:6wWVKhxIU2cEi0K81v7HvP"
-                }
-            ],
-            "external_urls": {
-                "spotify": "https://open.spotify.com/album/1CtTTpKbHU8KbHRB4LmBbv"
-            },
-            "total_tracks": 11
+    "spotify:playlist:3i5UETYUao9imIHUSHV3Ed": {
+        "collaborative": false,
+        "description": "",
+        "external_urls": {
+            "spotify": "https://open.spotify.com/playlist/3i5UETYUao9imIHUSHV3Ed"
         },
-        "artists": [
+        "href": "https://api.spotify.com/v1/playlists/3i5UETYUao9imIHUSHV3Ed",
+        "id": "3i5UETYUao9imIHUSHV3Ed",
+        "images": [
             {
-                "external_urls": {
-                    "spotify": "https://open.spotify.com/artist/6wWVKhxIU2cEi0K81v7HvP"
-                },
-                "href": "https://api.spotify.com/v1/artists/6wWVKhxIU2cEi0K81v7HvP",
-                "id": "6wWVKhxIU2cEi0K81v7HvP",
-                "name": "Rammstein",
-                "type": "artist",
-                "uri": "spotify:artist:6wWVKhxIU2cEi0K81v7HvP"
+                "height": 640,
+                "url": "https://mosaic.scdn.co/640/ab67616d00001e024aaf2413384c1efcc38353c6ab67616d00001e02722ad563d79a4e6baa2e3a7cab67616d00001e0290d7c2223cf5fa97a2fcf993ab67616d00001e02c804a75ef762b8b0837da1a9",
+                "width": 640
+            },
+            {
+                "height": 300,
+                "url": "https://mosaic.scdn.co/300/ab67616d00001e024aaf2413384c1efcc38353c6ab67616d00001e02722ad563d79a4e6baa2e3a7cab67616d00001e0290d7c2223cf5fa97a2fcf993ab67616d00001e02c804a75ef762b8b0837da1a9",
+                "width": 300
+            },
+            {
+                "height": 60,
+                "url": "https://mosaic.scdn.co/60/ab67616d00001e024aaf2413384c1efcc38353c6ab67616d00001e02722ad563d79a4e6baa2e3a7cab67616d00001e0290d7c2223cf5fa97a2fcf993ab67616d00001e02c804a75ef762b8b0837da1a9",
+                "width": 60
             }
         ],
-        "disc_number": 1,
-        "track_number": 3,
-        "duration_ms": 272440,
-        "external_ids": {
-            "isrc": "DEN120003766"
+        "name": "Arcane season 2",
+        "owner": {
+            "display_name": "Grumpy",
+            "external_urls": {
+                "spotify": "https://open.spotify.com/user/31uktkos2lp44axdfye5htf7vnmq"
+            },
+            "href": "https://api.spotify.com/v1/users/31uktkos2lp44axdfye5htf7vnmq",
+            "id": "31uktkos2lp44axdfye5htf7vnmq",
+            "type": "user",
+            "uri": "spotify:user:31uktkos2lp44axdfye5htf7vnmq"
         },
-        "external_urls": {
-            "spotify": "https://open.spotify.com/track/3gVhsZtseYtY1fMuyYq06F"
+        "primary_color": null,
+        "public": true,
+        "snapshot_id": "AAAALDq0UVeHwyBxKfBfDcXp9yL5KWqv",
+        "tracks": {
+            "href": "https://api.spotify.com/v1/playlists/3i5UETYUao9imIHUSHV3Ed/tracks",
+            "total": 22
         },
-        "href": "https://api.spotify.com/v1/tracks/3gVhsZtseYtY1fMuyYq06F",
-        "id": "3gVhsZtseYtY1fMuyYq06F",
-        "name": "Sonne",
-        "popularity": 74,
-        "uri": "spotify:track:3gVhsZtseYtY1fMuyYq06F",
-        "is_local": false
+        "type": "playlist",
+        "uri": "spotify:playlist:3i5UETYUao9imIHUSHV3Ed"
     },
-    "spotify:track:5DXGHZ3QDh0FcLXPMWTv9U": {
-        "preview_url": null,
-        "is_playable": true,
-        "explicit": false,
-        "type": "track",
-        "episode": false,
-        "track": true,
-        "album": {
-            "is_playable": true,
-            "type": "album",
-            "album_type": "album",
-            "href": "https://api.spotify.com/v1/albums/1X472EvsSqH09RyrqbtyXU",
-            "id": "1X472EvsSqH09RyrqbtyXU",
-            "images": [
-                {
-                    "height": 640,
-                    "url": "https://i.scdn.co/image/ab67616d0000b273163d1c5eddd35473f030f2d4",
-                    "width": 640
-                },
-                {
-                    "height": 300,
-                    "url": "https://i.scdn.co/image/ab67616d00001e02163d1c5eddd35473f030f2d4",
-                    "width": 300
-                },
-                {
-                    "height": 64,
-                    "url": "https://i.scdn.co/image/ab67616d00004851163d1c5eddd35473f030f2d4",
-                    "width": 64
-                }
-            ],
-            "name": "Papercuts",
-            "release_date": "2024-04-12",
-            "release_date_precision": "day",
-            "uri": "spotify:album:1X472EvsSqH09RyrqbtyXU",
-            "artists": [
-                {
-                    "external_urls": {
-                        "spotify": "https://open.spotify.com/artist/6XyY86QOPPrYVGvF9ch6wz"
-                    },
-                    "href": "https://api.spotify.com/v1/artists/6XyY86QOPPrYVGvF9ch6wz",
-                    "id": "6XyY86QOPPrYVGvF9ch6wz",
-                    "name": "Linkin Park",
-                    "type": "artist",
-                    "uri": "spotify:artist:6XyY86QOPPrYVGvF9ch6wz"
-                }
-            ],
-            "external_urls": {
-                "spotify": "https://open.spotify.com/album/1X472EvsSqH09RyrqbtyXU"
-            },
-            "total_tracks": 20
+    "spotify:playlist:3fILC0YkTR59phXvL4Mucm": {
+        "collaborative": false,
+        "description": "",
+        "external_urls": {
+            "spotify": "https://open.spotify.com/playlist/3fILC0YkTR59phXvL4Mucm"
         },
-        "artists": [
+        "href": "https://api.spotify.com/v1/playlists/3fILC0YkTR59phXvL4Mucm",
+        "id": "3fILC0YkTR59phXvL4Mucm",
+        "images": [
             {
-                "external_urls": {
-                    "spotify": "https://open.spotify.com/artist/6XyY86QOPPrYVGvF9ch6wz"
-                },
-                "href": "https://api.spotify.com/v1/artists/6XyY86QOPPrYVGvF9ch6wz",
-                "id": "6XyY86QOPPrYVGvF9ch6wz",
-                "name": "Linkin Park",
-                "type": "artist",
-                "uri": "spotify:artist:6XyY86QOPPrYVGvF9ch6wz"
+                "height": null,
+                "url": "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000d72c77f1b6f18b75dc586d1d559a",
+                "width": null
             }
         ],
-        "disc_number": 1,
-        "track_number": 6,
-        "duration_ms": 216293,
-        "external_ids": {
-            "isrc": "USWB11201322"
+        "name": "Arcane all Songs",
+        "owner": {
+            "display_name": "Ft.Foxy",
+            "external_urls": {
+                "spotify": "https://open.spotify.com/user/ythbj7f9ba5ntpkuamk7817a4"
+            },
+            "href": "https://api.spotify.com/v1/users/ythbj7f9ba5ntpkuamk7817a4",
+            "id": "ythbj7f9ba5ntpkuamk7817a4",
+            "type": "user",
+            "uri": "spotify:user:ythbj7f9ba5ntpkuamk7817a4"
         },
-        "external_urls": {
-            "spotify": "https://open.spotify.com/track/5DXGHZ3QDh0FcLXPMWTv9U"
+        "primary_color": null,
+        "public": true,
+        "snapshot_id": "AAAAHpWBxXG/0s+JX//WPzANsU1Bs3r1",
+        "tracks": {
+            "href": "https://api.spotify.com/v1/playlists/3fILC0YkTR59phXvL4Mucm/tracks",
+            "total": 34
         },
-        "href": "https://api.spotify.com/v1/tracks/5DXGHZ3QDh0FcLXPMWTv9U",
-        "id": "5DXGHZ3QDh0FcLXPMWTv9U",
-        "name": "In the End",
-        "popularity": 43,
-        "uri": "spotify:track:5DXGHZ3QDh0FcLXPMWTv9U",
-        "is_local": false
+        "type": "playlist",
+        "uri": "spotify:playlist:3fILC0YkTR59phXvL4Mucm"
     },
-    "spotify:track:60eOMEt3WNVX1m1jmApmnX": {
-        "preview_url": null,
-        "is_playable": true,
-        "explicit": false,
-        "type": "track",
-        "episode": false,
-        "track": true,
-        "album": {
-            "is_playable": true,
-            "type": "album",
-            "album_type": "album",
-            "href": "https://api.spotify.com/v1/albums/4VzzEviJGYUtAeSsJlI9QB",
-            "id": "4VzzEviJGYUtAeSsJlI9QB",
-            "images": [
-                {
-                    "height": 640,
-                    "url": "https://i.scdn.co/image/ab67616d0000b273af52c228c9619ff6298b08cd",
-                    "width": 640
-                },
-                {
-                    "height": 300,
-                    "url": "https://i.scdn.co/image/ab67616d00001e02af52c228c9619ff6298b08cd",
-                    "width": 300
-                },
-                {
-                    "height": 64,
-                    "url": "https://i.scdn.co/image/ab67616d00004851af52c228c9619ff6298b08cd",
-                    "width": 64
-                }
-            ],
-            "name": "Woodstock",
-            "release_date": "2017-06-16",
-            "release_date_precision": "day",
-            "uri": "spotify:album:4VzzEviJGYUtAeSsJlI9QB",
-            "artists": [
-                {
-                    "external_urls": {
-                        "spotify": "https://open.spotify.com/artist/4kI8Ie27vjvonwaB2ePh8T"
-                    },
-                    "href": "https://api.spotify.com/v1/artists/4kI8Ie27vjvonwaB2ePh8T",
-                    "id": "4kI8Ie27vjvonwaB2ePh8T",
-                    "name": "Portugal. The Man",
-                    "type": "artist",
-                    "uri": "spotify:artist:4kI8Ie27vjvonwaB2ePh8T"
-                }
-            ],
-            "external_urls": {
-                "spotify": "https://open.spotify.com/album/4VzzEviJGYUtAeSsJlI9QB"
-            },
-            "total_tracks": 10
+    "spotify:playlist:29ooXW3eV6qKiZXPD7hLjm": {
+        "collaborative": false,
+        "description": "playlist by animator on arcane s2 💙",
+        "external_urls": {
+            "spotify": "https://open.spotify.com/playlist/29ooXW3eV6qKiZXPD7hLjm"
         },
-        "artists": [
+        "href": "https://api.spotify.com/v1/playlists/29ooXW3eV6qKiZXPD7hLjm",
+        "id": "29ooXW3eV6qKiZXPD7hLjm",
+        "images": [
             {
-                "external_urls": {
-                    "spotify": "https://open.spotify.com/artist/4kI8Ie27vjvonwaB2ePh8T"
-                },
-                "href": "https://api.spotify.com/v1/artists/4kI8Ie27vjvonwaB2ePh8T",
-                "id": "4kI8Ie27vjvonwaB2ePh8T",
-                "name": "Portugal. The Man",
-                "type": "artist",
-                "uri": "spotify:artist:4kI8Ie27vjvonwaB2ePh8T"
+                "height": null,
+                "url": "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000d72c8634b7d0c8c41005b459056b",
+                "width": null
             }
         ],
-        "disc_number": 1,
-        "track_number": 3,
-        "duration_ms": 246786,
-        "external_ids": {
-            "isrc": "USAT21700816"
+        "name": "Best of Arcane",
+        "owner": {
+            "display_name": "🌸 Pauline 🌸",
+            "external_urls": {
+                "spotify": "https://open.spotify.com/user/11182177742"
+            },
+            "href": "https://api.spotify.com/v1/users/11182177742",
+            "id": "11182177742",
+            "type": "user",
+            "uri": "spotify:user:11182177742"
         },
+        "primary_color": null,
+        "public": true,
+        "snapshot_id": "AAAA11PyL0geICknJRSTXFz7v2x5rIw9",
+        "tracks": {
+            "href": "https://api.spotify.com/v1/playlists/29ooXW3eV6qKiZXPD7hLjm/tracks",
+            "total": 105
+        },
+        "type": "playlist",
+        "uri": "spotify:playlist:29ooXW3eV6qKiZXPD7hLjm"
+    },
+    "spotify:playlist:66Ogib5LVObGqYjbbNOSLK": {
+        "collaborative": false,
+        "description": "",
         "external_urls": {
-            "spotify": "https://open.spotify.com/track/60eOMEt3WNVX1m1jmApmnX"
+            "spotify": "https://open.spotify.com/playlist/66Ogib5LVObGqYjbbNOSLK"
         },
-        "href": "https://api.spotify.com/v1/tracks/60eOMEt3WNVX1m1jmApmnX",
-        "id": "60eOMEt3WNVX1m1jmApmnX",
-        "name": "Live in the Moment",
-        "popularity": 59,
-        "uri": "spotify:track:60eOMEt3WNVX1m1jmApmnX",
-        "is_local": false
+        "href": "https://api.spotify.com/v1/playlists/66Ogib5LVObGqYjbbNOSLK",
+        "id": "66Ogib5LVObGqYjbbNOSLK",
+        "images": [
+            {
+                "height": 640,
+                "url": "https://mosaic.scdn.co/640/ab67616d00001e024aaf2413384c1efcc38353c6ab67616d00001e026af67ce0772cdc204eef06f0ab67616d00001e02b9ab3c3eb284ec2f4d15fbffab67616d00001e02c804a75ef762b8b0837da1a9",
+                "width": 640
+            },
+            {
+                "height": 300,
+                "url": "https://mosaic.scdn.co/300/ab67616d00001e024aaf2413384c1efcc38353c6ab67616d00001e026af67ce0772cdc204eef06f0ab67616d00001e02b9ab3c3eb284ec2f4d15fbffab67616d00001e02c804a75ef762b8b0837da1a9",
+                "width": 300
+            },
+            {
+                "height": 60,
+                "url": "https://mosaic.scdn.co/60/ab67616d00001e024aaf2413384c1efcc38353c6ab67616d00001e026af67ce0772cdc204eef06f0ab67616d00001e02b9ab3c3eb284ec2f4d15fbffab67616d00001e02c804a75ef762b8b0837da1a9",
+                "width": 60
+            }
+        ],
+        "name": "Arcane Official Playlist (2)",
+        "owner": {
+            "display_name": "Eduardo Pico",
+            "external_urls": {
+                "spotify": "https://open.spotify.com/user/9g1s17v6bvokaaf9dpyi3ocst"
+            },
+            "href": "https://api.spotify.com/v1/users/9g1s17v6bvokaaf9dpyi3ocst",
+            "id": "9g1s17v6bvokaaf9dpyi3ocst",
+            "type": "user",
+            "uri": "spotify:user:9g1s17v6bvokaaf9dpyi3ocst"
+        },
+        "primary_color": null,
+        "public": true,
+        "snapshot_id": "AAAAD7Mz29NTcIUHZJMEIr0Os0BZvjCc",
+        "tracks": {
+            "href": "https://api.spotify.com/v1/playlists/66Ogib5LVObGqYjbbNOSLK/tracks",
+            "total": 171
+        },
+        "type": "playlist",
+        "uri": "spotify:playlist:66Ogib5LVObGqYjbbNOSLK"
+    },
+    "spotify:playlist:7mMAHCEozs427PwQARK15k": {
+        "collaborative": false,
+        "description": "Songs from official soundtrack playlists and songs that I think that fit&#x2F;hit the vibe ",
+        "external_urls": {
+            "spotify": "https://open.spotify.com/playlist/7mMAHCEozs427PwQARK15k"
+        },
+        "href": "https://api.spotify.com/v1/playlists/7mMAHCEozs427PwQARK15k",
+        "id": "7mMAHCEozs427PwQARK15k",
+        "images": [
+            {
+                "height": null,
+                "url": "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84c79fe652ac96b9657d8d39bc",
+                "width": null
+            }
+        ],
+        "name": "Arcane - Ultimate Sad/Emotional Playlist ",
+        "owner": {
+            "display_name": "nocedenoce",
+            "external_urls": {
+                "spotify": "https://open.spotify.com/user/nocedenoce"
+            },
+            "href": "https://api.spotify.com/v1/users/nocedenoce",
+            "id": "nocedenoce",
+            "type": "user",
+            "uri": "spotify:user:nocedenoce"
+        },
+        "primary_color": null,
+        "public": true,
+        "snapshot_id": "AAAAHI7mAVEzRDqev1PDBkpY+R1j/+//",
+        "tracks": {
+            "href": "https://api.spotify.com/v1/playlists/7mMAHCEozs427PwQARK15k/tracks",
+            "total": 21
+        },
+        "type": "playlist",
+        "uri": "spotify:playlist:7mMAHCEozs427PwQARK15k"
+    },
+    "spotify:playlist:7a0cBVDpyFRflPEXJWkfZV": {
+        "collaborative": false,
+        "description": "",
+        "external_urls": {
+            "spotify": "https://open.spotify.com/playlist/7a0cBVDpyFRflPEXJWkfZV"
+        },
+        "href": "https://api.spotify.com/v1/playlists/7a0cBVDpyFRflPEXJWkfZV",
+        "id": "7a0cBVDpyFRflPEXJWkfZV",
+        "images": [
+            {
+                "height": 640,
+                "url": "https://mosaic.scdn.co/640/ab67616d00001e024aaf2413384c1efcc38353c6ab67616d00001e026af67ce0772cdc204eef06f0ab67616d00001e02b9ab3c3eb284ec2f4d15fbffab67616d00001e02c804a75ef762b8b0837da1a9",
+                "width": 640
+            },
+            {
+                "height": 300,
+                "url": "https://mosaic.scdn.co/300/ab67616d00001e024aaf2413384c1efcc38353c6ab67616d00001e026af67ce0772cdc204eef06f0ab67616d00001e02b9ab3c3eb284ec2f4d15fbffab67616d00001e02c804a75ef762b8b0837da1a9",
+                "width": 300
+            },
+            {
+                "height": 60,
+                "url": "https://mosaic.scdn.co/60/ab67616d00001e024aaf2413384c1efcc38353c6ab67616d00001e026af67ce0772cdc204eef06f0ab67616d00001e02b9ab3c3eb284ec2f4d15fbffab67616d00001e02c804a75ef762b8b0837da1a9",
+                "width": 60
+            }
+        ],
+        "name": "Arcane Official Playlist",
+        "owner": {
+            "display_name": "Hec Tor Jo Ma",
+            "external_urls": {
+                "spotify": "https://open.spotify.com/user/1124736300"
+            },
+            "href": "https://api.spotify.com/v1/users/1124736300",
+            "id": "1124736300",
+            "type": "user",
+            "uri": "spotify:user:1124736300"
+        },
+        "primary_color": null,
+        "public": true,
+        "snapshot_id": "AAAABBWkWHjAOZBKf5zPBlrAssw/59q1",
+        "tracks": {
+            "href": "https://api.spotify.com/v1/playlists/7a0cBVDpyFRflPEXJWkfZV/tracks",
+            "total": 31
+        },
+        "type": "playlist",
+        "uri": "spotify:playlist:7a0cBVDpyFRflPEXJWkfZV"
+    },
+    "spotify:playlist:3tHdv05SPbk8TpKcozwvZd": {
+        "collaborative": false,
+        "description": "",
+        "external_urls": {
+            "spotify": "https://open.spotify.com/playlist/3tHdv05SPbk8TpKcozwvZd"
+        },
+        "href": "https://api.spotify.com/v1/playlists/3tHdv05SPbk8TpKcozwvZd",
+        "id": "3tHdv05SPbk8TpKcozwvZd",
+        "images": [
+            {
+                "height": 640,
+                "url": "https://mosaic.scdn.co/640/ab67616d00001e024aaf2413384c1efcc38353c6ab67616d00001e026af67ce0772cdc204eef06f0ab67616d00001e02b9ab3c3eb284ec2f4d15fbffab67616d00001e02c804a75ef762b8b0837da1a9",
+                "width": 640
+            },
+            {
+                "height": 300,
+                "url": "https://mosaic.scdn.co/300/ab67616d00001e024aaf2413384c1efcc38353c6ab67616d00001e026af67ce0772cdc204eef06f0ab67616d00001e02b9ab3c3eb284ec2f4d15fbffab67616d00001e02c804a75ef762b8b0837da1a9",
+                "width": 300
+            },
+            {
+                "height": 60,
+                "url": "https://mosaic.scdn.co/60/ab67616d00001e024aaf2413384c1efcc38353c6ab67616d00001e026af67ce0772cdc204eef06f0ab67616d00001e02b9ab3c3eb284ec2f4d15fbffab67616d00001e02c804a75ef762b8b0837da1a9",
+                "width": 60
+            }
+        ],
+        "name": "Arcane Official Playlist (2)",
+        "owner": {
+            "display_name": "J",
+            "external_urls": {
+                "spotify": "https://open.spotify.com/user/udnyzzzld6qkmzl4y4ftfagvd"
+            },
+            "href": "https://api.spotify.com/v1/users/udnyzzzld6qkmzl4y4ftfagvd",
+            "id": "udnyzzzld6qkmzl4y4ftfagvd",
+            "type": "user",
+            "uri": "spotify:user:udnyzzzld6qkmzl4y4ftfagvd"
+        },
+        "primary_color": null,
+        "public": true,
+        "snapshot_id": "AAAACOT1/8Z8OiW9yNMIiGCCRhphhR0e",
+        "tracks": {
+            "href": "https://api.spotify.com/v1/playlists/3tHdv05SPbk8TpKcozwvZd/tracks",
+            "total": 32
+        },
+        "type": "playlist",
+        "uri": "spotify:playlist:3tHdv05SPbk8TpKcozwvZd"
+    },
+    "spotify:playlist:7MhTDpQCZUdH2v7RCSCzC0": {
+        "collaborative": false,
+        "description": "",
+        "external_urls": {
+            "spotify": "https://open.spotify.com/playlist/7MhTDpQCZUdH2v7RCSCzC0"
+        },
+        "href": "https://api.spotify.com/v1/playlists/7MhTDpQCZUdH2v7RCSCzC0",
+        "id": "7MhTDpQCZUdH2v7RCSCzC0",
+        "images": [
+            {
+                "height": 640,
+                "url": "https://mosaic.scdn.co/640/ab67616d00001e024aaf2413384c1efcc38353c6ab67616d00001e026af67ce0772cdc204eef06f0ab67616d00001e02b9ab3c3eb284ec2f4d15fbffab67616d00001e02c804a75ef762b8b0837da1a9",
+                "width": 640
+            },
+            {
+                "height": 300,
+                "url": "https://mosaic.scdn.co/300/ab67616d00001e024aaf2413384c1efcc38353c6ab67616d00001e026af67ce0772cdc204eef06f0ab67616d00001e02b9ab3c3eb284ec2f4d15fbffab67616d00001e02c804a75ef762b8b0837da1a9",
+                "width": 300
+            },
+            {
+                "height": 60,
+                "url": "https://mosaic.scdn.co/60/ab67616d00001e024aaf2413384c1efcc38353c6ab67616d00001e026af67ce0772cdc204eef06f0ab67616d00001e02b9ab3c3eb284ec2f4d15fbffab67616d00001e02c804a75ef762b8b0837da1a9",
+                "width": 60
+            }
+        ],
+        "name": "Arcane Official Playlist",
+        "owner": {
+            "display_name": "Max Ses",
+            "external_urls": {
+                "spotify": "https://open.spotify.com/user/1161357770"
+            },
+            "href": "https://api.spotify.com/v1/users/1161357770",
+            "id": "1161357770",
+            "type": "user",
+            "uri": "spotify:user:1161357770"
+        },
+        "primary_color": null,
+        "public": true,
+        "snapshot_id": "AAAAAr+Y+JCih5ju33oFgArefyK5xYnb",
+        "tracks": {
+            "href": "https://api.spotify.com/v1/playlists/7MhTDpQCZUdH2v7RCSCzC0/tracks",
+            "total": 31
+        },
+        "type": "playlist",
+        "uri": "spotify:playlist:7MhTDpQCZUdH2v7RCSCzC0"
+    },
+    "spotify:playlist:7wXW6AdMwcTuf0pXgZ4NYD": {
+        "collaborative": false,
+        "description": "",
+        "external_urls": {
+            "spotify": "https://open.spotify.com/playlist/7wXW6AdMwcTuf0pXgZ4NYD"
+        },
+        "href": "https://api.spotify.com/v1/playlists/7wXW6AdMwcTuf0pXgZ4NYD",
+        "id": "7wXW6AdMwcTuf0pXgZ4NYD",
+        "images": [
+            {
+                "height": 640,
+                "url": "https://mosaic.scdn.co/640/ab67616d00001e024aaf2413384c1efcc38353c6ab67616d00001e026af67ce0772cdc204eef06f0ab67616d00001e02b9ab3c3eb284ec2f4d15fbffab67616d00001e02c804a75ef762b8b0837da1a9",
+                "width": 640
+            },
+            {
+                "height": 300,
+                "url": "https://mosaic.scdn.co/300/ab67616d00001e024aaf2413384c1efcc38353c6ab67616d00001e026af67ce0772cdc204eef06f0ab67616d00001e02b9ab3c3eb284ec2f4d15fbffab67616d00001e02c804a75ef762b8b0837da1a9",
+                "width": 300
+            },
+            {
+                "height": 60,
+                "url": "https://mosaic.scdn.co/60/ab67616d00001e024aaf2413384c1efcc38353c6ab67616d00001e026af67ce0772cdc204eef06f0ab67616d00001e02b9ab3c3eb284ec2f4d15fbffab67616d00001e02c804a75ef762b8b0837da1a9",
+                "width": 60
+            }
+        ],
+        "name": "Arcane Official Playlist",
+        "owner": {
+            "display_name": "Stohmannpia",
+            "external_urls": {
+                "spotify": "https://open.spotify.com/user/l0ajmxw1ezp8gu85bd8jvqws8"
+            },
+            "href": "https://api.spotify.com/v1/users/l0ajmxw1ezp8gu85bd8jvqws8",
+            "id": "l0ajmxw1ezp8gu85bd8jvqws8",
+            "type": "user",
+            "uri": "spotify:user:l0ajmxw1ezp8gu85bd8jvqws8"
+        },
+        "primary_color": null,
+        "public": true,
+        "snapshot_id": "AAAABaPKh8nLKbOi2CLpiIISzPUITfmD",
+        "tracks": {
+            "href": "https://api.spotify.com/v1/playlists/7wXW6AdMwcTuf0pXgZ4NYD/tracks",
+            "total": 34
+        },
+        "type": "playlist",
+        "uri": "spotify:playlist:7wXW6AdMwcTuf0pXgZ4NYD"
+    },
+    "spotify:playlist:2fP0DCEnWhWCsabxBd3wfD": {
+        "collaborative": false,
+        "description": "",
+        "external_urls": {
+            "spotify": "https://open.spotify.com/playlist/2fP0DCEnWhWCsabxBd3wfD"
+        },
+        "href": "https://api.spotify.com/v1/playlists/2fP0DCEnWhWCsabxBd3wfD",
+        "id": "2fP0DCEnWhWCsabxBd3wfD",
+        "images": [
+            {
+                "height": 640,
+                "url": "https://mosaic.scdn.co/640/ab67616d00001e0206158e981961d25b1ae937a8ab67616d00001e0219d67f7438589b6b572653ebab67616d00001e021cf0815a0d7310568149932cab67616d00001e02e3abf9d8b2da7a0c452179a8",
+                "width": 640
+            },
+            {
+                "height": 300,
+                "url": "https://mosaic.scdn.co/300/ab67616d00001e0206158e981961d25b1ae937a8ab67616d00001e0219d67f7438589b6b572653ebab67616d00001e021cf0815a0d7310568149932cab67616d00001e02e3abf9d8b2da7a0c452179a8",
+                "width": 300
+            },
+            {
+                "height": 60,
+                "url": "https://mosaic.scdn.co/60/ab67616d00001e0206158e981961d25b1ae937a8ab67616d00001e0219d67f7438589b6b572653ebab67616d00001e021cf0815a0d7310568149932cab67616d00001e02e3abf9d8b2da7a0c452179a8",
+                "width": 60
+            }
+        ],
+        "name": "Arcane Official Playlist1",
+        "owner": {
+            "display_name": "Mar Tina",
+            "external_urls": {
+                "spotify": "https://open.spotify.com/user/11169041555"
+            },
+            "href": "https://api.spotify.com/v1/users/11169041555",
+            "id": "11169041555",
+            "type": "user",
+            "uri": "spotify:user:11169041555"
+        },
+        "primary_color": null,
+        "public": true,
+        "snapshot_id": "AAAAUKevN0fDseO9h6DLHB/NdsdwEmcU",
+        "tracks": {
+            "href": "https://api.spotify.com/v1/playlists/2fP0DCEnWhWCsabxBd3wfD/tracks",
+            "total": 39
+        },
+        "type": "playlist",
+        "uri": "spotify:playlist:2fP0DCEnWhWCsabxBd3wfD"
+    },
+    "spotify:playlist:2DtDDnwpiBlOxMOeilms4m": {
+        "collaborative": false,
+        "description": "",
+        "external_urls": {
+            "spotify": "https://open.spotify.com/playlist/2DtDDnwpiBlOxMOeilms4m"
+        },
+        "href": "https://api.spotify.com/v1/playlists/2DtDDnwpiBlOxMOeilms4m",
+        "id": "2DtDDnwpiBlOxMOeilms4m",
+        "images": [
+            {
+                "height": 640,
+                "url": "https://mosaic.scdn.co/640/ab67616d00001e021168bda06865ff230d3e4fbbab67616d00001e024aaf2413384c1efcc38353c6ab67616d00001e02b6d68c96d0dea02ce85a558fab67616d00001e02c804a75ef762b8b0837da1a9",
+                "width": 640
+            },
+            {
+                "height": 300,
+                "url": "https://mosaic.scdn.co/300/ab67616d00001e021168bda06865ff230d3e4fbbab67616d00001e024aaf2413384c1efcc38353c6ab67616d00001e02b6d68c96d0dea02ce85a558fab67616d00001e02c804a75ef762b8b0837da1a9",
+                "width": 300
+            },
+            {
+                "height": 60,
+                "url": "https://mosaic.scdn.co/60/ab67616d00001e021168bda06865ff230d3e4fbbab67616d00001e024aaf2413384c1efcc38353c6ab67616d00001e02b6d68c96d0dea02ce85a558fab67616d00001e02c804a75ef762b8b0837da1a9",
+                "width": 60
+            }
+        ],
+        "name": "Arcane Official Playlist",
+        "owner": {
+            "display_name": "Angel",
+            "external_urls": {
+                "spotify": "https://open.spotify.com/user/31wqrxgt2kr5rp7v6tojoxvxmlim"
+            },
+            "href": "https://api.spotify.com/v1/users/31wqrxgt2kr5rp7v6tojoxvxmlim",
+            "id": "31wqrxgt2kr5rp7v6tojoxvxmlim",
+            "type": "user",
+            "uri": "spotify:user:31wqrxgt2kr5rp7v6tojoxvxmlim"
+        },
+        "primary_color": null,
+        "public": true,
+        "snapshot_id": "AAAAFLvmwEzNlkDNrwDVNNm+KhOE5D5q",
+        "tracks": {
+            "href": "https://api.spotify.com/v1/playlists/2DtDDnwpiBlOxMOeilms4m/tracks",
+            "total": 31
+        },
+        "type": "playlist",
+        "uri": "spotify:playlist:2DtDDnwpiBlOxMOeilms4m"
+    },
+    "spotify:playlist:0Tp6oZlrdeRvdDDUAh9jtM": {
+        "collaborative": false,
+        "description": "",
+        "external_urls": {
+            "spotify": "https://open.spotify.com/playlist/0Tp6oZlrdeRvdDDUAh9jtM"
+        },
+        "href": "https://api.spotify.com/v1/playlists/0Tp6oZlrdeRvdDDUAh9jtM",
+        "id": "0Tp6oZlrdeRvdDDUAh9jtM",
+        "images": [
+            {
+                "height": 640,
+                "url": "https://mosaic.scdn.co/640/ab67616d00001e024aaf2413384c1efcc38353c6ab67616d00001e026af67ce0772cdc204eef06f0ab67616d00001e02b9ab3c3eb284ec2f4d15fbffab67616d00001e02c804a75ef762b8b0837da1a9",
+                "width": 640
+            },
+            {
+                "height": 300,
+                "url": "https://mosaic.scdn.co/300/ab67616d00001e024aaf2413384c1efcc38353c6ab67616d00001e026af67ce0772cdc204eef06f0ab67616d00001e02b9ab3c3eb284ec2f4d15fbffab67616d00001e02c804a75ef762b8b0837da1a9",
+                "width": 300
+            },
+            {
+                "height": 60,
+                "url": "https://mosaic.scdn.co/60/ab67616d00001e024aaf2413384c1efcc38353c6ab67616d00001e026af67ce0772cdc204eef06f0ab67616d00001e02b9ab3c3eb284ec2f4d15fbffab67616d00001e02c804a75ef762b8b0837da1a9",
+                "width": 60
+            }
+        ],
+        "name": "Arcane Official Playlist",
+        "owner": {
+            "display_name": "dundeebonni",
+            "external_urls": {
+                "spotify": "https://open.spotify.com/user/dundeebonni"
+            },
+            "href": "https://api.spotify.com/v1/users/dundeebonni",
+            "id": "dundeebonni",
+            "type": "user",
+            "uri": "spotify:user:dundeebonni"
+        },
+        "primary_color": null,
+        "public": true,
+        "snapshot_id": "AAAAEIkq91KkixEZ0EEOKwm1m7wOxHZc",
+        "tracks": {
+            "href": "https://api.spotify.com/v1/playlists/0Tp6oZlrdeRvdDDUAh9jtM/tracks",
+            "total": 19
+        },
+        "type": "playlist",
+        "uri": "spotify:playlist:0Tp6oZlrdeRvdDDUAh9jtM"
+    },
+    "spotify:playlist:6Om15nv7Y2H5O1LiMZlC3I": {
+        "collaborative": false,
+        "description": "",
+        "external_urls": {
+            "spotify": "https://open.spotify.com/playlist/6Om15nv7Y2H5O1LiMZlC3I"
+        },
+        "href": "https://api.spotify.com/v1/playlists/6Om15nv7Y2H5O1LiMZlC3I",
+        "id": "6Om15nv7Y2H5O1LiMZlC3I",
+        "images": [
+            {
+                "height": 640,
+                "url": "https://mosaic.scdn.co/640/ab67616d00001e024aaf2413384c1efcc38353c6ab67616d00001e026af67ce0772cdc204eef06f0ab67616d00001e02b9ab3c3eb284ec2f4d15fbffab67616d00001e02c804a75ef762b8b0837da1a9",
+                "width": 640
+            },
+            {
+                "height": 300,
+                "url": "https://mosaic.scdn.co/300/ab67616d00001e024aaf2413384c1efcc38353c6ab67616d00001e026af67ce0772cdc204eef06f0ab67616d00001e02b9ab3c3eb284ec2f4d15fbffab67616d00001e02c804a75ef762b8b0837da1a9",
+                "width": 300
+            },
+            {
+                "height": 60,
+                "url": "https://mosaic.scdn.co/60/ab67616d00001e024aaf2413384c1efcc38353c6ab67616d00001e026af67ce0772cdc204eef06f0ab67616d00001e02b9ab3c3eb284ec2f4d15fbffab67616d00001e02c804a75ef762b8b0837da1a9",
+                "width": 60
+            }
+        ],
+        "name": "Arcane Official Playlist (2)",
+        "owner": {
+            "display_name": "Moyasserab",
+            "external_urls": {
+                "spotify": "https://open.spotify.com/user/95l79ff6yfe81ihrjvuunk2pi"
+            },
+            "href": "https://api.spotify.com/v1/users/95l79ff6yfe81ihrjvuunk2pi",
+            "id": "95l79ff6yfe81ihrjvuunk2pi",
+            "type": "user",
+            "uri": "spotify:user:95l79ff6yfe81ihrjvuunk2pi"
+        },
+        "primary_color": null,
+        "public": true,
+        "snapshot_id": "AAAAMf+UZE1bxJ3Ivvzhm3N4NVolJQ82",
+        "tracks": {
+            "href": "https://api.spotify.com/v1/playlists/6Om15nv7Y2H5O1LiMZlC3I/tracks",
+            "total": 51
+        },
+        "type": "playlist",
+        "uri": "spotify:playlist:6Om15nv7Y2H5O1LiMZlC3I"
+    },
+    "spotify:playlist:1LpWmBdRTz0IhcvOSCUa3w": {
+        "collaborative": false,
+        "description": "",
+        "external_urls": {
+            "spotify": "https://open.spotify.com/playlist/1LpWmBdRTz0IhcvOSCUa3w"
+        },
+        "href": "https://api.spotify.com/v1/playlists/1LpWmBdRTz0IhcvOSCUa3w",
+        "id": "1LpWmBdRTz0IhcvOSCUa3w",
+        "images": [
+            {
+                "height": 640,
+                "url": "https://mosaic.scdn.co/640/ab67616d00001e024aaf2413384c1efcc38353c6ab67616d00001e026af67ce0772cdc204eef06f0ab67616d00001e02b9ab3c3eb284ec2f4d15fbffab67616d00001e02c804a75ef762b8b0837da1a9",
+                "width": 640
+            },
+            {
+                "height": 300,
+                "url": "https://mosaic.scdn.co/300/ab67616d00001e024aaf2413384c1efcc38353c6ab67616d00001e026af67ce0772cdc204eef06f0ab67616d00001e02b9ab3c3eb284ec2f4d15fbffab67616d00001e02c804a75ef762b8b0837da1a9",
+                "width": 300
+            },
+            {
+                "height": 60,
+                "url": "https://mosaic.scdn.co/60/ab67616d00001e024aaf2413384c1efcc38353c6ab67616d00001e026af67ce0772cdc204eef06f0ab67616d00001e02b9ab3c3eb284ec2f4d15fbffab67616d00001e02c804a75ef762b8b0837da1a9",
+                "width": 60
+            }
+        ],
+        "name": "Arcane Official Playlist",
+        "owner": {
+            "display_name": "Jay Mason",
+            "external_urls": {
+                "spotify": "https://open.spotify.com/user/31eklnhzxyzraewkv5uz5ewub33q"
+            },
+            "href": "https://api.spotify.com/v1/users/31eklnhzxyzraewkv5uz5ewub33q",
+            "id": "31eklnhzxyzraewkv5uz5ewub33q",
+            "type": "user",
+            "uri": "spotify:user:31eklnhzxyzraewkv5uz5ewub33q"
+        },
+        "primary_color": null,
+        "public": true,
+        "snapshot_id": "AAAAQo+bkCz9Nc1bEW1GWkTg/qu/4egw",
+        "tracks": {
+            "href": "https://api.spotify.com/v1/playlists/1LpWmBdRTz0IhcvOSCUa3w/tracks",
+            "total": 278
+        },
+        "type": "playlist",
+        "uri": "spotify:playlist:1LpWmBdRTz0IhcvOSCUa3w"
     }
 }

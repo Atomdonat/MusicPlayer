@@ -119,7 +119,8 @@ by Niki Tonsky (https://mastodon.online/@nikitonsky/113691789641950263)
 * [ ] do ToDo's in Code
 * [ ] test Code
 * [ ] add Docstrings and comment Code (including Highlightings)
-  * [ ] Generate Documentation using [Sphinx](https://sphinx-rtd-tutorial.readthedocs.io/en/latest/build-the-docs.html#generating-documentation-from-docstrings)
+  * [x] Generate Documentation using [Sphinx](https://sphinx-rtd-tutorial.readthedocs.io/en/latest/build-the-docs.html#generating-documentation-from-docstrings)
+  * [ ] fix submodules not showing in RTD
 
 ### Backend related
 
