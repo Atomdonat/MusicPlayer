@@ -50,19 +50,16 @@
 
 [//]: # (- )
 
-## [1.15.8] - 27.02.2025 - minor Documentation fix
 
-### other files
-- fixed error in .readthedocs.yaml
-
-
-## [1.15.7] - 27.02.2025 - minor Documentation fix
+## [1.15.7] - 03.03.2025 - Preparing Documentation
 
 ### Changes in Frontend Code
 - removed sphinx Warnings
 
 ### other files
 - added .readthedocs.yaml for Read the Docs publication
+- added MIT License
+- added setup.py file 
 
 
 ## [1.15.6] - 25.02.2025 - generated Documentation
