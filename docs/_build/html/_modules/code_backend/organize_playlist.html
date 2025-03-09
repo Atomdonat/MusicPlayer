@@ -72,11 +72,12 @@
 <span></span><span class="kn">from</span><span class="w"> </span><span class="nn">code_backend.shared_config</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">code_backend.secondary_methods</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">image_to_b64</span><span class="p">,</span> <span class="n">url_to_uri</span><span class="p">,</span> <span class="n">split_list_into_chunks</span><span class="p">,</span> <span class="n">uri_to_id</span><span class="p">,</span> <span class="n">concat_iterables</span><span class="p">,</span>
-    <span class="n">load_json</span><span class="p">,</span> <span class="n">value_from_dict</span><span class="p">,</span> <span class="n">key_from_dict</span><span class="p">,</span><span class="n">print_debug</span><span class="p">,</span> <span class="n">check_spotify_uris</span><span class="p">,</span> <span class="n">check_spotify_uri</span>
+    <span class="n">load_json</span><span class="p">,</span> <span class="n">value_from_dict</span><span class="p">,</span> <span class="n">key_from_dict</span><span class="p">,</span><span class="n">print_debug</span><span class="p">,</span>
+    <span class="n">check_spotify_uris</span><span class="p">,</span> <span class="n">check_spotify_uri</span><span class="p">,</span> <span class="n">check_spotify_ids</span><span class="p">,</span> <span class="n">get_invalid_spotify_ids</span>
 <span class="p">)</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">code_backend.spotify_web_api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">spotify</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">code_backend.spotify_web_api</span><span class="w"> </span><span class="kn">import</span> <span class="n">save_playlist_state</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">code_backend.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">InputException</span><span class="p">,</span> <span class="n">CustomException</span><span class="p">,</span> <span class="n">SpotifyUriException</span><span class="p">,</span> <span class="n">SpotifyApiException</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">code_backend.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">InputException</span><span class="p">,</span> <span class="n">CustomException</span><span class="p">,</span> <span class="n">SpotifyUriException</span><span class="p">,</span> <span class="n">SpotifyApiException</span><span class="p">,</span> <span class="n">SpotifyIdException</span>
 
 
 <span class="n">DEFAULT_IMAGE</span> <span class="o">=</span> <span class="n">image_to_b64</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">NO_IMAGE_PATH</span><span class="p">),</span> <span class="s1">&#39;PNG&#39;</span><span class="p">)</span>
@@ -287,34 +288,86 @@
 
 
 
+<div class="viewcode-block" id="playlist_from_albums">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.organize_playlist.playlist_from_albums">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">playlist_from_albums</span><span class="p">(</span><span class="n">album_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">playlist_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">public</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">collaborative</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">get_id</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a playlist from a collection of albums.</span>
+
+<span class="sd">    :param album_ids: list of Spotify Album IDs</span>
+<span class="sd">    :param playlist_name: name for the new playlist</span>
+<span class="sd">    :param public: whether the new playlist should be public</span>
+<span class="sd">    :param collaborative: whether the new playlist should be collaborative</span>
+<span class="sd">    :param description: What Description the new playlist should have (None: List of Album Names)</span>
+<span class="sd">    :param get_id: Whether to return the playlist</span>
+<span class="sd">    :return: None or Dict containing Spotify Playlist, in the form of {playlist_uri: playlist}</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    :raises SpotifyIdException: if spotify id is invalid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">check_spotify_ids</span><span class="p">(</span><span class="n">spotify_ids</span><span class="o">=</span><span class="n">album_ids</span><span class="p">):</span>
+        <span class="n">invalid_ids</span> <span class="o">=</span> <span class="n">get_invalid_spotify_ids</span><span class="p">(</span><span class="n">spotify_ids</span><span class="o">=</span><span class="n">album_ids</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">SpotifyIdException</span><span class="p">(</span><span class="n">invalid_id</span><span class="o">=</span><span class="n">invalid_ids</span><span class="p">,</span> <span class="n">id_type</span><span class="o">=</span><span class="s2">&quot;album&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">playlist_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">playlist_name</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;(suitable playlist name)&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">public</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">public</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">collaborative</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">collaborative</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">description</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">description</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">description</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;(suitable playlist description)&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">get_id</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">get_id</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+
+    <span class="c1"># Fetch Track</span>
+    <span class="n">album_tracks</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">album_id</span> <span class="ow">in</span> <span class="n">album_ids</span><span class="p">:</span>
+        <span class="n">album_tracks</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">spotify</span><span class="o">.</span><span class="n">get_album_tracks</span><span class="p">(</span><span class="n">album_id</span><span class="o">=</span><span class="n">album_id</span><span class="p">)))</span>
+    <span class="n">print_debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Albums tracks: </span><span class="si">{</span><span class="n">album_tracks</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">shuffled_tracks</span> <span class="o">=</span> <span class="n">all_shuffle</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">album_tracks</span><span class="p">))</span>
+
+    <span class="c1"># Create Playlist</span>
+    <span class="k">if</span> <span class="n">description</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">album_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">current_album</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">current_album</span> <span class="ow">in</span> <span class="n">spotify</span><span class="o">.</span><span class="n">get_several_albums</span><span class="p">(</span><span class="n">album_ids</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+        <span class="n">description</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Collected Tracks from Albums: &#39;</span><span class="si">{</span><span class="s2">&quot;&#39;, &#39;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">album_names</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+
+    <span class="n">new_playlist</span> <span class="o">=</span> <span class="n">spotify</span><span class="o">.</span><span class="n">create_playlist</span><span class="p">(</span>
+        <span class="n">user_id</span><span class="o">=</span><span class="n">value_from_dict</span><span class="p">(</span><span class="n">spotify</span><span class="o">.</span><span class="n">get_current_users_profile</span><span class="p">())[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">playlist_name</span><span class="p">,</span>
+        <span class="n">public</span><span class="o">=</span><span class="n">public</span><span class="p">,</span>
+        <span class="n">collaborative</span><span class="o">=</span><span class="n">collaborative</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="n">description</span>
+    <span class="p">)</span>
+    <span class="n">new_playlist_id</span> <span class="o">=</span> <span class="n">uri_to_id</span><span class="p">(</span><span class="n">key_from_dict</span><span class="p">(</span><span class="n">new_playlist</span><span class="p">))</span>
+
+    <span class="c1"># Add Tracks to Playlist</span>
+    <span class="n">spotify</span><span class="o">.</span><span class="n">add_items_to_playlist</span><span class="p">(</span>
+        <span class="n">playlist_id</span><span class="o">=</span><span class="n">new_playlist_id</span><span class="p">,</span>
+        <span class="n">track_uris</span><span class="o">=</span><span class="n">shuffled_tracks</span>
+    <span class="p">)</span>
+
+
+    <span class="k">if</span> <span class="n">get_id</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">spotify</span><span class="o">.</span><span class="n">get_playlist</span><span class="p">(</span><span class="n">playlist_id</span><span class="o">=</span><span class="n">new_playlist_id</span><span class="p">)</span></div>
+
+
+
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
-    <span class="n">collection_uri</span> <span class="o">=</span> <span class="n">url_to_uri</span><span class="p">(</span><span class="s2">&quot;https://open.spotify.com/playlist/4r0nXktfzwMFLj6g8dIMx8?si=e50cba493c9d48e5&quot;</span><span class="p">)</span>
-    <span class="n">collection_id</span> <span class="o">=</span> <span class="n">uri_to_id</span><span class="p">(</span><span class="n">collection_uri</span><span class="p">)</span>
-    <span class="c1"># collection_uri = url_to_uri(input(&quot;Enter Collection URL: &quot;))</span>
-    <span class="c1"># organize_collection(collection_uri=collection_uri, shuffle=True)</span>
-
-    <span class="n">seas1</span> <span class="o">=</span> <span class="n">url_to_uri</span><span class="p">(</span><span class="s2">&quot;https://open.spotify.com/album/0jV32pIk8l3vTaU3thTaW2?si=fMuSGDDuQ9O0VbbiKHHx9Q&quot;</span><span class="p">,</span> <span class="n">to_id</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">seas2</span> <span class="o">=</span> <span class="n">url_to_uri</span><span class="p">(</span><span class="s2">&quot;https://open.spotify.com/album/2x6LWti2bjYS6AllSomoV7?si=NPT3W40PTtGQjAZO4NqqYw&quot;</span><span class="p">,</span> <span class="n">to_id</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-    <span class="n">items1</span> <span class="o">=</span> <span class="n">spotify</span><span class="o">.</span><span class="n">get_album_tracks</span><span class="p">(</span><span class="n">album_id</span><span class="o">=</span><span class="n">seas1</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-    <span class="n">items2</span> <span class="o">=</span> <span class="n">spotify</span><span class="o">.</span><span class="n">get_album_tracks</span><span class="p">(</span><span class="n">album_id</span><span class="o">=</span><span class="n">seas2</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-    <span class="n">items</span>  <span class="o">=</span> <span class="n">concat_iterables</span><span class="p">(</span><span class="n">items1</span><span class="p">,</span> <span class="n">items2</span><span class="p">)</span>
-
-    <span class="n">new_playlist_items</span> <span class="o">=</span> <span class="n">all_shuffle</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
-    <span class="c1"># newpl = spotify.create_playlist(</span>
-    <span class="c1">#     user_id=&quot;simonluca1&quot;,</span>
-    <span class="c1">#     name=f&quot;Arcane Soundtracks&quot;,</span>
-    <span class="c1">#     public=True,</span>
-    <span class="c1">#     collaborative=False,</span>
-    <span class="c1">#     description=&quot;Unified Playlist of both Albums &#39;Arcane League of Legends: Season 1/2 (Soundtracks from the Animated Series)&#39; by Arcane&quot;</span>
-    <span class="c1"># )</span>
-    <span class="c1"># spotify.update_playlist_items(playlist_id=&quot;2mD7jZO2qeviKcmbs9q62N&quot;, track_uris=new_playlist_items)</span>
-    <span class="c1"># print(value_from_dict(spotify.get_playlist(playlist_id=collection_id)))</span>
-    <span class="n">spotify</span><span class="o">.</span><span class="n">add_custom_playlist_cover_image</span><span class="p">(</span>
-        <span class="n">playlist_id</span><span class="o">=</span><span class="s2">&quot;2mD7jZO2qeviKcmbs9q62N&quot;</span><span class="p">,</span>
-        <span class="n">b64_image</span><span class="o">=</span><span class="n">image_to_b64</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;E:\Bilder\33006541-arcane-netflix-riot-games-1Z70.jpg&quot;</span><span class="p">),</span> <span class="s2">&quot;JPEG&quot;</span><span class="p">)</span>
-    <span class="p">)</span>
+    <span class="n">save_playlist_state</span><span class="p">(</span><span class="n">playlist_id</span><span class="o">=</span><span class="s2">&quot;5PPHCyClHIW1SgHWuRQLqh&quot;</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="s2">&quot;code_backend/development_and_testing/debugging.json&quot;</span><span class="p">)</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">code_backend.secondary_methods</span><span class="w"> </span><span class="kn">import</span> <span class="n">urls_to_uris</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">urls_to_uris</span><span class="p">(</span><span class="n">spotify_urls</span><span class="o">=</span><span class="p">[</span>
+        <span class="s2">&quot;https://open.spotify.com/playlist/2mD7jZO2qeviKcmbs9q62N?si=dc0d3f62e70b4c97&quot;</span><span class="p">,</span> <span class="c1"># Arcane</span>
+        <span class="s2">&quot;https://open.spotify.com/playlist/0Y5sbr9NFTybZ1g9Yxijuh?si=e76af434fe1a42dc&quot;</span><span class="p">,</span> <span class="c1"># Epic</span>
+        <span class="s2">&quot;https://open.spotify.com/playlist/5PPHCyClHIW1SgHWuRQLqh?si=820576619f3b4523&quot;</span><span class="p">,</span> <span class="c1"># Motorrad</span>
+    <span class="p">]):</span>
+        <span class="n">organize_collection</span><span class="p">(</span><span class="n">collection_uri</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 
            </div>

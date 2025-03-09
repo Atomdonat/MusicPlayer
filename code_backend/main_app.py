@@ -238,7 +238,7 @@ class SpotifyApp:
 
         results = spotify.search_for_item(
             search_query=search_query,
-            item_type=[item_type],
+            item_type=item_type,
             limit=limit,
             offset=offset
         )
@@ -246,7 +246,7 @@ class SpotifyApp:
         # Choose right one
         if select_correct:
             print(f"\n{TEXTCOLOR}These items are found by your search {search_query}:")
-            item_counter = 0
+            item_counter = 1
             for item_uri, item in results.items():
                 _, item_type = uri_to_id(spotify_uri=item_uri, get_type=True)
                 match item_type:
@@ -255,12 +255,12 @@ class SpotifyApp:
                     case "artist":
                         print(f"\t{str(item_counter).zfill(len(str(limit)))} Artist: {item['name']}")
                     case 'playlist':
-                        print(f"\t{str(item_counter).zfill(len(str(limit)))} Playlist: {item['name']} by {item['owner']['name']}")
+                        print(f"\t{str(item_counter).zfill(len(str(limit)))} Playlist: {item['name']} by {item['owner']['display_name']}")
                     case "track":
                         print(f"\t{str(item_counter).zfill(len(str(limit)))} Track: {item['name']} ({item['album']['name']}) by {', '.join([current_artist['name'] for current_artist in item['artists']])}")
 
                 item_counter += 1
-            item_index = int(input(f"\nEnter the index of the item to return [0-{limit-1}]: "))
+            item_index = int(input(f"\nEnter the index of the item to return [1-{len(results.values())}]: "))
             correct_item_uri = list(results.keys())[item_index]
             return {correct_item_uri: results[correct_item_uri]}
 
@@ -342,3 +342,9 @@ class SpotifyApp:
 
 if __name__ == '__main__':
     """"""
+    myapp = SpotifyApp()
+    print(myapp.find_object(
+        search_query="Arcane Official Playlist",
+        item_type=["playlist"],
+        select_correct=True
+    ))

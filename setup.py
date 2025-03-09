@@ -1,5 +1,8 @@
 from setuptools import setup, find_packages
+import os
 
+base_dir = os.path.dirname(os.path.abspath(__file__))
+readme_path = os.path.join(base_dir, "README.md")
 
 setup(
     name='MusicPlayer',
@@ -9,7 +12,7 @@ setup(
     author='Atomdonat',
     author_email='busterbox2@gmail.com',
     description="A Python project for interacting with the Spotify Web API",
-    long_description=open("README.md", "r", encoding="utf-8").read(),
+    long_description=open(readme_path, "r", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
     packages=find_packages(),
     install_requires=[

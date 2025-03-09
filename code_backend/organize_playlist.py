@@ -1,11 +1,12 @@
 from code_backend.shared_config import *
 from code_backend.secondary_methods import (
-    image_to_b64, url_to_uri, split_list_into_chunks, uri_to_id,
-    load_json, value_from_dict, key_from_dict,print_debug, check_spotify_uris, check_spotify_uri
+    image_to_b64, url_to_uri, split_list_into_chunks, uri_to_id, concat_iterables,
+    load_json, value_from_dict, key_from_dict,print_debug,
+    check_spotify_uris, check_spotify_uri, check_spotify_ids, get_invalid_spotify_ids
 )
 import code_backend.spotify_web_api as spotify
 from code_backend.spotify_web_api import save_playlist_state
-from code_backend.exceptions import InputException, CustomException, SpotifyUriException, SpotifyApiException
+from code_backend.exceptions import InputException, CustomException, SpotifyUriException, SpotifyApiException, SpotifyIdException
 
 
 DEFAULT_IMAGE = image_to_b64(Image.open(NO_IMAGE_PATH), 'PNG')
@@ -204,8 +205,80 @@ def organize_collection(collection_uri: str, **kwargs) -> None:
     spotify.update_playlist_items(playlist_id=collection_id, track_uris=collection_tracks)
 
 
+def playlist_from_albums(album_ids: list[str], playlist_name: str, public: bool = True, collaborative: bool = False, description: str = None, get_id: bool = False) -> None | dict:
+    """
+    Create a playlist from a collection of albums.
+
+    :param album_ids: list of Spotify Album IDs
+    :param playlist_name: name for the new playlist
+    :param public: whether the new playlist should be public
+    :param collaborative: whether the new playlist should be collaborative
+    :param description: What Description the new playlist should have (None: List of Album Names)
+    :param get_id: Whether to return the playlist
+    :return: None or Dict containing Spotify Playlist, in the form of {playlist_uri: playlist}
+    :raises InputException: if input is invalid
+    :raises SpotifyIdException: if spotify id is invalid
+    """
+
+    if not check_spotify_ids(spotify_ids=album_ids):
+        invalid_ids = get_invalid_spotify_ids(spotify_ids=album_ids)
+        raise SpotifyIdException(invalid_id=invalid_ids, id_type="album")
+
+    if not isinstance(playlist_name, str):
+        raise InputException(item_value=playlist_name, valid_values="(suitable playlist name)", valid_types=str)
+
+    if not isinstance(public, bool):
+        raise InputException(item_value=public, valid_values=(True, False), valid_types=bool)
+
+    if not isinstance(collaborative, bool):
+        raise InputException(item_value=collaborative, valid_values=(True, False), valid_types=bool)
+
+    if description is not None and not isinstance(description, str):
+        raise InputException(item_value=description, valid_values="(suitable playlist description)", valid_types=str)
+
+    if not isinstance(get_id, bool):
+        raise InputException(item_value=get_id, valid_values=(True, False), valid_types=bool)
+
+
+    # Fetch Track
+    album_tracks = set()
+    for album_id in album_ids:
+        album_tracks.update(set(spotify.get_album_tracks(album_id=album_id)))
+    print_debug(f"Albums tracks: {album_tracks}")
+    shuffled_tracks = all_shuffle(list(album_tracks))
+
+    # Create Playlist
+    if description is None:
+        album_names = [current_album['name'] for current_album in spotify.get_several_albums(album_ids).values()]
+        description = f"Collected Tracks from Albums: '{"', '".join(album_names)}'"
+
+    new_playlist = spotify.create_playlist(
+        user_id=value_from_dict(spotify.get_current_users_profile())['id'],
+        name=playlist_name,
+        public=public,
+        collaborative=collaborative,
+        description=description
+    )
+    new_playlist_id = uri_to_id(key_from_dict(new_playlist))
+
+    # Add Tracks to Playlist
+    spotify.add_items_to_playlist(
+        playlist_id=new_playlist_id,
+        track_uris=shuffled_tracks
+    )
+
+
+    if get_id:
+        return spotify.get_playlist(playlist_id=new_playlist_id)
+
+
 if __name__ == '__main__':
     """"""
-    collection_uri = url_to_uri("https://open.spotify.com/playlist/5PPHCyClHIW1SgHWuRQLqh?si=ec3447c1b8af4d55")
-    # collection_uri = url_to_uri(input("Enter Collection URL: "))
-    organize_collection(collection_uri=collection_uri, shuffle=True)
+    save_playlist_state(playlist_id="5PPHCyClHIW1SgHWuRQLqh", filepath="code_backend/development_and_testing/debugging.json")
+    from code_backend.secondary_methods import urls_to_uris
+    for i in urls_to_uris(spotify_urls=[
+        "https://open.spotify.com/playlist/2mD7jZO2qeviKcmbs9q62N?si=dc0d3f62e70b4c97", # Arcane
+        "https://open.spotify.com/playlist/0Y5sbr9NFTybZ1g9Yxijuh?si=e76af434fe1a42dc", # Epic
+        "https://open.spotify.com/playlist/5PPHCyClHIW1SgHWuRQLqh?si=820576619f3b4523", # Motorrad
+    ]):
+        organize_collection(collection_uri=i, shuffle=True)

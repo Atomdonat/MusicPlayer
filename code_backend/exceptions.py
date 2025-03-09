@@ -81,11 +81,10 @@ class HttpException(SpotifyApiException):
         self.response_text = response_text
 
         super().__init__(self.__str__())
-        print(f"\n{CORANGE}<===== End Error =====>{TEXTCOLOR}\n")
 
     def __str__(self):
         return (
-            "<===== Begin Error =====>\n\n"
+            "\n<===== Begin Error =====>\n\n"
             f"Request returned Code: {self.error_code} - {self.error_name}\n"
             f"{self.error_description}\n"
             "Responsible Query:\n"
@@ -96,6 +95,7 @@ class HttpException(SpotifyApiException):
             f"{self.request_query.body if self.request_query.body else '\'---\''}\n"
             f"------------END------------{TEXTCOLOR}\n"
             f"More infos: {self.response_text}\n"
+            f"\n{CORANGE}<===== End Error =====>{TEXTCOLOR}\n"
         )
 
 
@@ -112,7 +112,7 @@ class RequestException(Exception):
 
     def __str__(self):
         return (
-            "<===== Begin Error =====>\n\n"
+            "\n<===== Begin Error =====>\n\n"
             f"{CCYAN}Request returned:{CORANGE} {self.error.args}\n"
             f"{CCYAN}Responsible Query:\n"
             f"{CORANGE}-----------START-----------\n"

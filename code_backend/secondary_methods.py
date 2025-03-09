@@ -59,6 +59,35 @@ def url_to_uri(spotify_url: str, to_id: bool = False) -> str:
     else:
         return "spotify:" + class_type + ":" + id_
 
+def urls_to_uris(spotify_urls: list[str], to_id: bool = False) -> list[str]:
+    """
+    Convert spotify urls to uris or ids
+
+    :param spotify_urls: urls to spotify items
+    :param to_id: if to get only the ids
+    :return: Spotify uris or ids
+    :raises InputException: if input is invalid
+    :raises CustomException: If Exception occurs
+    """
+
+    if not isinstance(spotify_urls, list) and any(not isinstance(current_url, str) for current_url in spotify_urls):
+        raise InputException(item_value=spotify_urls, valid_values="list containing spotify url", valid_types=list)
+
+    if not isinstance(to_id, bool):
+        raise InputException(item_value=to_id, valid_values=(True, False), valid_types=bool)
+
+    try:
+        if to_id:
+            items = [current_url.split("/")[-1].split("?")[0] for current_url in spotify_urls]
+
+        else:
+            items = [f"spotify:{current_url.split("/")[-2][:-1] if current_url.split("/")[-2][-1] == "s" else current_url.split("/")[-2]}:{current_url.split("/")[-1].split("?")[0]}" for current_url in spotify_urls]
+
+    except Exception as error:
+        raise CustomException(error_message=error, more_infos=f"Exception occurred while converting spotify urls to uris/ids: '{spotify_urls}'")
+
+    return items
+
 
 def id_to_uri(class_type: Literal['album', 'artist', 'track', 'playlist', 'user'], spotify_id: str) -> str:
     """

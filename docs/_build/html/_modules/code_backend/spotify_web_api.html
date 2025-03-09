@@ -1732,7 +1732,8 @@
         <span class="n">invalid_uris</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_invalid_spotify_uris</span><span class="p">(</span><span class="n">spotify_uris</span><span class="o">=</span><span class="n">track_uris</span><span class="p">))</span>
         <span class="k">raise</span> <span class="n">SpotifyUriException</span><span class="p">(</span><span class="n">invalid_uri</span><span class="o">=</span><span class="n">invalid_uris</span><span class="p">,</span> <span class="n">uri_type</span><span class="o">=</span><span class="s2">&quot;track&quot;</span><span class="p">)</span>
 
-    <span class="n">original_tracks</span> <span class="o">=</span> <span class="n">get_original_tracks</span><span class="p">(</span><span class="n">track_uris</span><span class="p">)</span>
+    <span class="n">track_dict</span> <span class="o">=</span> <span class="n">get_several_tracks</span><span class="p">(</span><span class="n">track_ids</span><span class="o">=</span><span class="p">[</span><span class="n">uri_to_id</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">track_uris</span><span class="p">])</span>
+    <span class="n">original_tracks</span> <span class="o">=</span> <span class="n">get_original_tracks</span><span class="p">(</span><span class="n">track_dict</span><span class="p">)</span>
     <span class="n">track_dict</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;uri&quot;</span><span class="p">:</span> <span class="n">item</span><span class="p">}</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">original_tracks</span><span class="p">]</span>
 
     <span class="k">for</span> <span class="n">current_offset</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">track_uris</span><span class="p">),</span> <span class="mi">100</span><span class="p">):</span>
@@ -2052,6 +2053,7 @@
         <span class="n">request_type</span><span class="o">=</span><span class="s2">&quot;GET&quot;</span>
     <span class="p">)</span>
 
+    <span class="c1"># debug</span>
     <span class="n">json_to_file</span><span class="p">(</span><span class="s2">&quot;code_backend/development_and_testing/debugging.json&quot;</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="n">output</span> <span class="o">=</span> <span class="p">{}</span>

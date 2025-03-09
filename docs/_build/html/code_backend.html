@@ -90,6 +90,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#code_backend.organize_playlist.all_shuffle"><code class="docutils literal notranslate"><span class="pre">all_shuffle()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#code_backend.organize_playlist.all_shuffle_dict"><code class="docutils literal notranslate"><span class="pre">all_shuffle_dict()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#code_backend.organize_playlist.organize_collection"><code class="docutils literal notranslate"><span class="pre">organize_collection()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#code_backend.organize_playlist.playlist_from_albums"><code class="docutils literal notranslate"><span class="pre">playlist_from_albums()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#code_backend.organize_playlist.remove_duplicates"><code class="docutils literal notranslate"><span class="pre">remove_duplicates()</span></code></a></li>
 </ul>
 </li>
@@ -141,6 +142,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#code_backend.secondary_methods.update_env_key"><code class="docutils literal notranslate"><span class="pre">update_env_key()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#code_backend.secondary_methods.uri_to_id"><code class="docutils literal notranslate"><span class="pre">uri_to_id()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#code_backend.secondary_methods.url_to_uri"><code class="docutils literal notranslate"><span class="pre">url_to_uri()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#code_backend.secondary_methods.urls_to_uris"><code class="docutils literal notranslate"><span class="pre">urls_to_uris()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#code_backend.secondary_methods.value_from_dict"><code class="docutils literal notranslate"><span class="pre">value_from_dict()</span></code></a></li>
 </ul>
 </li>
@@ -999,6 +1001,33 @@
 <li><p><a class="reference internal" href="#code_backend.exceptions.InputException" title="code_backend.exceptions.InputException"><strong>InputException</strong></a> – if input is invalid</p></li>
 <li><p><a class="reference internal" href="#code_backend.exceptions.SpotifyApiException" title="code_backend.exceptions.SpotifyApiException"><strong>SpotifyApiException</strong></a> – if Exception related to Spotify API occurs</p></li>
 <li><p><a class="reference internal" href="#code_backend.exceptions.SpotifyUriException" title="code_backend.exceptions.SpotifyUriException"><strong>SpotifyUriException</strong></a> – if spotify uri is invalid</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="code_backend.organize_playlist.playlist_from_albums">
+<span class="sig-prename descclassname"><span class="pre">code_backend.organize_playlist.</span></span><span class="sig-name descname"><span class="pre">playlist_from_albums</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">album_ids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">playlist_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">public</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collaborative</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/code_backend/organize_playlist.html#playlist_from_albums"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.organize_playlist.playlist_from_albums" title="Link to this definition"></a></dt>
+<dd><p>Create a playlist from a collection of albums.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>album_ids</strong> – list of Spotify Album IDs</p></li>
+<li><p><strong>playlist_name</strong> – name for the new playlist</p></li>
+<li><p><strong>public</strong> – whether the new playlist should be public</p></li>
+<li><p><strong>collaborative</strong> – whether the new playlist should be collaborative</p></li>
+<li><p><strong>description</strong> – What Description the new playlist should have (None: List of Album Names)</p></li>
+<li><p><strong>get_id</strong> – Whether to return the playlist</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None or Dict containing Spotify Playlist, in the form of {playlist_uri: playlist}</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#code_backend.exceptions.InputException" title="code_backend.exceptions.InputException"><strong>InputException</strong></a> – if input is invalid</p></li>
+<li><p><a class="reference internal" href="#code_backend.exceptions.SpotifyIdException" title="code_backend.exceptions.SpotifyIdException"><strong>SpotifyIdException</strong></a> – if spotify id is invalid</p></li>
 </ul>
 </dd>
 </dl>
@@ -1928,6 +1957,29 @@
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Spotify uri or id</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#code_backend.exceptions.InputException" title="code_backend.exceptions.InputException"><strong>InputException</strong></a> – if input is invalid</p></li>
+<li><p><a class="reference internal" href="#code_backend.exceptions.CustomException" title="code_backend.exceptions.CustomException"><strong>CustomException</strong></a> – If Exception occurs</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="code_backend.secondary_methods.urls_to_uris">
+<span class="sig-prename descclassname"><span class="pre">code_backend.secondary_methods.</span></span><span class="sig-name descname"><span class="pre">urls_to_uris</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spotify_urls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/code_backend/secondary_methods.html#urls_to_uris"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.secondary_methods.urls_to_uris" title="Link to this definition"></a></dt>
+<dd><p>Convert spotify urls to uris or ids</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spotify_urls</strong> – urls to spotify items</p></li>
+<li><p><strong>to_id</strong> – if to get only the ids</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Spotify uris or ids</p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">

@@ -50,6 +50,25 @@
 
 [//]: # (- )
 
+## [1.15.8] - 09.03.2025 - new playlist creation method
+
+### Changes in Backend Code
+
+#### exceptions.py
+- minor changes
+
+#### main_app.py
+- error fix
+
+#### organize_playlist.py
+- new method to merge multiple albums into a single playlist (`playlist_from_albums()`)
+
+#### secondary_methods.py
+- new method to convert Spotify URL lists into Spotify ID/URI lists (`urls_to_uris()`)
+
+#### spotify_web_api.py
+- error fix
+
 
 ## [1.15.7] - 03.03.2025 - Preparing Documentation
 

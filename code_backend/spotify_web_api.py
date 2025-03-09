@@ -12,7 +12,7 @@ from code_backend.secondary_methods import (
     update_env_key, image_from_url, print_debug,
     absolute_path, remove_key_recursively, json_to_file,
     check_spotify_id, check_spotify_ids, check_spotify_uri, check_spotify_uris,
-    get_invalid_spotify_ids, get_invalid_spotify_uris, check_spotify_user_ids
+    get_invalid_spotify_ids, get_invalid_spotify_uris, check_spotify_user_ids, uri_to_id, url_to_uri
 )
 from code_backend.exceptions import (
     HttpException, RequestException, CustomException, InputException,
@@ -1548,7 +1548,8 @@ def remove_playlist_items(playlist_id: str, track_uris: list[str]) -> None:
         invalid_uris = ",".join(get_invalid_spotify_uris(spotify_uris=track_uris))
         raise SpotifyUriException(invalid_uri=invalid_uris, uri_type="track")
 
-    original_tracks = get_original_tracks(track_uris)
+    track_dict = get_several_tracks(track_ids=[uri_to_id(i) for i in track_uris])
+    original_tracks = get_original_tracks(track_dict)
     track_dict = [{"uri": item} for item in original_tracks]
 
     for current_offset in range(0, len(track_uris), 100):
@@ -1847,9 +1848,14 @@ def search_for_item(
         request_type="GET"
     )
 
+    # debug
+    json_to_file("code_backend/development_and_testing/debugging.json", response, overwrite=True)
+
     output = {}
     for item_type in response.keys():
-        output.update({current_item["uri"]: current_item for current_item in response[f"{item_type}"]["items"]})
+        output.update({current_item["uri"]: current_item for current_item in response[f"{item_type}"]["items"] if current_item})
+
+    json_to_file("code_backend/development_and_testing/debugging_2.json", output, overwrite=True)
 
     return output
 
