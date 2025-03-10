@@ -1,4 +1,5 @@
 flask
+GitPython
 numpy
 pandas
 pillow

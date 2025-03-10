@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>code_backend.spotify_web_api &mdash; MusicPlayer 1.15.7 documentation</title>
+  <title>code_backend.spotify_web_api &mdash; MusicPlayer 1.15.8 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=bb5c4468"></script>
+      <script src="../../_static/documentation_options.js?v=5346e7aa"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -2525,30 +2525,8 @@
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
-    <span class="c1"># print(api_request_data(</span>
-    <span class="c1">#     url=f&quot;https://api.spotify.com/v1/albums/79fnwKynD56xIXBVWkyaE5?market={MARKET}&quot;,</span>
-    <span class="c1">#     request_type=&quot;GET&quot;,</span>
-    <span class="c1">#     json_data=None</span>
-    <span class="c1"># ))</span>
-
-    <span class="c1"># with open(absolute_path(&quot;code_backend/testing/debugging.json&quot;), &quot;r&quot;) as jile:</span>
-    <span class="c1">#     relinked_track = json.load(jile)</span>
-    <span class="c1">#</span>
-    <span class="c1"># print(get_original_tracks(relinked_track))</span>
-
-
-    <span class="c1"># playlist_tracks = get_playlist_items(playlist_id=&quot;6bRkO7PLCXgmV4EJH52iU4&quot;)</span>
-    <span class="c1">#</span>
-    <span class="c1"># json_to_file(</span>
-    <span class="c1">#     json_filepath=absolute_path(&quot;code_backend/testing/debugging.json&quot;),</span>
-    <span class="c1">#     json_data=playlist_tracks,</span>
-    <span class="c1">#     overwrite=True</span>
-    <span class="c1"># )</span>
-    <span class="c1"># json_to_file(</span>
-    <span class="c1">#     json_filepath=absolute_path(&quot;code_backend/testing/debugging_2.json&quot;),</span>
-    <span class="c1">#     json_data=get_original_tracks(tracks=playlist_tracks),</span>
-    <span class="c1">#     overwrite=True</span>
-    <span class="c1"># )</span>
+    <span class="n">request_regular_token</span><span class="p">(</span><span class="n">use_credentials</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">request_extended_token</span><span class="p">()</span>
 </pre></div>
 
            </div>

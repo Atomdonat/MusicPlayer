@@ -73,21 +73,9 @@
 <h1>General Information<a class="headerlink" href="#general-information" title="Link to this heading"></a></h1>
 <section id="future-of-the-project">
 <h2>Future of the project<a class="headerlink" href="#future-of-the-project" title="Link to this heading"></a></h2>
-<p>¯(°_o)/¯</p>
-<section id="ideas">
-<h3>Ideas<a class="headerlink" href="#ideas" title="Link to this heading"></a></h3>
-<ul class="simple">
-<li><p>Initial Project Idea: one unified App for Spotify, YT-Music, etc.</p></li>
-<li><dl class="simple">
-<dt>tailored Playlists</dt><dd><ul>
-<li><p>compensate for own crappy? taste</p></li>
-<li><p>Spotify’s “Made for you” Playlists (by genre) are not good</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-</ul>
-</section>
+<p>¯(°_o)/¯ ### Ideas - Initial Project Idea: one unified App for Spotify,
+YT-Music, etc. - tailored Playlists - compensate for own crappy? taste -
+Spotify’s “Made for you” Playlists (by genre) are not good</p>
 </section>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
@@ -128,8 +116,8 @@ now</p></li>
 </li>
 <li><p>using market with Playlist can lead to errors <a class="reference external" href="https://developer.spotify.com/documentation/web-api/concepts/track-relinking">Spotify Track
 Relinking</a></p></li>
-<li><p>catching exceptions can be a helpful but uncommon benefit (If error do
-B else do A)</p>
+<li><p>catching exceptions can be a helpful but uncommon benefit (If error
+do B else do A)</p>
 <ul>
 <li><p>Catch Exceptions early on</p></li>
 </ul>
@@ -139,8 +127,9 @@ B else do A)</p>
 commit messages</p></li>
 <li><p>do not reset Database before Analyzing anything (No Data in DB -&gt; no
 Data to analyse)</p></li>
-<li><p>you won’t get an error (or smth. similar) if you cross the API request
-limit (using spotipy; for each request the delay grows exponentially)</p></li>
+<li><p>you won’t get an error (or smth. similar) if you cross the API
+request limit (using spotipy; for each request the delay grows
+exponentially)</p></li>
 <li><p>spotipy is a shitty library no documentation -&gt; if it is bad do it
 yourself but better (=&gt; <code class="docutils literal notranslate"><span class="pre">spotify_web_api.py</span></code>)</p></li>
 <li><p>where there is a problem, there is another public repo/service
@@ -181,7 +170,8 @@ an error or not (Though, the documentations cURL request always says
 </li>
 <li><p>HACK:</p>
 <ul>
-<li><p>Usage: Used to mark code that is a workaround or temporary solution.</p></li>
+<li><p>Usage: Used to mark code that is a workaround or temporary
+solution.</p></li>
 <li><p>Pattern: <code class="docutils literal notranslate"><span class="pre">\bhack\b.*</span></code></p></li>
 <li><p>Main Color: <code class="docutils literal notranslate"><span class="pre">#9370DB</span></code></p></li>
 <li><p>Darker Version: <code class="docutils literal notranslate"><span class="pre">#7D60BF</span></code></p></li>
@@ -197,7 +187,8 @@ an error or not (Though, the documentations cURL request always says
 </li>
 <li><p>Method Progress Status:</p>
 <ul>
-<li><p>Usage: Used to mark the development progress of methods (see below)</p></li>
+<li><p>Usage: Used to mark the development progress of methods (see
+below)</p></li>
 <li><p>Pattern: <code class="docutils literal notranslate"><span class="pre">#</span> <span class="pre">\bmps\b.*</span></code></p></li>
 <li><p>Main Color: <code class="docutils literal notranslate"><span class="pre">#C77DBB</span></code></p></li>
 <li><p>Darker Version: <code class="docutils literal notranslate"><span class="pre">#C36F85</span></code></p></li>
@@ -221,8 +212,8 @@ an error or not (Though, the documentations cURL request always says
 </li>
 <li><p>WARNING:</p>
 <ul>
-<li><p>Usage: Used to indicate something that might need attention or could
-be problematic.</p></li>
+<li><p>Usage: Used to indicate something that might need attention or
+could be problematic.</p></li>
 <li><p>Pattern: <code class="docutils literal notranslate"><span class="pre">\bwarning\b.*</span></code></p></li>
 <li><p>Main Color: <code class="docutils literal notranslate"><span class="pre">#FFA500</span></code></p></li>
 <li><p>Darker Version: <code class="docutils literal notranslate"><span class="pre">#E69500</span></code></p></li>
@@ -245,13 +236,6 @@ be problematic.</p></li>
 <li><p>remove after one/two commits after mps=3, cps=3</p></li>
 </ul>
 </section>
-<section id="progress-versioning-semantic">
-<h3>Progress Versioning Semantic<a class="headerlink" href="#progress-versioning-semantic" title="Link to this heading"></a></h3>
-<a class="reference internal image-reference" href="_images/pride_versioning.png"><img alt="It depicts a version number structured as Major.Minor.Patch (e.g., 2.7.123) with custom meanings. The major version ('Proud version') is increased when the developer is proud of the release. The minor version ('Default version') is used for normal or okay releases. The patch version ('Shame version') is incremented when fixing issues that are too embarrassing to admit." src="_images/pride_versioning.png" style="width: 500px;" />
-</a>
-<p>by Niki Tonsky
-(<a class="reference external" href="https://mastodon.online/&#64;nikitonsky/113691789641950263">https://mastodon.online/&#64;nikitonsky/113691789641950263</a>)</p>
-</section>
 </section>
 <section id="known-error-messages">
 <h2>Known Error messages<a class="headerlink" href="#known-error-messages" title="Link to this heading"></a></h2>
@@ -265,9 +249,9 @@ RemoteDisconnected(‘Remote end closed connection without response’))
 <ul>
 <li><p>Solution: “Since the client credentials flow does not include
 authorization, only endpoints that do not access user information
-can be accessed. You can use another authentication flow for getting
-recently played tracks from a user. Let me know if you have any
-questions!”</p></li>
+can be accessed. You can use another authentication flow for
+getting recently played tracks from a user. Let me know if you
+have any questions!”</p></li>
 <li><p>Source:
 <a class="reference external" href="https://community.spotify.com/t5/Spotify-for-Developers/500-internal-server-error/m-p/5400938/highlight/true#M4961">https://community.spotify.com/t5/Spotify-for-Developers/500-internal-server-error/m-p/5400938/highlight/true#M4961</a></p></li>
 </ul>
@@ -281,8 +265,7 @@ questions!”</p></li>
 <li><p>☐ test Code</p></li>
 <li><p>☐ add Docstrings and comment Code (including Highlightings)</p>
 <ul>
-<li><p>☐ Generate Documentation using
-<a class="reference external" href="https://sphinx-rtd-tutorial.readthedocs.io/en/latest/build-the-docs.html#generating-documentation-from-docstrings">Sphinx</a></p></li>
+<li><p>☐ fix submodules not showing in RTD</p></li>
 </ul>
 </li>
 </ul>
@@ -315,8 +298,8 @@ started nor playing anything (Classes-&gt;Player-&gt;get_instance())</p></li>
 <li><p>☐ open extra Profile Window for Album, Artist, Playlist, User</p></li>
 <li><p>☐ too long texts should move automatically</p></li>
 <li><p>☐ QT GUI/better Frontend</p></li>
-<li><p>☐ if searched track is already in queue, show/highlighted where (App
-Window)</p></li>
+<li><p>☐ if searched track is already in queue, show/highlighted where
+(App Window)</p></li>
 </ul>
 </li>
 </ul>
@@ -332,8 +315,8 @@ words separated by underscores as necessary to improve readability.
 Variable names follow the same convention as function
 names.</a>”</p>
 <ul>
-<li><p>non-public: “<a class="reference external" href="https://peps.python.org/pep-0008/#method-names-and-instance-variables">Use one leading underscore only for non-public methods
-and instance
+<li><p>non-public: “<a class="reference external" href="https://peps.python.org/pep-0008/#method-names-and-instance-variables">Use one leading underscore only for non-public
+methods and instance
 variables.</a>”</p></li>
 </ul>
 </li>
@@ -345,6 +328,13 @@ TOTAL.</a>”</p></li>
 convention.</a>”</p></li>
 <li><p>docstrings: “<a class="reference external" href="https://peps.python.org/pep-0287/">reStructuredText Docstring
 Format</a>”</p></li>
+</ul>
+</section>
+<section id="other">
+<h3>other<a class="headerlink" href="#other" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>versioning: <a class="reference external" href="https://en.wikipedia.org/wiki/Software_versioning#Schemes">Semantic
+Versioning</a></p></li>
 </ul>
 </section>
 </section>
@@ -379,8 +369,8 @@ Algorithm</a></p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/tkinter.html">Tkinter</a></p></li>
 </ul>
 </section>
-<section id="other">
-<h3>Other<a class="headerlink" href="#other" title="Link to this heading"></a></h3>
+<section id="other-1">
+<span id="id1"></span><h3>Other<a class="headerlink" href="#other-1" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p><a class="reference external" href="https://www.markdownguide.org/basic-syntax/">Markdown</a></p></li>
 <li><p><a class="reference external" href="https://peps.python.org/pep-0257/">Docstring Conventions</a></p></li>
@@ -392,8 +382,6 @@ reStructuredText</a></p></li>
 </ul>
 </li>
 </ul>
-<a class="reference internal image-reference" href="_images/pride_versioning.png"><img alt="It depicts a version number structured as Major.Minor.Patch (e.g., 2.7.123) with custom meanings. The major version ('Proud version') is increased when the developer is proud of the release. The minor version ('Default version') is used for normal or okay releases. The patch version ('Shame version') is incremented when fixing issues that are too embarrassing to admit." src="_images/pride_versioning.png" style="width: 500px;" />
-</a>
 </section>
 </section>
 </section>

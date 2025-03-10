@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>code_backend.secondary_methods &mdash; MusicPlayer 1.15.7 documentation</title>
+  <title>code_backend.secondary_methods &mdash; MusicPlayer 1.15.8 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=bb5c4468"></script>
+      <script src="../../_static/documentation_options.js?v=5346e7aa"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -72,8 +72,10 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">File containing (helper) methods outsourced from other files</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
 <span class="kn">from</span><span class="w"> </span><span class="nn">code_backend.shared_config</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">code_backend.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">InputException</span><span class="p">,</span> <span class="n">CustomException</span><span class="p">,</span> <span class="n">SpotifyIdException</span><span class="p">,</span> <span class="n">SpotifyUriException</span><span class="p">,</span> <span class="n">RequestException</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">code_backend.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">InputException</span><span class="p">,</span> <span class="n">CustomException</span><span class="p">,</span> <span class="n">SpotifyIdException</span><span class="p">,</span> <span class="n">SpotifyUriException</span><span class="p">,</span> <span class="n">RequestException</span><span class="p">,</span> <span class="n">EnvFileException</span>
 
 
 <div class="viewcode-block" id="millis_to_minutes">
@@ -747,6 +749,85 @@
 
 
 
+<div class="viewcode-block" id="get_env_keys">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.get_env_keys">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_env_keys</span><span class="p">(</span><span class="n">env_file_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get all unique keys from the .env file</span>
+
+<span class="sd">    :param env_file_path: environment file path</span>
+<span class="sd">    :return: set containing unique environment keys</span>
+<span class="sd">    :raises InputException: if input is invalid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env_file_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="n">item_value</span><span class="o">=</span><span class="n">env_file_path</span><span class="p">,</span> <span class="n">valid_values</span><span class="o">=</span><span class="s2">&quot;valid path&quot;</span><span class="p">,</span> <span class="n">valid_types</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">env_file_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">env_file_path</span> <span class="o">=</span> <span class="n">find_dotenv</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">env_file_path</span> <span class="o">=</span> <span class="n">absolute_path</span><span class="p">(</span><span class="n">env_file_path</span><span class="p">)</span>
+
+    <span class="n">env_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">env_file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">file</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">line</span> <span class="o">!=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">:</span>
+                <span class="n">env_keys</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">env_keys</span></div>
+
+
+
+<span class="c1"># mps: 1</span>
+<div class="viewcode-block" id="check_env_file">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.check_env_file">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_env_file</span><span class="p">(</span><span class="n">env_file_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if the .env file is valid and every key has a correct value.</span>
+
+<span class="sd">    :param env_file_path:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">env_file_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">env_file_path</span> <span class="o">=</span> <span class="n">find_dotenv</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">env_file_path</span> <span class="o">=</span> <span class="n">absolute_path</span><span class="p">(</span><span class="n">env_file_path</span><span class="p">)</span>
+
+    <span class="n">load_dotenv</span><span class="p">(</span><span class="n">env_file_path</span><span class="p">)</span>
+    <span class="n">valid_items</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;CLIENT_ID&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;length&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">},</span>
+        <span class="s2">&quot;CLIENT_SECRET&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;length&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">},</span>
+        <span class="s2">&quot;REDIRECT_URI&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;length&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+        <span class="s2">&quot;REGULAR_TOKEN&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;access_token&quot;</span><span class="p">,</span> <span class="s2">&quot;token_type&quot;</span><span class="p">,</span> <span class="s2">&quot;expires&quot;</span><span class="p">}},</span>
+        <span class="s2">&quot;REFRESH_TOKEN&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;refresh_token&quot;</span><span class="p">}},</span>
+        <span class="s2">&quot;AUTHORIZED_SCOPES&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;scope&quot;</span><span class="p">}},</span>
+        <span class="s2">&quot;EXTENDED_TOKEN&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;access_token&#39;</span><span class="p">,</span> <span class="s1">&#39;token_type&#39;</span><span class="p">,</span> <span class="s1">&#39;expires&#39;</span><span class="p">}},</span>
+    <span class="p">}</span>
+    <span class="n">current_value</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">current_key</span> <span class="ow">in</span> <span class="n">get_env_keys</span><span class="p">(</span><span class="n">env_file_path</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">current_value</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="n">current_key</span><span class="p">)</span>
+            <span class="n">current_valid</span> <span class="o">=</span> <span class="n">valid_items</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">current_key</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">current_key</span> <span class="ow">in</span> <span class="n">valid_items</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="nb">any</span><span class="p">([</span>
+                <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">current_value</span><span class="p">,</span> <span class="n">current_valid</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)),</span>
+                <span class="n">current_key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;CLIENT_ID&quot;</span><span class="p">,</span> <span class="s2">&quot;CLIENT_SECRET&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">current_value</span><span class="p">)</span> <span class="o">!=</span> <span class="n">current_valid</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;length&quot;</span><span class="p">),</span>
+                <span class="n">current_key</span> <span class="o">==</span> <span class="s2">&quot;REDIRECT_URI&quot;</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">current_value</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">current_valid</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;length&quot;</span><span class="p">),</span>
+                <span class="n">current_key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;REGULAR_TOKEN&quot;</span><span class="p">,</span><span class="s2">&quot;REFRESH_TOKEN&quot;</span><span class="p">,</span><span class="s2">&quot;AUTHORIZED_SCOPES&quot;</span><span class="p">,</span><span class="s2">&quot;EXTENDED_TOKEN&quot;</span><span class="p">]</span>
+                    <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="nb">frozenset</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">current_value</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">-</span><span class="n">current_valid</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;content&quot;</span><span class="p">))</span>
+            <span class="p">]):</span> <span class="k">raise</span> <span class="ne">Exception</span>
+
+
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">EnvFileException</span><span class="p">(</span>
+                <span class="n">file_path</span><span class="o">=</span><span class="n">env_file_path</span><span class="p">,</span>
+                <span class="n">key_name</span><span class="o">=</span><span class="n">current_key</span><span class="p">,</span>
+                <span class="n">expected_value</span><span class="o">=</span><span class="n">valid_items</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">current_key</span><span class="p">),</span>
+                <span class="n">passed_value</span><span class="o">=</span><span class="n">current_value</span>
+            <span class="p">)</span></div>
+
+
+
 <div class="viewcode-block" id="update_env_key">
 <a class="viewcode-back" href="../../code_backend.html#code_backend.secondary_methods.update_env_key">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">update_env_key</span><span class="p">(</span><span class="n">env_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">new_value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
@@ -1307,6 +1388,9 @@
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+    <span class="c1"># print(get_env_keys())</span>
+    <span class="c1"># check_env_file()</span>
+    <span class="n">check_env_file</span><span class="p">()</span>
 </pre></div>
 
            </div>
