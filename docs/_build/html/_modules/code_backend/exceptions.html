@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>code_backend.exceptions &mdash; MusicPlayer 1.15.7 documentation</title>
+  <title>code_backend.exceptions &mdash; MusicPlayer 1.15.8 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=bb5c4468"></script>
+      <script src="../../_static/documentation_options.js?v=5346e7aa"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -163,10 +163,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">response_text</span> <span class="o">=</span> <span class="n">response_text</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">CORANGE</span><span class="si">}</span><span class="s2">&lt;===== End Error =====&gt;</span><span class="si">{</span><span class="n">TEXTCOLOR</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(</span>
-            <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&lt;===== Begin Error =====&gt;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;&lt;===== Begin Error =====&gt;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;Request returned Code: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">error_code</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">error_name</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">error_description</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="s2">&quot;Responsible Query:</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -177,7 +178,6 @@
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">request_query</span><span class="o">.</span><span class="n">body</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">request_query</span><span class="o">.</span><span class="n">body</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;</span><span class="se">\&#39;</span><span class="s1">---</span><span class="se">\&#39;</span><span class="s1">&#39;</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;------------END------------</span><span class="si">{</span><span class="n">TEXTCOLOR</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;More infos: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">response_text</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">CORANGE</span><span class="si">}</span><span class="s2">&lt;===== End Error =====&gt;</span><span class="si">{</span><span class="n">TEXTCOLOR</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="p">)</span></div>
 
 
@@ -197,7 +197,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(</span>
-            <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&lt;===== Begin Error =====&gt;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;&lt;===== Begin Error =====&gt;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">CCYAN</span><span class="si">}</span><span class="s2">Request returned:</span><span class="si">{</span><span class="n">CORANGE</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">args</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">CCYAN</span><span class="si">}</span><span class="s2">Responsible Query:</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">CORANGE</span><span class="si">}</span><span class="s2">-----------START-----------</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -252,7 +252,7 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Exception raised when the input is invalid</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">valid_values</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span> <span class="n">valid_types</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">valid_values</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span> <span class="n">valid_types</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">item_value</span> <span class="o">=</span> <span class="n">item_value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">valid_values</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="s1">&#39;</span><span class="se">\&#39;</span><span class="s1">, </span><span class="se">\&#39;</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">valid_values</span><span class="p">])</span><span class="si">}</span><span class="s2">&#39;&quot;</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">valid_values</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">valid_values</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">item_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">item_value</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
@@ -271,7 +271,7 @@
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">CORANGE</span><span class="si">}</span><span class="s2">Valid Values:</span><span class="si">{</span><span class="n">TEXTCOLOR</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">valid_values</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">CORANGE</span><span class="si">}</span><span class="s2">Received Type:</span><span class="si">{</span><span class="n">TEXTCOLOR</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">item_type</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">CORANGE</span><span class="si">}</span><span class="s2">Valid Types:</span><span class="si">{</span><span class="n">TEXTCOLOR</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">valid_types</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">CORANGE</span><span class="si">}</span><span class="s2">&lt;===== End Error =====&gt;</span><span class="si">{</span><span class="n">TEXTCOLOR</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">CORANGE</span><span class="si">}</span><span class="s2">&lt;===== End Error Description =====&gt;</span><span class="si">{</span><span class="n">TEXTCOLOR</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="p">)</span></div>
 
 
@@ -354,6 +354,38 @@
         <span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="EnvFileException">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.exceptions.EnvFileException">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">EnvFileException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">key_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">expected_value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">passed_value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">file_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">key_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">key_name</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">expected_value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">expected_value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">passed_value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">passed_value</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">expected_type</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">expected_value</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">passed_type</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">passed_value</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">())</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Invalid ENV value detected</span><span class="si">{</span><span class="n">TEXTCOLOR</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">CORANGE</span><span class="si">}</span><span class="s2">&lt;===== Begin Error Description =====&gt;</span><span class="si">{</span><span class="n">TEXTCOLOR</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">CORANGE</span><span class="si">}</span><span class="s2">Responsible ENV file:</span><span class="si">{</span><span class="n">TEXTCOLOR</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">CORANGE</span><span class="si">}</span><span class="s2">Responsible Key:</span><span class="si">{</span><span class="n">TEXTCOLOR</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">key_name</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">CORANGE</span><span class="si">}</span><span class="s2">Received Values:</span><span class="si">{</span><span class="n">TEXTCOLOR</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">passed_value</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">CORANGE</span><span class="si">}</span><span class="s2">Expected Values:</span><span class="si">{</span><span class="n">TEXTCOLOR</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">expected_value</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">CORANGE</span><span class="si">}</span><span class="s2">Received Type:</span><span class="si">{</span><span class="n">TEXTCOLOR</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">passed_type</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">CORANGE</span><span class="si">}</span><span class="s2">Expected Type:</span><span class="si">{</span><span class="n">TEXTCOLOR</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">expected_type</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">CORANGE</span><span class="si">}</span><span class="s2">&lt;===== End Error Description =====&gt;</span><span class="si">{</span><span class="n">TEXTCOLOR</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span></div>
+
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
@@ -362,7 +394,12 @@
     <span class="c1">#     spotify.pause_playback()</span>
     <span class="c1"># except Exception as e:</span>
     <span class="c1">#     raise CustomException(e,&quot;test&quot;)</span>
-    <span class="k">raise</span> <span class="n">SpotifyUriException</span><span class="p">(</span><span class="n">invalid_uri</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">uri_type</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="n">EnvFileException</span><span class="p">(</span>
+        <span class="n">file_path</span><span class="o">=</span><span class="s2">&quot;./env&quot;</span><span class="p">,</span>
+        <span class="n">key_name</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">,</span>
+        <span class="n">expected_value</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">passed_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span>
 </pre></div>
 
            </div>

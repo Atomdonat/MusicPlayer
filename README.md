@@ -102,10 +102,6 @@ or update only half of the attributes
 - 3 -- finished
 - remove after one/two commits after mps=3, cps=3
 
-### Progress Versioning Semantic
-![](pride_versioning.png)
-by Niki Tonsky (https://mastodon.online/@nikitonsky/113691789641950263)
-
 ## Known Error messages
 
 * requests.exceptions.ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')) -> Just retry
@@ -119,7 +115,7 @@ by Niki Tonsky (https://mastodon.online/@nikitonsky/113691789641950263)
 * [ ] do ToDo's in Code
 * [ ] test Code
 * [ ] add Docstrings and comment Code (including Highlightings)
-  * [ ] fix submodules not loading documentation in RTD
+  * [ ] fix submodules not showing in RTD
 
 ### Backend related
 
@@ -152,6 +148,9 @@ by Niki Tonsky (https://mastodon.online/@nikitonsky/113691789641950263)
 - constants: "[Constants are usually defined on a module level and written in all capital letters with underscores separating words. Examples include MAX_OVERFLOW and TOTAL.](https://peps.python.org/pep-0008/#constants)"
 - classes: "[Class names should normally use the CapWords convention.](https://peps.python.org/pep-0008/#function-and-variable-names)"
 - docstrings: "[reStructuredText Docstring Format](https://peps.python.org/pep-0287/)"
+
+### other
+- versioning: [Semantic Versioning](https://en.wikipedia.org/wiki/Software_versioning#Schemes)
 
 ## Tags
 - Dictionaries / JSON
