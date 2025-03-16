@@ -27,5 +27,7 @@ python:
   install:
     - path: .
     - requirements: docs/requirements.txt
+    - path: ..
+      requirements: requirements.txt
 
 
