@@ -52,12 +52,16 @@ ENV_PATH = os.path.join(ROOT_DIR_PATH,'code_backend', '.env')
 SPOTIFY_HTTP_ERRORS_PATH = os.path.join(ROOT_DIR_PATH, "Databases", "JSON_Files", "http_errors.json")
 
 
+# ENV Keys assignment
 load_dotenv(ENV_PATH)
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 REDIRECT_URI = os.getenv("REDIRECT_URI")
 SPOTIFY_USERNAME = os.getenv("SPOTIFY_USERNAME")
 SPOTIFY_PASSWORD = os.getenv("SPOTIFY_PASSWORD")
+
+
+# Spotify API constants
 MARKET = 'DE'
 SCOPES = " ".join([
     'playlist-modify-private',
@@ -74,6 +78,7 @@ SCOPES = " ".join([
     'user-top-read'
 ])
 
+# global constants
 MAX_REQUESTS_PER_CALL = 500
 MAX_POPULARITY = 20
 SKIPPING_STEPS: dict = {
@@ -84,7 +89,10 @@ SKIPPING_STEPS: dict = {
     "not_skipped": 1
 }
 GUI_SIZE = [800, 400]
+WAIT_TIME = 5
 
+
+# ANSI Color Macros
 TEXTCOLOR = "\033[38;2;172;174;180m"
 CBLACK="\x1b[30m"
 CRED="\x1b[31m"
@@ -95,8 +103,6 @@ CMAGENTA="\x1b[35m"
 CCYAN="\x1b[36m"
 CWHITE="\x1b[37m"
 CORANGE="\x1b[38;5;215m"
-
-WAIT_TIME = 5
 
 
 if __name__ == '__main__':

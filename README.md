@@ -42,6 +42,7 @@ or update only half of the attributes
 * not every error means it's not working
 * Whether the requests body is send with `data` or `json` can cause an error or not (Though, the documentations cURL request always says `data`)
 * testcases should include **all** cases
+* RTD submodules not rendering because other project relevant modules (e.g. numpy) wouldn't be installed (requirements.txt missing in readthedocs.yaml)
 
 
 ## Code/Comment Highlighting (in Pycharm)
@@ -112,17 +113,18 @@ or update only half of the attributes
 
 ## ToDo List (prioritized)
 
+* keep Docstrings up to date
 * [ ] do ToDo's in Code
-* [ ] test Code
-* [ ] add Docstrings and comment Code (including Highlightings)
-  * [ ] fix submodules not showing in RTD
+* [x] test Code
+* [x] add Docstrings and comment Code (including Highlightings)
+  * [x] fix submodules not showing in RTD
 
 ### Backend related
 
 * [ ] add CLI interaction for `main_app.py`
   * headless App (e.g. for servers 24/7 app access)
   * [ ] method to print docstrings as manpage
-* [ ] unify return types/output and print statements
+* [x] unify return types/output and print statements
 * [ ] use Spotify's Audio Features & Analytics
 * [ ] clean up imports
 * [ ] clean up code

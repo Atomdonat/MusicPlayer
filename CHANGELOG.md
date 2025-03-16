@@ -50,6 +50,29 @@
 
 [//]: # (- )
 
+
+## [1.15.9] - 16.03.2025 - ENV File Check Support
+### Changes in Backend Code
+
+#### exceptions.py
+- updated error formatting for some Exceptions
+
+#### secondary_methods.py
+- replaced own logic in `absolute_path()` with `os.path.abspath()`
+- added methods for checking .env file
+
+#### spotify_web_api.py
+- added initial .env check for completeness
+
+### other files
+- fixed RTD submodules not rendering (caused by missing requirements in 'readthedocs.yaml')
+- added file 'prepare_commit.py' for commit preparation (semi-automatic versioning, docs regeneration, ...)
+
+#### README.md
+- regular update
+
+
+
 ## [1.15.8] - 09.03.2025 - new playlist creation method
 
 ### Changes in Backend Code

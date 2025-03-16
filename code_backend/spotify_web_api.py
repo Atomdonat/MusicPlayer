@@ -12,7 +12,8 @@ from code_backend.secondary_methods import (
     update_env_key, image_from_url, print_debug,
     absolute_path, remove_key_recursively, json_to_file,
     check_spotify_id, check_spotify_ids, check_spotify_uri, check_spotify_uris,
-    get_invalid_spotify_ids, get_invalid_spotify_uris, check_spotify_user_ids, uri_to_id, url_to_uri
+    get_invalid_spotify_ids, get_invalid_spotify_uris, check_spotify_user_ids, uri_to_id, url_to_uri,
+    check_env_file
 )
 from code_backend.exceptions import (
     HttpException, RequestException, CustomException, InputException,
@@ -24,6 +25,8 @@ from code_backend.exceptions import (
 #  https://curlconverter.com/python/
 
 # Note: some methods can still have bugs depending on usage
+
+check_env_file(ENV_PATH)
 
 
 def request_regular_token(use_credentials: bool = False, force_new_token: bool = False) -> None:
@@ -2283,27 +2286,3 @@ def get_followed_artists(get_type: str = "artist") -> dict | None:
 
 if __name__ == '__main__':
     """"""
-    # print(api_request_data(
-    #     url=f"https://api.spotify.com/v1/albums/79fnwKynD56xIXBVWkyaE5?market={MARKET}",
-    #     request_type="GET",
-    #     json_data=None
-    # ))
-
-    # with open(absolute_path("code_backend/testing/debugging.json"), "r") as jile:
-    #     relinked_track = json.load(jile)
-    #
-    # print(get_original_tracks(relinked_track))
-
-
-    # playlist_tracks = get_playlist_items(playlist_id="6bRkO7PLCXgmV4EJH52iU4")
-    #
-    # json_to_file(
-    #     json_filepath=absolute_path("code_backend/testing/debugging.json"),
-    #     json_data=playlist_tracks,
-    #     overwrite=True
-    # )
-    # json_to_file(
-    #     json_filepath=absolute_path("code_backend/testing/debugging_2.json"),
-    #     json_data=get_original_tracks(tracks=playlist_tracks),
-    #     overwrite=True
-    # )

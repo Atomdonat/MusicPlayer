@@ -2,8 +2,10 @@
 Project specific exceptions
 
 Exception Definition for Docstrings:
-:raises CustomException: If Exception occurs
-:raises DatabaseException: If Exception related to the Database occurs
+
+:raises CustomException: if Exception occurs
+:raises DatabaseException: if Exception related to the Database occurs
+:raises EnvFileException: if Exception related to the Env File occurs
 :raises HttpException: if request response code is not good
 :raises InputException: if input is invalid
 :raises LimitException: if limit is invalid
@@ -11,27 +13,9 @@ Exception Definition for Docstrings:
 :raises SpotifyApiException: if Exception related to Spotify API occurs
 :raises SpotifyIdException: if spotify id is invalid
 :raises SpotifyUriException: if spotify uri is invalid
-
 """
 
 from code_backend.shared_config import *
-
-# avoid circular import error with secondary_methods.py
-def absolute_path(path: str) -> str:
-    """
-    Converts the given path to an absolute path. If the path is absolute nothing happens. If in doubt just call it
-
-    :param path: (relative) path to convert
-    :return: absolute path
-    """
-
-    if path.startswith(ROOT_DIR_PATH):
-        return path
-    else:
-        # remove leading '/' or './'
-        path = path[1:] if path.startswith("/") else path[2:] if path.startswith("./") else path
-
-        return str(os.path.join(ROOT_DIR_PATH, path))
 
 
 # avoid circular import error with secondary_methods.py
@@ -42,7 +26,7 @@ def load_json(path: str) -> dict:
     :param path: path to file
     :return: JSON object
     """
-    path = absolute_path(path)
+    path = os.path.abspath(path)
     with open(path, 'r') as j_file:
         return json.load(j_file)
 
@@ -67,7 +51,7 @@ class HttpException(SpotifyApiException):
         :param request_query: The original HTTP request that triggered the error.
         :param response_text: The response body received from the server.
         """
-        with open(absolute_path(SPOTIFY_HTTP_ERRORS_PATH), 'r') as j_file:
+        with open(os.path.abspath(SPOTIFY_HTTP_ERRORS_PATH), 'r') as j_file:
             spotify_http_errors = json.load(j_file)
 
         assert str(error_code) in spotify_http_errors.keys(), f"Invalid HTTP error code encountered '{error_code}'"
@@ -84,7 +68,7 @@ class HttpException(SpotifyApiException):
 
     def __str__(self):
         return (
-            "\n<===== Begin Error =====>\n\n"
+            "\n<===== Begin Error Description =====>\n\n"
             f"Request returned Code: {self.error_code} - {self.error_name}\n"
             f"{self.error_description}\n"
             "Responsible Query:\n"
@@ -95,7 +79,7 @@ class HttpException(SpotifyApiException):
             f"{self.request_query.body if self.request_query.body else '\'---\''}\n"
             f"------------END------------{TEXTCOLOR}\n"
             f"More infos: {self.response_text}\n"
-            f"\n{CORANGE}<===== End Error =====>{TEXTCOLOR}\n"
+            f"\n{CORANGE}<===== End Error Description =====>{TEXTCOLOR}\n"
         )
 
 
@@ -108,11 +92,10 @@ class RequestException(Exception):
         self.error = error
         self.request_query = request_query.prepare()
         super().__init__(self.__str__())
-        print(f"\n{CORANGE}<===== End Error =====>{TEXTCOLOR}\n")
 
     def __str__(self):
         return (
-            "\n<===== Begin Error =====>\n\n"
+            "\n<===== Begin Error Description =====>\n\n"
             f"{CCYAN}Request returned:{CORANGE} {self.error.args}\n"
             f"{CCYAN}Responsible Query:\n"
             f"{CORANGE}-----------START-----------\n"
@@ -122,6 +105,7 @@ class RequestException(Exception):
             f"{self.request_query.body if self.request_query.body else '---'}\n"
             f"------------END------------{TEXTCOLOR}\n\n"
             f"{CCYAN}Traceback: {CRED}\n{traceback.format_exc()}{TEXTCOLOR}"
+            f"\n{CORANGE}<===== End Error Description =====>{TEXTCOLOR}\n"
         )
 
 
@@ -136,16 +120,18 @@ class CustomException(Exception):
         self.error_message = error_message
         self.more_infos = more_infos
         super().__init__(self.__str__())
-        print(f"\n{CORANGE}<===== End Error =====>{TEXTCOLOR}\n")
 
     def __str__(self) -> str:
-        print(f"\n{CORANGE}<===== Begin Error =====>{CRED}\n")
-        print("Error message:", str(self.error_message))
-        if self.more_infos:
-            print("More infos:", self.more_infos)
-        if isinstance(self.error_message, Exception):
-            print("Error type:", self.error_message.__class__.__name__)
-            print("Arguments:", self.error_message.args)
+        return (
+            f"{str(self.error_message)}\n"
+            f"\n{CORANGE}<===== Begin Error Description =====>{CRED}\n\n"
+            f"{f"More infos: {self.more_infos}" if self.more_infos else ""}"
+            f"{ 
+                f"Error type: {self.error_message.__class__.__name__}"+ 
+                f"\nArguments: {self.error_message.args}" if isinstance(self.error_message, Exception) else ""
+            }"
+            f"\n\n{CORANGE}<===== End Error Description =====>{TEXTCOLOR}\n"
+        )
 
 
 class DatabaseException(CustomException):
@@ -251,6 +237,10 @@ class LimitException(Exception):
         )
 
 class EnvFileException(Exception):
+    """
+    Exception raised when invalid env file passed
+    """
+
     def __init__(self, file_path: str, key_name: str, expected_value: Any = None, passed_value: Any = None) -> None:
         self.file_path: str = file_path
         self.key_name: str = key_name

@@ -280,5 +280,6 @@ if __name__ == '__main__':
         "https://open.spotify.com/playlist/2mD7jZO2qeviKcmbs9q62N?si=dc0d3f62e70b4c97", # Arcane
         "https://open.spotify.com/playlist/0Y5sbr9NFTybZ1g9Yxijuh?si=e76af434fe1a42dc", # Epic
         "https://open.spotify.com/playlist/5PPHCyClHIW1SgHWuRQLqh?si=820576619f3b4523", # Motorrad
+        "https://open.spotify.com/playlist/1E9TmoQuyE1KuXwSdvf85I?si=75bd3985d3e7466b" # Transformers
     ]):
         organize_collection(collection_uri=i, shuffle=True)

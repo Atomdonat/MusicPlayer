@@ -1,8 +1,10 @@
 """
 File containing (helper) methods outsourced from other files
 """
+import os
+
 from code_backend.shared_config import *
-from code_backend.exceptions import InputException, CustomException, SpotifyIdException, SpotifyUriException, RequestException
+from code_backend.exceptions import InputException, CustomException, SpotifyIdException, SpotifyUriException, RequestException, EnvFileException
 
 
 def millis_to_minutes(millis: int, to_hours: bool = False) -> str:
@@ -598,6 +600,85 @@ def check_limits(limit: int, min_limit: int = 1, max_limit: int = MAX_REQUESTS_P
     return check_lower_limit(limit, min_limit) + check_upper_limit(limit, max_limit)
 
 
+def get_env_keys(env_file_path: str = None) -> set:
+    """
+    get all unique keys from the .env file
+
+    :param env_file_path: environment file path
+    :return: set containing unique environment keys
+    :raises InputException: if input is invalid
+    """
+
+    if not isinstance(env_file_path, str):
+        raise InputException(item_value=env_file_path, valid_values="valid path", valid_types=str)
+
+    if env_file_path is None:
+        env_file_path = find_dotenv()
+    else:
+        env_file_path = absolute_path(env_file_path)
+
+    env_keys = set()
+    with open(env_file_path, "r") as file:
+        for line in file.readlines():
+            if not line.startswith("#") and line != "\n":
+                env_keys.add(line.split("=")[0])
+
+    return env_keys
+
+
+# mps: 1
+def check_env_file(env_file_path: str = None) -> None:
+    """
+    Check if the .env file is valid and every key has a correct value.
+
+    :param env_file_path: path to .env file
+    :raises EnvFileException: if Exception related to the Env File occurs
+    :raises InputException: if input is invalid
+    """
+
+    if env_file_path is None:
+        env_file_path = find_dotenv()
+    else:
+        env_file_path = absolute_path(env_file_path)
+
+    load_dotenv(env_file_path)
+    valid_items = {
+        "CLIENT_ID": {"type": str, "length": 32},
+        "CLIENT_SECRET": {"type": str, "length": 32},
+        "REDIRECT_URI": {"type": str, "length": 1},
+        "REGULAR_TOKEN": {"type": str, "content": {"access_token", "token_type", "expires"}},
+        "REFRESH_TOKEN": {"type": str, "content": {"refresh_token"}},
+        "AUTHORIZED_SCOPES": {"type": str, "content": {"scope"}},
+        "EXTENDED_TOKEN": {"type": str, "content": {'access_token', 'token_type', 'expires'}},
+    }
+    current_value = None
+    for current_key in get_env_keys(env_file_path):
+        try:
+            current_value = os.getenv(current_key)
+            current_valid = valid_items.get(current_key)
+
+            if current_key in valid_items.keys() and any([
+                not isinstance(current_value, current_valid.get("type")),
+                current_key in ["CLIENT_ID", "CLIENT_SECRET"] and len(current_value) != current_valid.get("length"),
+                current_key == "REDIRECT_URI" and len(current_value) < current_valid.get("length"),
+                current_key in ["REGULAR_TOKEN","REFRESH_TOKEN","AUTHORIZED_SCOPES","EXTENDED_TOKEN"]
+                    and len(frozenset(json.loads(current_value).keys())-current_valid.get("content"))
+            ]): raise Exception
+
+
+        except Exception:
+            formated_values = ", ".join([
+                f"{key}: {value.__name__}" if key == "type" else f"{key}: {value}" for key, value in valid_items.get(current_key).items()
+            ])
+
+            raise EnvFileException(
+                file_path=env_file_path,
+                key_name=current_key,
+                expected_value=formated_values,
+                passed_value=current_value
+            )
+
+
 def update_env_key(env_key: str, new_value) -> tuple[str, str]:
     """
     Update the env key with the new value.
@@ -773,7 +854,7 @@ def load_sql_query(file_path: str) -> str:
         raise CustomException(error_message=error, more_infos=f"Exception occurred while loading SQL query from file '{file_path}'.")
 
 
-def absolute_path(path: str, is_file: bool = False) -> str:
+def absolute_path(path: str, is_file: bool = False) -> AnyStr:
     """
     Converts the given path to an absolute path. If the path is absolute nothing happens. If in doubt just call it
 
@@ -786,10 +867,13 @@ def absolute_path(path: str, is_file: bool = False) -> str:
     if not isinstance(path, str):
         raise InputException(item_value=path, valid_values="string", valid_types=str)
 
-    if not path.startswith(ROOT_DIR_PATH):
-        # remove leading '/' or './'
-        path = path[1:] if path.startswith("/") else path[2:] if path.startswith("./") else path
-        path = str(os.path.join(ROOT_DIR_PATH, path))
+    # own logic:
+    # if not path.startswith(ROOT_DIR_PATH):
+    #     # remove leading '/' or './'
+    #     path = path[1:] if path.startswith("/") else path[2:] if path.startswith("./") else path
+    #     path = str(os.path.join(ROOT_DIR_PATH, path))
+
+    path = os.path.abspath(path)
 
     if not os.path.exists(os.path.split(path)[0]):
         raise InputException(item_value=path, valid_values="valid filepath", valid_types=str)
@@ -1089,3 +1173,7 @@ def get_invalid_spotify_uris(spotify_uris: list) -> list:
 
 if __name__ == '__main__':
     """"""
+    # print(get_env_keys())
+    # check_env_file()
+
+    check_env_file()
