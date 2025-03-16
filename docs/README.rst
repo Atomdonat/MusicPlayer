@@ -208,6 +208,9 @@ Frontend related
 Used Conventions
 ----------------
 
+-  versioning: `Semantic
+   Versioning <https://en.wikipedia.org/wiki/Software_versioning#Schemes>`__
+
 PEP
 ~~~
 
@@ -228,12 +231,6 @@ PEP
    convention. <https://peps.python.org/pep-0008/#function-and-variable-names>`__”
 -  docstrings: “`reStructuredText Docstring
    Format <https://peps.python.org/pep-0287/>`__”
-
-other
-~~~~~
-
--  versioning: `Semantic
-   Versioning <https://en.wikipedia.org/wiki/Software_versioning#Schemes>`__
 
 Tags
 ----
@@ -262,8 +259,6 @@ Frontend
 ~~~~~~~~
 
 -  `Tkinter <https://docs.python.org/3/library/tkinter.html>`__
-
-.. _other-1:
 
 Other
 ~~~~~

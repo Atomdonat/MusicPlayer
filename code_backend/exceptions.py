@@ -158,7 +158,7 @@ class InputException(Exception):
     """
     Exception raised when the input is invalid
     """
-    def __init__(self, item_value: Any, valid_values: tuple | str, valid_types: tuple):
+    def __init__(self, item_value: Any, valid_values: tuple | str, valid_types: Any | tuple):
         self.item_value = item_value
         self.valid_values = f"'{'\', \''.join([str(i) for i in valid_values])}'" if isinstance(valid_values, tuple) else f"'{valid_values}'"
         self.item_type = type(item_value).__name__
@@ -177,7 +177,7 @@ class InputException(Exception):
             f"{CORANGE}Valid Values:{TEXTCOLOR} {self.valid_values}\n\n"
             f"{CORANGE}Received Type:{TEXTCOLOR} {self.item_type}\n"
             f"{CORANGE}Valid Types:{TEXTCOLOR} {self.valid_types}\n"
-            f"\n{CORANGE}<===== End Error =====>{TEXTCOLOR}\n"
+            f"\n{CORANGE}<===== End Error Description =====>{TEXTCOLOR}\n"
         )
 
 
@@ -250,6 +250,35 @@ class LimitException(Exception):
             f"\n{CORANGE}<====== End Error Description ======>{TEXTCOLOR}\n"
         )
 
+class EnvFileException(Exception):
+    def __init__(self, file_path: str, key_name: str, expected_value: Any = None, passed_value: Any = None) -> None:
+        self.file_path: str = file_path
+        self.key_name: str = key_name
+
+        self.expected_value: Any = expected_value
+        self.passed_value: Any = passed_value
+
+        self.expected_type: Any = type(expected_value).__name__
+        self.passed_type: Any = type(passed_value).__name__
+
+        super().__init__(self.__str__())
+
+    def __str__(self):
+        return (
+            f"Invalid ENV value detected{TEXTCOLOR}\n"
+            f"\n{CORANGE}<===== Begin Error Description =====>{TEXTCOLOR}\n\n"
+            
+            f"{CORANGE}Responsible ENV file:{TEXTCOLOR} {self.file_path}\n"
+            f"{CORANGE}Responsible Key:{TEXTCOLOR} {self.key_name}\n\n"
+            
+            f"{CORANGE}Received Values:{TEXTCOLOR} {self.passed_value}\n"
+            f"{CORANGE}Expected Values:{TEXTCOLOR} {self.expected_value}\n\n"
+            
+            f"{CORANGE}Received Type:{TEXTCOLOR} {self.passed_type}\n"
+            f"{CORANGE}Expected Type:{TEXTCOLOR} {self.expected_type}\n"
+            
+            f"\n{CORANGE}<===== End Error Description =====>{TEXTCOLOR}\n"
+        )
 
 if __name__ == "__main__":
     """"""
@@ -258,4 +287,9 @@ if __name__ == "__main__":
     #     spotify.pause_playback()
     # except Exception as e:
     #     raise CustomException(e,"test")
-    raise SpotifyUriException(invalid_uri="test", uri_type="test")
+    raise EnvFileException(
+        file_path="./env",
+        key_name="test",
+        expected_value="{}",
+        passed_value=None,
+    )

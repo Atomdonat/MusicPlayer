@@ -142,15 +142,14 @@ or update only half of the attributes
   * [ ] if searched track is already in queue, show/highlighted where (App Window)
 
 ## Used Conventions
+- versioning: [Semantic Versioning](https://en.wikipedia.org/wiki/Software_versioning#Schemes)
+
 ### PEP
 - method/function names: "[Function names should be lowercase, with words separated by underscores as necessary to improve readability. Variable names follow the same convention as function names.](https://peps.python.org/pep-0008/#function-and-variable-names)"
   - non-public: "[Use one leading underscore only for non-public methods and instance variables.](https://peps.python.org/pep-0008/#method-names-and-instance-variables)"
 - constants: "[Constants are usually defined on a module level and written in all capital letters with underscores separating words. Examples include MAX_OVERFLOW and TOTAL.](https://peps.python.org/pep-0008/#constants)"
 - classes: "[Class names should normally use the CapWords convention.](https://peps.python.org/pep-0008/#function-and-variable-names)"
 - docstrings: "[reStructuredText Docstring Format](https://peps.python.org/pep-0287/)"
-
-### other
-- versioning: [Semantic Versioning](https://en.wikipedia.org/wiki/Software_versioning#Schemes)
 
 ## Tags
 - Dictionaries / JSON

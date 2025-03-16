@@ -21,4 +21,3 @@ Databases/JSON_Files/spotify_*.json
 .obsidian
 
 Databases/test.db
-code_backend/__init__.py

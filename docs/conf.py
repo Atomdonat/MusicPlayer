@@ -20,7 +20,7 @@ release = '1.15.8'
 extensions = ["sphinx.ext.todo", "sphinx.ext.viewcode", "sphinx.ext.autodoc"]
 
 templates_path = ['_templates']
-exclude_patterns = ['Thumbs.db', '.DS_Store', 'setup.rst', 'prepare_commit.rst']
+exclude_patterns = ['Thumbs.db', '.DS_Store', 'setup.rst', 'setup', 'prepare_commit.rst', 'prepare_commit']
 
 
 
