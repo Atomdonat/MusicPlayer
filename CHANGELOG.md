@@ -1,54 +1,39 @@
 # Changelog
 
-[//]: # (Template:)
+## [1.16.0] - 26.03.2025 - Basic CLI interaction from main.py
 
-[//]: # (## [new Version] - Date - Title)
+### Changes in Backend Code
 
-[//]: # (### Changes in Backend Code)
+#### database_access.py
+- extracted universal database access methods to super class
+- made table_struct dynamic (tables from sql_master and table_info from tables)
 
-[//]: # (#### database_access.py)
+#### exceptions.py
+- fixed typo
 
-[//]: # (-)
+#### main.py
+- renamed from main_app.py
+- implemented basic shell interaction using [code](https://docs.python.org/3.13/library/code.html) 
+  - added complete functionality for methods/classes with tab 
+  - added `clear()` method as python equivalent of `clear` (Linux) or `cls` (Windows)
+  - added `man()` method as python equivalent of `man`
 
-[//]: # (#### main_app.py)
+#### secondary_methods.py
+- updated error formatting for some Exceptions
 
-[//]: # (-)
+#### shared_config.py
+- minor changes
 
-[//]: # (#### music_classes.py)
+### Changes in Other files
 
-[//]: # (-)
+#### README.md
+- regular update
 
-[//]: # (#### organize_playlist.py)
+#### changes_unstaged.md
+- added to track unstaged changes 
 
-[//]: # (-)
-
-[//]: # (#### secondary_methods.py)
-
-[//]: # (-)
-
-[//]: # (#### shared_config.py)
-
-[//]: # (-)
-
-[//]: # (#### spotify_web_api.py)
-
-[//]: # (-)
-
-[//]: # (### Changes in Frontend Code)
-
-[//]: # (### other files)
-
-[//]: # (#### .env.sample)
-
-[//]: # (-)
-
-[//]: # (#### README.md)
-
-[//]: # (- )
-
-[//]: # (#### requirements.txt)
-
-[//]: # (- )
+#### prepare_commit.py
+- added docstrings
 
 
 ## [1.15.9] - 16.03.2025 - ENV File Check Support
@@ -58,7 +43,6 @@
 - updated error formatting for some Exceptions
 
 #### secondary_methods.py
-- replaced own logic in `absolute_path()` with `os.path.abspath()`
 - added methods for checking .env file
 
 #### spotify_web_api.py
@@ -70,7 +54,6 @@
 
 #### README.md
 - regular update
-
 
 
 ## [1.15.8] - 09.03.2025 - new playlist creation method

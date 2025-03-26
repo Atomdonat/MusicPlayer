@@ -125,7 +125,7 @@ class CustomException(Exception):
         return (
             f"{str(self.error_message)}\n"
             f"\n{CORANGE}<===== Begin Error Description =====>{CRED}\n\n"
-            f"{f"More infos: {self.more_infos}" if self.more_infos else ""}"
+            f"{f"More infos: {self.more_infos}" if self.more_infos else ""}\n"
             f"{ 
                 f"Error type: {self.error_message.__class__.__name__}"+ 
                 f"\nArguments: {self.error_message.args}" if isinstance(self.error_message, Exception) else ""

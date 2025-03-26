@@ -115,19 +115,15 @@ or update only half of the attributes
 
 * keep Docstrings up to date
 * [ ] do ToDo's in Code
-* [x] test Code
-* [x] add Docstrings and comment Code (including Highlightings)
-  * [x] fix submodules not showing in RTD
+* [ ] replace Flask in `spotify_web_api.py`
+* [ ] clean up imports
+* [ ] clean up code
 
 ### Backend related
 
-* [ ] add CLI interaction for `main_app.py`
+* [ ] improve [CLI interaction](https://docs.python.org/3.13/library/code.html) for `main.py`
   * headless App (e.g. for servers 24/7 app access)
-  * [ ] method to print docstrings as manpage
-* [x] unify return types/output and print statements
 * [ ] use Spotify's Audio Features & Analytics
-* [ ] clean up imports
-* [ ] clean up code
 * [ ] optimize track search distribution in 'random_playlist_by_genre()'
 
 ### Frontend related

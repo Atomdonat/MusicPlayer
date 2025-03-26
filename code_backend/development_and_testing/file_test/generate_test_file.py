@@ -1,3 +1,5 @@
+from xml.etree.ElementTree import indent
+
 from code_backend.shared_config import *
 from code_backend.secondary_methods import absolute_path, json_to_file, load_json
 import ast
@@ -96,7 +98,8 @@ def ensure_valid_token():
 
 
 if __name__ == "__main__":
-    # file_path = absolute_path("code_backend/spotify_web_api.py")
-    # parsed_data = parse_python_file(file_path)
+    file_path = absolute_path("code_backend/spotify_web_api.py")
+    parsed_data = parse_python_file(file_path)
+    print(json.dumps(parsed_data, indent=4))
     # json_to_file(json_filepath="code_backend/testing/debugging.json", json_data=parsed_data, overwrite=True)
-    generate_test_file(load_json("code_backend/testing/debugging.json"), "code_backend/testing/file_test/test_spotify_web_api.py")
+    # generate_test_file(load_json("code_backend/testing/debugging.json"), "code_backend/testing/file_test/test_spotify_web_api.py")

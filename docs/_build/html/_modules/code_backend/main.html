@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>code_backend.main_app &mdash; MusicPlayer 1.15.8 documentation</title>
+  <title>code_backend.main &mdash; MusicPlayer 1.16.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=5346e7aa"></script>
+      <script src="../../_static/documentation_options.js?v=e2aa0a4e"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -59,7 +59,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
-      <li class="breadcrumb-item active">code_backend.main_app</li>
+      <li class="breadcrumb-item active">code_backend.main</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -68,7 +68,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>Source code for code_backend.main_app</h1><div class="highlight"><pre>
+  <h1>Source code for code_backend.main</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span><span class="w"> </span><span class="nn">code_backend.shared_config</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">code_backend.organize_playlist</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">organize</span>
@@ -79,10 +79,23 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">code_backend.secondary_methods</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">uri_to_id</span><span class="p">,</span> <span class="n">load_json</span><span class="p">,</span> <span class="n">url_to_uri</span><span class="p">,</span> <span class="n">key_from_dict</span><span class="p">,</span> <span class="n">check_limits</span>
 <span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">code</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">readline</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">rlcompleter</span>
+
+
+<span class="n">BANNER</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="si">{</span><span class="n">CSPOGREEN</span><span class="si">}</span>
+<span class="s2">    ███    ███ ██    ██ ███████ ██  ██████    ██████  ██       █████  ██    ██ ███████ ██████  </span>
+<span class="s2">    ████  ████ ██    ██ ██      ██ ██         ██   ██ ██      ██   ██  ██  ██  ██      ██   ██ </span>
+<span class="s2">    ██ ████ ██ ██    ██ ███████ ██ ██         ██████  ██      ███████   ████   █████   ██████  </span>
+<span class="s2">    ██  ██  ██ ██    ██      ██ ██ ██         ██      ██      ██   ██    ██    ██      ██   ██ </span>
+<span class="s2">    ██      ██  ██████  ███████ ██  ██████    ██      ███████ ██   ██    ██    ███████ ██   ██ </span>
+<span class="s2">               </span>
+<span class="si">{</span><span class="n">TEND</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
 
 
 <div class="viewcode-block" id="Player">
-<a class="viewcode-back" href="../../code_backend.html#code_backend.main_app.Player">[docs]</a>
+<a class="viewcode-back" href="../../code_backend.html#code_backend.main.Player">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Player</span><span class="p">:</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">player</span> <span class="o">=</span> <span class="n">spotify</span><span class="o">.</span><span class="n">get_playback_state</span><span class="p">()</span>
@@ -124,7 +137,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">skip_blacklisted_items</span><span class="p">()</span>
 
 <div class="viewcode-block" id="Player.change_playing_state">
-<a class="viewcode-back" href="../../code_backend.html#code_backend.main_app.Player.change_playing_state">[docs]</a>
+<a class="viewcode-back" href="../../code_backend.html#code_backend.main.Player.change_playing_state">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">change_playing_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Switch the current playing state of Spotify Player</span>
@@ -149,7 +162,7 @@
 
 
 <div class="viewcode-block" id="Player.initialize_player">
-<a class="viewcode-back" href="../../code_backend.html#code_backend.main_app.Player.initialize_player">[docs]</a>
+<a class="viewcode-back" href="../../code_backend.html#code_backend.main.Player.initialize_player">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">initialize_player</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get Information of the current Player state of Spotify (updates attributes)</span>
@@ -193,7 +206,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">progress</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
 
 <div class="viewcode-block" id="Player.change_repeat_state">
-<a class="viewcode-back" href="../../code_backend.html#code_backend.main_app.Player.change_repeat_state">[docs]</a>
+<a class="viewcode-back" href="../../code_backend.html#code_backend.main.Player.change_repeat_state">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">change_repeat_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_state</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;context&#39;</span><span class="p">,</span> <span class="s1">&#39;track&#39;</span><span class="p">,</span> <span class="s1">&#39;off&#39;</span><span class="p">]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Change the current playing state of Spotify Player</span>
@@ -210,7 +223,7 @@
 
 
 <div class="viewcode-block" id="Player.next_track">
-<a class="viewcode-back" href="../../code_backend.html#code_backend.main_app.Player.next_track">[docs]</a>
+<a class="viewcode-back" href="../../code_backend.html#code_backend.main.Player.next_track">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">next_track</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Skips current track</span>
@@ -221,7 +234,7 @@
 
 
 <div class="viewcode-block" id="Player.prev_track">
-<a class="viewcode-back" href="../../code_backend.html#code_backend.main_app.Player.prev_track">[docs]</a>
+<a class="viewcode-back" href="../../code_backend.html#code_backend.main.Player.prev_track">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">prev_track</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Go to previous track (progress=0) or track start (progress&gt;0)</span>
@@ -232,7 +245,7 @@
 
 
 <div class="viewcode-block" id="Player.change_shuffle_state">
-<a class="viewcode-back" href="../../code_backend.html#code_backend.main_app.Player.change_shuffle_state">[docs]</a>
+<a class="viewcode-back" href="../../code_backend.html#code_backend.main.Player.change_shuffle_state">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">change_shuffle_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">dummy_player</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">shuffle_state</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">shuffle_state</span>
@@ -240,7 +253,7 @@
 
 
 <div class="viewcode-block" id="Player.set_volume">
-<a class="viewcode-back" href="../../code_backend.html#code_backend.main_app.Player.set_volume">[docs]</a>
+<a class="viewcode-back" href="../../code_backend.html#code_backend.main.Player.set_volume">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_volume</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
@@ -256,7 +269,7 @@
 
 
 <div class="viewcode-block" id="Player.skip_blacklisted_items">
-<a class="viewcode-back" href="../../code_backend.html#code_backend.main_app.Player.skip_blacklisted_items">[docs]</a>
+<a class="viewcode-back" href="../../code_backend.html#code_backend.main.Player.skip_blacklisted_items">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">skip_blacklisted_items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Skip Item if it is blacklisted in the Database</span>
@@ -293,7 +306,7 @@
 
 
 <div class="viewcode-block" id="SpotifyApp">
-<a class="viewcode-back" href="../../code_backend.html#code_backend.main_app.SpotifyApp">[docs]</a>
+<a class="viewcode-back" href="../../code_backend.html#code_backend.main.SpotifyApp">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SpotifyApp</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -308,7 +321,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">player</span> <span class="o">=</span> <span class="n">Player</span><span class="p">()</span>
 
 <div class="viewcode-block" id="SpotifyApp.find_object">
-<a class="viewcode-back" href="../../code_backend.html#code_backend.main_app.SpotifyApp.find_object">[docs]</a>
+<a class="viewcode-back" href="../../code_backend.html#code_backend.main.SpotifyApp.find_object">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_object</span><span class="p">(</span>
         <span class="n">search_query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -371,7 +384,7 @@
 
 
 <div class="viewcode-block" id="SpotifyApp.random_tracks_by_genre">
-<a class="viewcode-back" href="../../code_backend.html#code_backend.main_app.SpotifyApp.random_tracks_by_genre">[docs]</a>
+<a class="viewcode-back" href="../../code_backend.html#code_backend.main.SpotifyApp.random_tracks_by_genre">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">random_tracks_by_genre</span><span class="p">(</span><span class="n">genre_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">track_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">create_playlist</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -437,9 +450,8 @@
 
                 <span class="k">return</span> <span class="n">playlist_id</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;genre:</span><span class="si">{</span><span class="n">genre_name</span><span class="si">}</span><span class="s2">&quot;</span>
 
-
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">random_tracks</span><span class="p">,</span>
+                <span class="k">return</span> <span class="n">random_tracks</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No tracks found&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">None</span></div>
@@ -447,14 +459,120 @@
 
 
 
+<div class="viewcode-block" id="clear">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.main.clear">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Clear the current terminal screen</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;cls&#39;</span> <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;win32&quot;</span> <span class="k">else</span> <span class="s1">&#39;clear&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">BANNER</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="man">
+<a class="viewcode-back" href="../../code_backend.html#code_backend.main.man">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">man</span><span class="p">(</span><span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;code_backend.main.man&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    print Manpage for the entered method</span>
+
+<span class="sd">    **Example:** `&gt;&gt;&gt; man(&#39;code_backend.spotify_web_api.get_album&#39;)`</span>
+
+<span class="sd">    :param method: wanted method, in the form of &#39;path.to.module.method_name&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># get docstring from method name inside class</span>
+    <span class="n">class_name</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">letter</span> <span class="ow">in</span> <span class="n">method</span> <span class="k">for</span> <span class="n">letter</span> <span class="ow">in</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_uppercase</span><span class="p">):</span>
+        <span class="n">mod_name</span><span class="p">,</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">func_name</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">mod</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">mod_name</span><span class="p">)</span>
+        <span class="n">clas</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="n">class_name</span><span class="p">)</span>
+        <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">clas</span><span class="p">,</span> <span class="n">func_name</span><span class="p">)</span>
+        <span class="n">docstring</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="vm">__doc__</span>
+
+    <span class="c1"># get docstring from method name</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">mod_name</span><span class="p">,</span> <span class="n">func_name</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">mod</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">mod_name</span><span class="p">)</span>
+        <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="n">func_name</span><span class="p">)</span>
+        <span class="n">docstring</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="vm">__doc__</span>
+
+    <span class="c1"># parse docstring</span>
+    <span class="k">if</span> <span class="s2">&quot;:param&quot;</span> <span class="ow">in</span> <span class="n">docstring</span><span class="p">:</span>
+        <span class="n">description</span><span class="p">,</span> <span class="n">attributes</span> <span class="o">=</span> <span class="n">docstring</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:param&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">attributes</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;:param </span><span class="si">{</span><span class="n">attributes</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">attributes_exist</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">elif</span> <span class="s2">&quot;:return&quot;</span> <span class="ow">in</span> <span class="n">docstring</span><span class="p">:</span>
+        <span class="n">description</span><span class="p">,</span> <span class="n">attributes</span> <span class="o">=</span> <span class="n">docstring</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:return&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">attributes</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;:return </span><span class="si">{</span><span class="n">attributes</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">attributes_exist</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">elif</span> <span class="s2">&quot;:raises&quot;</span> <span class="ow">in</span> <span class="n">docstring</span><span class="p">:</span>
+        <span class="n">description</span><span class="p">,</span> <span class="n">attributes</span> <span class="o">=</span> <span class="n">docstring</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:raises&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">attributes</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;:raises </span><span class="si">{</span><span class="n">attributes</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">attributes_exist</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">description</span> <span class="o">=</span> <span class="n">docstring</span>
+        <span class="n">attributes_exist</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="n">parameters</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">returns</span> <span class="o">=</span> <span class="s2">&quot;None&quot;</span>
+    <span class="n">errors</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">attributes_exist</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">attributes</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;:param&quot;</span><span class="p">):</span>
+                <span class="n">param</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;:param &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">parameters</span><span class="p">[</span><span class="n">param</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span> <span class="o">=</span> <span class="n">param</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+            <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;:return&quot;</span><span class="p">):</span>
+                <span class="n">returns</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;:return:&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;:return :&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+            <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;:raises&quot;</span><span class="p">):</span>
+                <span class="n">error</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;:raises &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">errors</span><span class="p">[</span><span class="n">error</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span> <span class="o">=</span> <span class="n">error</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+    <span class="c1"># prepare docstring</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">description</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">**&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">TBOLD</span><span class="si">}{</span><span class="n">CSPOGREEN</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;**&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TEND</span><span class="si">}</span><span class="se">\n\t</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">parameters</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TBOLD</span><span class="si">}{</span><span class="n">key</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">TEND</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+    <span class="n">errors</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TBOLD</span><span class="si">}{</span><span class="n">key</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">TEND</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">errors</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+
+    <span class="c1"># format docstring</span>
+    <span class="n">met_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">TBOLD</span><span class="si">}{</span><span class="n">CSPOGREEN</span><span class="si">}</span><span class="s2">NAME:</span><span class="si">{</span><span class="n">TEND</span><span class="si">}</span><span class="se">\n\t</span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+    <span class="n">met_module</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TBOLD</span><span class="si">}{</span><span class="n">CSPOGREEN</span><span class="si">}</span><span class="s2">MODULE:</span><span class="si">{</span><span class="n">TEND</span><span class="si">}</span><span class="se">\n\t</span><span class="si">{</span><span class="n">mod_name</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+    <span class="n">met_class</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TBOLD</span><span class="si">}{</span><span class="n">CSPOGREEN</span><span class="si">}</span><span class="s2">CLASS:</span><span class="si">{</span><span class="n">TEND</span><span class="si">}</span><span class="se">\n\t</span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">class_name</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">met_description</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TBOLD</span><span class="si">}{</span><span class="n">CSPOGREEN</span><span class="si">}</span><span class="s2">DESCRIPTION:</span><span class="se">\n\t</span><span class="si">{</span><span class="n">TEND</span><span class="si">}{</span><span class="n">description</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">met_parameter</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TBOLD</span><span class="si">}{</span><span class="n">CSPOGREEN</span><span class="si">}</span><span class="s2">PARAMETER:</span><span class="si">{</span><span class="n">TEND</span><span class="si">}</span><span class="se">\n\t</span><span class="si">{</span><span class="n">parameters</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">parameters</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">met_return</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TBOLD</span><span class="si">}{</span><span class="n">CSPOGREEN</span><span class="si">}</span><span class="s2">RETURN VALUE:</span><span class="si">{</span><span class="n">TEND</span><span class="si">}</span><span class="se">\n\t</span><span class="si">{</span><span class="n">returns</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">returns</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">met_errors</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TBOLD</span><span class="si">}{</span><span class="n">CSPOGREEN</span><span class="si">}</span><span class="s2">ERRORS:</span><span class="si">{</span><span class="n">TEND</span><span class="si">}</span><span class="se">\n\t</span><span class="si">{</span><span class="n">errors</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">errors</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="nb">print</span><span class="p">((</span>
+        <span class="n">met_name</span>
+        <span class="o">+</span> <span class="n">met_module</span>
+        <span class="o">+</span> <span class="n">met_class</span>
+        <span class="o">+</span> <span class="n">met_description</span>
+        <span class="o">+</span> <span class="n">met_parameter</span>
+        <span class="o">+</span> <span class="n">met_return</span>
+        <span class="o">+</span> <span class="n">met_errors</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="o">*</span><span class="mi">4</span><span class="p">))</span></div>
+
+
+
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
-    <span class="n">myapp</span> <span class="o">=</span> <span class="n">SpotifyApp</span><span class="p">()</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">myapp</span><span class="o">.</span><span class="n">find_object</span><span class="p">(</span>
-        <span class="n">search_query</span><span class="o">=</span><span class="s2">&quot;Arcane Official Playlist&quot;</span><span class="p">,</span>
-        <span class="n">item_type</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;playlist&quot;</span><span class="p">],</span>
-        <span class="n">select_correct</span><span class="o">=</span><span class="kc">True</span>
-    <span class="p">))</span>
+    <span class="c1"># myApp = SpotifyApp()</span>
+    <span class="c1">#</span>
+    <span class="c1"># vars = globals()</span>
+    <span class="c1"># vars.update(locals())</span>
+    <span class="c1">#</span>
+    <span class="c1"># readline.set_completer(rlcompleter.Completer(vars).complete)</span>
+    <span class="c1"># readline.parse_and_bind(&quot;tab: complete&quot;)</span>
+    <span class="c1">#</span>
+    <span class="c1"># code.InteractiveConsole(locals=vars).interact(banner=BANNER)</span>
+    <span class="n">man</span><span class="p">()</span>
 </pre></div>
 
            </div>

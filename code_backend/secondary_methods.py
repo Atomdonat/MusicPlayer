@@ -868,12 +868,10 @@ def absolute_path(path: str, is_file: bool = False) -> AnyStr:
         raise InputException(item_value=path, valid_values="string", valid_types=str)
 
     # own logic:
-    # if not path.startswith(ROOT_DIR_PATH):
-    #     # remove leading '/' or './'
-    #     path = path[1:] if path.startswith("/") else path[2:] if path.startswith("./") else path
-    #     path = str(os.path.join(ROOT_DIR_PATH, path))
-
-    path = os.path.abspath(path)
+    if not path.startswith(ROOT_DIR_PATH):
+        # remove leading '/' or './'
+        path = path[1:] if path.startswith("/") else path[2:] if path.startswith("./") else path
+        path = str(os.path.join(ROOT_DIR_PATH, path))
 
     if not os.path.exists(os.path.split(path)[0]):
         raise InputException(item_value=path, valid_values="valid filepath", valid_types=str)
@@ -1169,6 +1167,8 @@ def get_invalid_spotify_uris(spotify_uris: list) -> list:
         raise InputException(item_value=spotify_uris, valid_values="list containing strings", valid_types=list)
 
     return [i for i in spotify_uris if not check_spotify_uri(i)]
+
+
 
 
 if __name__ == '__main__':

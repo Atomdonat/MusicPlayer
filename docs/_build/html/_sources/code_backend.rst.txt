@@ -20,10 +20,10 @@ code\_backend.exceptions module
    :show-inheritance:
    :undoc-members:
 
-code\_backend.main\_app module
-------------------------------
+code\_backend.main module
+-------------------------
 
-.. automodule:: code_backend.main_app
+.. automodule:: code_backend.main
    :members:
    :show-inheritance:
    :undoc-members:

@@ -4,9 +4,21 @@ import sys
 import subprocess
 import os
 from datetime import datetime
-import shutil
+
 
 def replace_in_file(file_path: str, pattern: str, replacement: str) -> None:
+    """
+    replace string in file
+
+    :param file_path: file path
+    :param pattern: pattern to replace
+    :param replacement: replacement string
+    :raises FileNotFoundError: if file doesn't exist
+    :raises PermissionError: if file is not readable or writable
+    :raises IsADirectoryError: if file path leads to a directory
+    :raises OSError: if file cannot be written to
+    """
+
     with open(file_path, "r") as f:
         old_file = f.read()
 
@@ -16,6 +28,15 @@ def replace_in_file(file_path: str, pattern: str, replacement: str) -> None:
 
 
 def new_version(is_major: bool = False, is_minor: bool = False, is_patch: bool = True) -> str:
+    """
+    Get the new version number
+
+    :param is_major: commit is major update (+1.0.0)
+    :param is_minor: commit is minor update (+0.1.0)
+    :param is_patch: commit is a patch (+0.0.1)
+    :return: new version number as string
+    """
+
     with open("CHANGELOG.md", "r") as f:
         data = f.read()
         data = re.search(r"\[(\d+\.\d+\.\d+)]", data).group(1)
@@ -31,6 +52,8 @@ def new_version(is_major: bool = False, is_minor: bool = False, is_patch: bool =
 
 
 def update_files():
+    """update required files"""
+
     back_changes="\n### Changes in Backend Code\n\n"
     front_changes="### Changes in Frontend Code\n\n"
     other_changes="### Changes in Other files\n\n"
@@ -50,7 +73,7 @@ def update_files():
             other_changes += f"#### {current_file_path.split("/")[-1]}\n- \n\n"
 
     now = datetime.now()
-    date_time_str = now.strftime("%d-%m-%Y")
+    date_time_str = now.strftime("%d.%m.%Y")
     changes = f"# Changelog\n\n## [{new_version}] - {date_time_str} - Title\n{back_changes}{front_changes}{other_changes}"
     replace_in_file(file_path="CHANGELOG.md", pattern="# Changelog\n", replacement=changes)
 
@@ -59,6 +82,15 @@ def update_files():
 
 
 def recompile_documentation():
+    """
+    recompile documentation with needed steps
+
+    :raises FileNotFoundError: if file doesn't exist
+    :raises PermissionError: if file is not readable or writable
+    :raises IsADirectoryError: if file path leads to a directory
+    :raises OSError: if file cannot be written to
+    """
+
     try:
         os.remove(os.path.abspath("docs/README.rst"))
     except OSError:
@@ -98,8 +130,8 @@ def recompile_documentation():
 
 if __name__ == "__main__":
     """"""
-    # new_version = new_version(is_major=False, is_minor=False, is_patch=True)
-    # update_files()
-    # print("Updated files")
+    new_version = new_version(is_major=False, is_minor=True, is_patch=False)
+    update_files()
+    print("Updated files")
     recompile_documentation()
     print("recompiled Documentation")

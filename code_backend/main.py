@@ -8,6 +8,19 @@ from code_backend.music_classes import Album, Artist, Device, Playlist, Track, U
 from code_backend.secondary_methods import (
     uri_to_id, load_json, url_to_uri, key_from_dict, check_limits
 )
+import code
+import readline
+import rlcompleter
+
+
+BANNER = f"""{CSPOGREEN}
+    ███    ███ ██    ██ ███████ ██  ██████    ██████  ██       █████  ██    ██ ███████ ██████  
+    ████  ████ ██    ██ ██      ██ ██         ██   ██ ██      ██   ██  ██  ██  ██      ██   ██ 
+    ██ ████ ██ ██    ██ ███████ ██ ██         ██████  ██      ███████   ████   █████   ██████  
+    ██  ██  ██ ██    ██      ██ ██ ██         ██      ██      ██   ██    ██    ██      ██   ██ 
+    ██      ██  ██████  ███████ ██  ██████    ██      ███████ ██   ██    ██    ███████ ██   ██ 
+               
+{TEND}"""
 
 
 class Player:
@@ -332,19 +345,118 @@ class SpotifyApp:
 
                 return playlist_id, f"genre:{genre_name}"
 
-
             else:
-                return random_tracks,
+                return random_tracks
         else:
             print("No tracks found")
             return None
 
 
+def clear():
+    """
+    Clear the current terminal screen
+    """
+    os.system('cls' if sys.platform == "win32" else 'clear')
+    print(BANNER)
+
+
+def man(method: str = 'code_backend.main.man') -> None:
+    """
+    print Manpage for the entered method
+
+    **Example:** `>>> man('code_backend.spotify_web_api.get_album')`
+
+    :param method: wanted method, in the form of 'path.to.module.method_name'
+    """
+    # get docstring from method name inside class
+    class_name = None
+    if any(letter in method for letter in string.ascii_uppercase):
+        mod_name, class_name, func_name = method.rsplit('.', 2)
+        mod = importlib.import_module(mod_name)
+        clas = getattr(mod, class_name)
+        func = getattr(clas, func_name)
+        docstring = func.__doc__
+
+    # get docstring from method name
+    else:
+        mod_name, func_name = method.rsplit('.', 1)
+        mod = importlib.import_module(mod_name)
+        func = getattr(mod, func_name)
+        docstring = func.__doc__
+
+    # parse docstring
+    if ":param" in docstring:
+        description, attributes = docstring.split(":param", 1)
+        attributes = f":param {attributes}"
+        attributes_exist = True
+
+    elif ":return" in docstring:
+        description, attributes = docstring.split(":return", 1)
+        attributes = f":return {attributes}"
+        attributes_exist = True
+
+    elif ":raises" in docstring:
+        description, attributes = docstring.split(":raises", 1)
+        attributes = f":raises {attributes}"
+        attributes_exist = True
+
+    else:
+        description = docstring
+        attributes_exist = False
+
+    parameters = {}
+    returns = "None"
+    errors = {}
+    if attributes_exist:
+        for line in attributes.splitlines():
+            if line.startswith(":param"):
+                param = line.replace(":param ", "").split(":",1)
+                parameters[param[0].strip()] = param[1].strip()
+
+            elif line.startswith(":return"):
+                returns = line.replace(":return:", "").replace(":return :", "").strip()
+
+            elif line.startswith(":raises"):
+                error = line.replace(":raises ", "").split(":", 1)
+                errors[error[0].strip()] = error[1].strip()
+
+    # prepare docstring
+    description = (
+        description.lstrip("\n")
+        .replace("\n**", f"\n{TBOLD}{CSPOGREEN}")
+        .replace("**", f"{TEND}\n\t")
+    )
+    parameters = "\n\t".join(f"{TBOLD}{key}:{TEND} {value}" for key, value in parameters.items())
+    errors = "\n\t".join(f"{TBOLD}{key}:{TEND} {value}" for key, value in errors.items())
+
+    # format docstring
+    met_name = f"\n{TBOLD}{CSPOGREEN}NAME:{TEND}\n\t{func_name}\n\n"
+    met_module = f"{TBOLD}{CSPOGREEN}MODULE:{TEND}\n\t{mod_name}\n\n"
+    met_class = f"{TBOLD}{CSPOGREEN}CLASS:{TEND}\n\t{func_name}\n\n" if class_name else ""
+    met_description = f"{TBOLD}{CSPOGREEN}DESCRIPTION:\n\t{TEND}{description}"
+    met_parameter = f"{TBOLD}{CSPOGREEN}PARAMETER:{TEND}\n\t{parameters}\n\n" if parameters != "" else ""
+    met_return = f"{TBOLD}{CSPOGREEN}RETURN VALUE:{TEND}\n\t{returns}\n\n" if returns != "" else ""
+    met_errors = f"{TBOLD}{CSPOGREEN}ERRORS:{TEND}\n\t{errors}\n\n" if errors != "" else ""
+
+    print((
+        met_name
+        + met_module
+        + met_class
+        + met_description
+        + met_parameter
+        + met_return
+        + met_errors
+    ).replace('\t', ' '*4))
+
+
 if __name__ == '__main__':
-    """"""
-    myapp = SpotifyApp()
-    print(myapp.find_object(
-        search_query="Arcane Official Playlist",
-        item_type=["playlist"],
-        select_correct=True
-    ))
+    # myApp = SpotifyApp()
+    #
+    # vars = globals()
+    # vars.update(locals())
+    #
+    # readline.set_completer(rlcompleter.Completer(vars).complete)
+    # readline.parse_and_bind("tab: complete")
+    #
+    # code.InteractiveConsole(locals=vars).interact(banner=BANNER)
+    man()

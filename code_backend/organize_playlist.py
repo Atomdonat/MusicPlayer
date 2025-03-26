@@ -274,7 +274,7 @@ def playlist_from_albums(album_ids: list[str], playlist_name: str, public: bool 
 
 if __name__ == '__main__':
     """"""
-    save_playlist_state(playlist_id="5PPHCyClHIW1SgHWuRQLqh", filepath="code_backend/development_and_testing/debugging.json")
+    # save_playlist_state(playlist_id="5PPHCyClHIW1SgHWuRQLqh", filepath="code_backend/development_and_testing/debugging.json")
     from code_backend.secondary_methods import urls_to_uris
     for i in urls_to_uris(spotify_urls=[
         "https://open.spotify.com/playlist/2mD7jZO2qeviKcmbs9q62N?si=dc0d3f62e70b4c97", # Arcane

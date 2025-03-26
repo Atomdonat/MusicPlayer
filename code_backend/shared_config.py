@@ -5,6 +5,7 @@
 # Standard library imports
 import ast
 import base64
+import importlib
 import io
 import json
 import os
@@ -92,17 +93,24 @@ GUI_SIZE = [800, 400]
 WAIT_TIME = 5
 
 
-# ANSI Color Macros
-TEXTCOLOR = "\033[38;2;172;174;180m"
+# ANSI Macros
+TBOLD = '\033[1m'
+TUNDERLINE = '\033[4m'
+TEND = '\033[0m'
+
+## Colors
+TEXTCOLOR = '\033[0m'
 CBLACK="\x1b[30m"
 CRED="\x1b[31m"
 CGREEN="\x1b[32m"
+CSPOGREEN = "\x1b[38;2;30;215;96m" # Spotify Green
 CYELLOW="\x1b[33m"
 CBLUE="\x1b[34m"
 CMAGENTA="\x1b[35m"
 CCYAN="\x1b[36m"
 CWHITE="\x1b[37m"
 CORANGE="\x1b[38;5;215m"
+
 
 
 if __name__ == '__main__':

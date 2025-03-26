@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MusicPlayer Documentation &mdash; MusicPlayer 1.15.8 documentation</title>
+  <title>MusicPlayer Documentation &mdash; MusicPlayer 1.16.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=5346e7aa"></script>
+      <script src="_static/documentation_options.js?v=e2aa0a4e"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -153,6 +153,9 @@ fixing/bypassing it</p></li>
 an error or not (Though, the documentations cURL request always says
 <code class="docutils literal notranslate"><span class="pre">data</span></code>)</p></li>
 <li><p>testcases should include <strong>all</strong> cases</p></li>
+<li><p>RTD submodules not rendering because other project relevant modules
+(e.g. numpy) wouldn’t be installed (requirements.txt missing in
+readthedocs.yaml)</p></li>
 </ul>
 </section>
 <section id="code-comment-highlighting-in-pycharm">
@@ -275,27 +278,24 @@ have any questions!”</p></li>
 <section id="todo-list-prioritized">
 <h2>ToDo List (prioritized)<a class="headerlink" href="#todo-list-prioritized" title="Link to this heading"></a></h2>
 <ul class="simple">
+<li><p>keep Docstrings up to date</p></li>
 <li><p>☐ do ToDo’s in Code</p></li>
-<li><p>☐ test Code</p></li>
-<li><p>☐ add Docstrings and comment Code (including Highlightings)</p>
-<ul>
-<li><p>☐ fix submodules not showing in RTD</p></li>
-</ul>
-</li>
+<li><p>☐ Sphinx manpage (with <code class="docutils literal notranslate"><span class="pre">sphinx.builders.manpage.ManualPageBuilder</span></code>)</p></li>
+<li><p>☐ replace Flask in <code class="docutils literal notranslate"><span class="pre">spotify_web_api.py</span></code></p></li>
+<li><p>☐ clean up imports</p></li>
+<li><p>☐ clean up code</p></li>
 </ul>
 <section id="backend-related">
 <h3>Backend related<a class="headerlink" href="#backend-related" title="Link to this heading"></a></h3>
 <ul class="simple">
-<li><p>☐ add CLI interaction for <code class="docutils literal notranslate"><span class="pre">main_app.py</span></code></p>
+<li><p>☐ improve <a class="reference external" href="https://docs.python.org/3.13/library/code.html">CLI
+interaction</a> for
+<code class="docutils literal notranslate"><span class="pre">main.py</span></code></p>
 <ul>
 <li><p>headless App (e.g. for servers 24/7 app access)</p></li>
-<li><p>☐ method to print docstrings as manpage</p></li>
 </ul>
 </li>
-<li><p>☐ unify return types/output and print statements</p></li>
 <li><p>☐ use Spotify’s Audio Features &amp; Analytics</p></li>
-<li><p>☐ clean up imports</p></li>
-<li><p>☐ clean up code</p></li>
 <li><p>☐ optimize track search distribution in ‘random_playlist_by_genre()’</p></li>
 </ul>
 </section>

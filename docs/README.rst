@@ -64,6 +64,9 @@ Lessons Learned
    an error or not (Though, the documentations cURL request always says
    ``data``)
 -  testcases should include **all** cases
+-  RTD submodules not rendering because other project relevant modules
+   (e.g. numpy) wouldn’t be installed (requirements.txt missing in
+   readthedocs.yaml)
 
 Code/Comment Highlighting (in Pycharm)
 --------------------------------------
@@ -169,24 +172,23 @@ Known Error messages
 ToDo List (prioritized)
 -----------------------
 
+-  keep Docstrings up to date
 -  ☐ do ToDo’s in Code
--  ☐ test Code
--  ☐ add Docstrings and comment Code (including Highlightings)
-
-   -  ☐ fix submodules not showing in RTD
+-  ☐ Sphinx manpage (with ``sphinx.builders.manpage.ManualPageBuilder``)
+-  ☐ replace Flask in ``spotify_web_api.py``
+-  ☐ clean up imports
+-  ☐ clean up code
 
 Backend related
 ~~~~~~~~~~~~~~~
 
--  ☐ add CLI interaction for ``main_app.py``
+-  ☐ improve `CLI
+   interaction <https://docs.python.org/3.13/library/code.html>`__ for
+   ``main.py``
 
    -  headless App (e.g. for servers 24/7 app access)
-   -  ☐ method to print docstrings as manpage
 
--  ☐ unify return types/output and print statements
 -  ☐ use Spotify’s Audio Features & Analytics
--  ☐ clean up imports
--  ☐ clean up code
 -  ☐ optimize track search distribution in ‘random_playlist_by_genre()’
 
 Frontend related

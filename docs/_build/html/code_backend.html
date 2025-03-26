@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>code_backend package &mdash; MusicPlayer 1.15.8 documentation</title>
+  <title>code_backend package &mdash; MusicPlayer 1.16.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=5346e7aa"></script>
+      <script src="_static/documentation_options.js?v=e2aa0a4e"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -48,6 +48,7 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">code_backend package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-code_backend.database_access">code_backend.database_access module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#code_backend.database_access.DatabaseAccess"><code class="docutils literal notranslate"><span class="pre">DatabaseAccess</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#code_backend.database_access.MyAppDatabase"><code class="docutils literal notranslate"><span class="pre">MyAppDatabase</span></code></a></li>
 </ul>
 </li>
@@ -62,13 +63,14 @@
 <li class="toctree-l4"><a class="reference internal" href="#code_backend.exceptions.SpotifyApiException"><code class="docutils literal notranslate"><span class="pre">SpotifyApiException</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#code_backend.exceptions.SpotifyIdException"><code class="docutils literal notranslate"><span class="pre">SpotifyIdException</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#code_backend.exceptions.SpotifyUriException"><code class="docutils literal notranslate"><span class="pre">SpotifyUriException</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#code_backend.exceptions.absolute_path"><code class="docutils literal notranslate"><span class="pre">absolute_path()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#code_backend.exceptions.load_json"><code class="docutils literal notranslate"><span class="pre">load_json()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#module-code_backend.main_app">code_backend.main_app module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#code_backend.main_app.Player"><code class="docutils literal notranslate"><span class="pre">Player</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#code_backend.main_app.SpotifyApp"><code class="docutils literal notranslate"><span class="pre">SpotifyApp</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-code_backend.main">code_backend.main module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#code_backend.main.Player"><code class="docutils literal notranslate"><span class="pre">Player</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#code_backend.main.SpotifyApp"><code class="docutils literal notranslate"><span class="pre">SpotifyApp</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#code_backend.main.clear"><code class="docutils literal notranslate"><span class="pre">clear()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#code_backend.main.man"><code class="docutils literal notranslate"><span class="pre">man()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#module-code_backend.music_classes">code_backend.music_classes module</a><ul>
@@ -251,37 +253,20 @@
 <section id="module-code_backend.database_access">
 <span id="code-backend-database-access-module"></span><h2>code_backend.database_access module<a class="headerlink" href="#module-code_backend.database_access" title="Link to this heading"></a></h2>
 <dl class="py class">
-<dt class="sig sig-object py" id="code_backend.database_access.MyAppDatabase">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">code_backend.database_access.</span></span><span class="sig-name descname"><span class="pre">MyAppDatabase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_backend/database_access.html#MyAppDatabase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.database_access.MyAppDatabase" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="code_backend.database_access.DatabaseAccess">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">code_backend.database_access.</span></span><span class="sig-name descname"><span class="pre">DatabaseAccess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_backend/database_access.html#DatabaseAccess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.database_access.DatabaseAccess" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>class acting as Data Access Object for Database. Handling all access to the Database</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="code_backend.database_access.MyAppDatabase.add_dummies">
-<span class="sig-name descname"><span class="pre">add_dummies</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/code_backend/database_access.html#MyAppDatabase.add_dummies"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.database_access.MyAppDatabase.add_dummies" title="Link to this definition"></a></dt>
-<dd><p>Add dummy data to the database to avoid Exceptions and to test methods</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p></p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="#code_backend.exceptions.CustomException" title="code_backend.exceptions.CustomException"><strong>CustomException</strong></a> – If Exception occurs</p></li>
-<li><p><a class="reference internal" href="#code_backend.exceptions.DatabaseException" title="code_backend.exceptions.DatabaseException"><strong>DatabaseException</strong></a> – If Exception related to the Database occurs</p></li>
-<li><p><a class="reference internal" href="#code_backend.exceptions.InputException" title="code_backend.exceptions.InputException"><strong>InputException</strong></a> – if input is invalid</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="code_backend.database_access.MyAppDatabase.add_item_to_table">
-<span class="sig-name descname"><span class="pre">add_item_to_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'albums'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'artists'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'tracks'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'playlists'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'users'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'genres'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'devices'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/code_backend/database_access.html#MyAppDatabase.add_item_to_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.database_access.MyAppDatabase.add_item_to_table" title="Link to this definition"></a></dt>
-<dd><p>Adds item to table if it does not exist, otherwise, the insert will be ignored. If not all required keys are passed, an error is raised with exit code 1.</p>
+<dt class="sig sig-object py" id="code_backend.database_access.DatabaseAccess.add_item_to_table">
+<span class="sig-name descname"><span class="pre">add_item_to_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/code_backend/database_access.html#DatabaseAccess.add_item_to_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.database_access.DatabaseAccess.add_item_to_table" title="Link to this definition"></a></dt>
+<dd><p>Adds item to table if it does not exist, otherwise, the insert will be ignored. If not all required keys are passed, the default value ‘NULL’ will be used.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>table_name</strong> – Which table to add</p></li>
-<li><p><strong>kwargs</strong> – which arguments are passed to database</p></li>
+<li><p><strong>query_template</strong> – sql query template in the correct format</p></li>
+<li><p><strong>kwargs</strong> – which arguments are passed to database, should be column=value assignments</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -298,9 +283,9 @@
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="code_backend.database_access.MyAppDatabase.execute_query">
-<span class="sig-name descname"><span class="pre">execute_query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sql_query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fetch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span></span></span><a class="reference internal" href="_modules/code_backend/database_access.html#MyAppDatabase.execute_query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.database_access.MyAppDatabase.execute_query" title="Link to this definition"></a></dt>
-<dd><p>Execute a SQL query with parameters</p>
+<dt class="sig sig-object py" id="code_backend.database_access.DatabaseAccess.execute_query">
+<span class="sig-name descname"><span class="pre">execute_query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sql_query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fetch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span></span></span><a class="reference internal" href="_modules/code_backend/database_access.html#DatabaseAccess.execute_query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.database_access.DatabaseAccess.execute_query" title="Link to this definition"></a></dt>
+<dd><p>Execute a SQL query <strong>with</strong> parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -322,8 +307,8 @@
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="code_backend.database_access.MyAppDatabase.execute_queue_queries">
-<span class="sig-name descname"><span class="pre">execute_queue_queries</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/code_backend/database_access.html#MyAppDatabase.execute_queue_queries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.database_access.MyAppDatabase.execute_queue_queries" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="code_backend.database_access.DatabaseAccess.execute_queue_queries">
+<span class="sig-name descname"><span class="pre">execute_queue_queries</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/code_backend/database_access.html#DatabaseAccess.execute_queue_queries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.database_access.DatabaseAccess.execute_queue_queries" title="Link to this definition"></a></dt>
 <dd><p>Execute all SQL queries queued in self.sql_query_queue</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -339,9 +324,9 @@
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="code_backend.database_access.MyAppDatabase.execute_script">
-<span class="sig-name descname"><span class="pre">execute_script</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sql_script</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fetch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_backend/database_access.html#MyAppDatabase.execute_script"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.database_access.MyAppDatabase.execute_script" title="Link to this definition"></a></dt>
-<dd><p>Execute a SQL script without parameters</p>
+<dt class="sig sig-object py" id="code_backend.database_access.DatabaseAccess.execute_script">
+<span class="sig-name descname"><span class="pre">execute_script</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sql_script</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fetch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_backend/database_access.html#DatabaseAccess.execute_script"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.database_access.DatabaseAccess.execute_script" title="Link to this definition"></a></dt>
+<dd><p>Execute a SQL script <strong>without</strong> parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -354,6 +339,249 @@
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#code_backend.exceptions.DatabaseException" title="code_backend.exceptions.DatabaseException"><strong>DatabaseException</strong></a> – If Exception related to the Database occurs</p></li>
+<li><p><a class="reference internal" href="#code_backend.exceptions.InputException" title="code_backend.exceptions.InputException"><strong>InputException</strong></a> – if input is invalid</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="code_backend.database_access.DatabaseAccess.fetch_column">
+<span class="sig-name descname"><span class="pre">fetch_column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/code_backend/database_access.html#DatabaseAccess.fetch_column"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.database_access.DatabaseAccess.fetch_column" title="Link to this definition"></a></dt>
+<dd><p>fetch column from table by ID</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table_name</strong> – name of the table</p></li>
+<li><p><strong>table_column</strong> – what column to fetch</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>wanted column</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#code_backend.exceptions.DatabaseException" title="code_backend.exceptions.DatabaseException"><strong>DatabaseException</strong></a> – If Exception related to the Database occurs</p></li>
+<li><p><a class="reference internal" href="#code_backend.exceptions.InputException" title="code_backend.exceptions.InputException"><strong>InputException</strong></a> – if input is invalid</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="code_backend.database_access.DatabaseAccess.fetch_row">
+<span class="sig-name descname"><span class="pre">fetch_row</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'*'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/code_backend/database_access.html#DatabaseAccess.fetch_row"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.database_access.DatabaseAccess.fetch_row" title="Link to this definition"></a></dt>
+<dd><p>fetch item from table by ID</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table_name</strong> – name of the table</p></li>
+<li><p><strong>item_id</strong> – what item to fetch</p></li>
+<li><p><strong>table_column</strong> – what column to fetch (default: ‘*’ fetches all columns)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>hopefully what you asked for (row, value of column, None, ¯_(ツ)_/¯)</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#code_backend.exceptions.DatabaseException" title="code_backend.exceptions.DatabaseException"><strong>DatabaseException</strong></a> – If Exception related to the Database occurs</p></li>
+<li><p><a class="reference internal" href="#code_backend.exceptions.InputException" title="code_backend.exceptions.InputException"><strong>InputException</strong></a> – if input is invalid</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="code_backend.database_access.DatabaseAccess.fetch_rows">
+<span class="sig-name descname"><span class="pre">fetch_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'albums'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'artists'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'tracks'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'playlists'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'users'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'genres'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'devices'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/code_backend/database_access.html#DatabaseAccess.fetch_rows"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.database_access.DatabaseAccess.fetch_rows" title="Link to this definition"></a></dt>
+<dd><p>Fetch one or more rows from a table, where the value of target_column is target_value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table_name</strong> – Table to fetch from</p></li>
+<li><p><strong>target_column</strong> – Which column to match</p></li>
+<li><p><strong>target_value</strong> – Which value to match</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict containing the fetched rows, in the form of {primary_key: row}</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#code_backend.exceptions.DatabaseException" title="code_backend.exceptions.DatabaseException"><strong>DatabaseException</strong></a> – If Exception related to the Database occurs</p></li>
+<li><p><a class="reference internal" href="#code_backend.exceptions.InputException" title="code_backend.exceptions.InputException"><strong>InputException</strong></a> – if input is invalid</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="code_backend.database_access.DatabaseAccess.remove_specific_item">
+<span class="sig-name descname"><span class="pre">remove_specific_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_backend/database_access.html#DatabaseAccess.remove_specific_item"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.database_access.DatabaseAccess.remove_specific_item" title="Link to this definition"></a></dt>
+<dd><p>remove item from table by ID</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table_name</strong> – name of the table</p></li>
+<li><p><strong>item_id</strong> – what item to remove</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#code_backend.exceptions.DatabaseException" title="code_backend.exceptions.DatabaseException"><strong>DatabaseException</strong></a> – If Exception related to the Database occurs</p></li>
+<li><p><a class="reference internal" href="#code_backend.exceptions.InputException" title="code_backend.exceptions.InputException"><strong>InputException</strong></a> – if input is invalid</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="code_backend.database_access.DatabaseAccess.reset_database">
+<span class="sig-name descname"><span class="pre">reset_database</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_backend/database_access.html#DatabaseAccess.reset_database"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.database_access.DatabaseAccess.reset_database" title="Link to this definition"></a></dt>
+<dd><p>reset complete database (all tables) to initial state</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#code_backend.exceptions.CustomException" title="code_backend.exceptions.CustomException"><strong>CustomException</strong></a> – If Exception occurs</p></li>
+<li><p><a class="reference internal" href="#code_backend.exceptions.DatabaseException" title="code_backend.exceptions.DatabaseException"><strong>DatabaseException</strong></a> – If Exception related to the Database occurs</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="code_backend.database_access.DatabaseAccess.reset_table">
+<span class="sig-name descname"><span class="pre">reset_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_backend/database_access.html#DatabaseAccess.reset_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.database_access.DatabaseAccess.reset_table" title="Link to this definition"></a></dt>
+<dd><p>reset table to initial state</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>table_name</strong> – name of the table</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#code_backend.exceptions.CustomException" title="code_backend.exceptions.CustomException"><strong>CustomException</strong></a> – If Exception occurs</p></li>
+<li><p><a class="reference internal" href="#code_backend.exceptions.DatabaseException" title="code_backend.exceptions.DatabaseException"><strong>DatabaseException</strong></a> – If Exception related to the Database occurs</p></li>
+<li><p><a class="reference internal" href="#code_backend.exceptions.InputException" title="code_backend.exceptions.InputException"><strong>InputException</strong></a> – if input is invalid</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="code_backend.database_access.DatabaseAccess.split_queries">
+<span class="sig-name descname"><span class="pre">split_queries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sql_query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_backend/database_access.html#DatabaseAccess.split_queries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.database_access.DatabaseAccess.split_queries" title="Link to this definition"></a></dt>
+<dd><p>Split SQL script/query containing multiple commands with parameters into multiple queries and execute them. The placeholders in the script must match the keys in parameter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sql_query</strong> – SQL query</p></li>
+<li><p><strong>parameter</strong> – parameters to pass to the SQL query</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#code_backend.exceptions.DatabaseException" title="code_backend.exceptions.DatabaseException"><strong>DatabaseException</strong></a> – If Exception related to the Database occurs</p></li>
+<li><p><a class="reference internal" href="#code_backend.exceptions.InputException" title="code_backend.exceptions.InputException"><strong>InputException</strong></a> – if input is invalid</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="code_backend.database_access.DatabaseAccess.table_struct">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">table_struct</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#code_backend.database_access.DatabaseAccess.table_struct" title="Link to this definition"></a></dt>
+<dd><p>Get the structure of all tables in the database. This only includes the table names, primary keys and column names per table</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict containing the database structure, in the form of {table_name: {‘ids’: […], ‘columns’: […]}}</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#code_backend.exceptions.DatabaseException" title="code_backend.exceptions.DatabaseException"><strong>DatabaseException</strong></a> – If Exception related to the Database occurs</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="code_backend.database_access.DatabaseAccess.update_item">
+<span class="sig-name descname"><span class="pre">update_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/code_backend/database_access.html#DatabaseAccess.update_item"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.database_access.DatabaseAccess.update_item" title="Link to this definition"></a></dt>
+<dd><p>Updates the specified value from table by ID</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table_name</strong> – name of the table</p></li>
+<li><p><strong>item_id</strong> – what item to update</p></li>
+<li><p><strong>table_column</strong> – which column to update</p></li>
+<li><p><strong>new_value</strong> – new value</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#code_backend.exceptions.DatabaseException" title="code_backend.exceptions.DatabaseException"><strong>DatabaseException</strong></a> – If Exception related to the Database occurs</p></li>
+<li><p><a class="reference internal" href="#code_backend.exceptions.InputException" title="code_backend.exceptions.InputException"><strong>InputException</strong></a> – if input is invalid</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="code_backend.database_access.MyAppDatabase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">code_backend.database_access.</span></span><span class="sig-name descname"><span class="pre">MyAppDatabase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_backend/database_access.html#MyAppDatabase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.database_access.MyAppDatabase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#code_backend.database_access.DatabaseAccess" title="code_backend.database_access.DatabaseAccess"><code class="xref py py-class docutils literal notranslate"><span class="pre">DatabaseAccess</span></code></a></p>
+<p>class acting as Data Access Object for Main Database</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="code_backend.database_access.MyAppDatabase.add_dummies">
+<span class="sig-name descname"><span class="pre">add_dummies</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/code_backend/database_access.html#MyAppDatabase.add_dummies"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.database_access.MyAppDatabase.add_dummies" title="Link to this definition"></a></dt>
+<dd><p>Add dummy data to the database to avoid Exceptions and to test methods</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#code_backend.exceptions.CustomException" title="code_backend.exceptions.CustomException"><strong>CustomException</strong></a> – If Exception occurs</p></li>
+<li><p><a class="reference internal" href="#code_backend.exceptions.DatabaseException" title="code_backend.exceptions.DatabaseException"><strong>DatabaseException</strong></a> – If Exception related to the Database occurs</p></li>
+<li><p><a class="reference internal" href="#code_backend.exceptions.InputException" title="code_backend.exceptions.InputException"><strong>InputException</strong></a> – if input is invalid</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="code_backend.database_access.MyAppDatabase.add_item_to_table">
+<span class="sig-name descname"><span class="pre">add_item_to_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'albums'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'artists'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'tracks'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'playlists'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'users'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'genres'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'devices'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/code_backend/database_access.html#MyAppDatabase.add_item_to_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.database_access.MyAppDatabase.add_item_to_table" title="Link to this definition"></a></dt>
+<dd><p>Adds item to table if it does not exist, otherwise, the insert will be ignored. If not all required keys are passed, the default value ‘NULL’ will be used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table_name</strong> – Which table to add</p></li>
+<li><p><strong>kwargs</strong> – which arguments are passed to database</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#code_backend.exceptions.CustomException" title="code_backend.exceptions.CustomException"><strong>CustomException</strong></a> – If Exception occurs</p></li>
 <li><p><a class="reference internal" href="#code_backend.exceptions.DatabaseException" title="code_backend.exceptions.DatabaseException"><strong>DatabaseException</strong></a> – If Exception related to the Database occurs</p></li>
 <li><p><a class="reference internal" href="#code_backend.exceptions.InputException" title="code_backend.exceptions.InputException"><strong>InputException</strong></a> – if input is invalid</p></li>
 </ul>
@@ -487,7 +715,6 @@
 <dd class="field-even"><ul class="simple">
 <li><p><a class="reference internal" href="#code_backend.exceptions.CustomException" title="code_backend.exceptions.CustomException"><strong>CustomException</strong></a> – If Exception occurs</p></li>
 <li><p><a class="reference internal" href="#code_backend.exceptions.DatabaseException" title="code_backend.exceptions.DatabaseException"><strong>DatabaseException</strong></a> – If Exception related to the Database occurs</p></li>
-<li><p><a class="reference internal" href="#code_backend.exceptions.InputException" title="code_backend.exceptions.InputException"><strong>InputException</strong></a> – if input is invalid</p></li>
 </ul>
 </dd>
 </dl>
@@ -507,29 +734,6 @@
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#code_backend.exceptions.CustomException" title="code_backend.exceptions.CustomException"><strong>CustomException</strong></a> – If Exception occurs</p></li>
-<li><p><a class="reference internal" href="#code_backend.exceptions.DatabaseException" title="code_backend.exceptions.DatabaseException"><strong>DatabaseException</strong></a> – If Exception related to the Database occurs</p></li>
-<li><p><a class="reference internal" href="#code_backend.exceptions.InputException" title="code_backend.exceptions.InputException"><strong>InputException</strong></a> – if input is invalid</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="code_backend.database_access.MyAppDatabase.split_queries">
-<span class="sig-name descname"><span class="pre">split_queries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sql_query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_backend/database_access.html#MyAppDatabase.split_queries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.database_access.MyAppDatabase.split_queries" title="Link to this definition"></a></dt>
-<dd><p>Split SQL script/query containing multiple commands with parameters into multiple queries and execute them. The placeholders in the script must match the keys in parameter.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>sql_query</strong> – SQL query</p></li>
-<li><p><strong>parameter</strong> – parameters to pass to the SQL query</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
 <li><p><a class="reference internal" href="#code_backend.exceptions.DatabaseException" title="code_backend.exceptions.DatabaseException"><strong>DatabaseException</strong></a> – If Exception related to the Database occurs</p></li>
 <li><p><a class="reference internal" href="#code_backend.exceptions.InputException" title="code_backend.exceptions.InputException"><strong>InputException</strong></a> – if input is invalid</p></li>
 </ul>
@@ -569,16 +773,39 @@
 <section id="module-code_backend.exceptions">
 <span id="code-backend-exceptions-module"></span><h2>code_backend.exceptions module<a class="headerlink" href="#module-code_backend.exceptions" title="Link to this heading"></a></h2>
 <p>Project specific exceptions</p>
-<p>Exception Definition for Docstrings:
-:raises CustomException: If Exception occurs
-:raises DatabaseException: If Exception related to the Database occurs
-:raises HttpException: if request response code is not good
-:raises InputException: if input is invalid
-:raises LimitException: if limit is invalid
-:raises RequestException: if Exception occurs while using requests
-:raises SpotifyApiException: if Exception related to Spotify API occurs
-:raises SpotifyIdException: if spotify id is invalid
-:raises SpotifyUriException: if spotify uri is invalid</p>
+<p>Exception Definition for Docstrings:</p>
+<dl class="field-list simple">
+<dt class="field-odd">raises CustomException<span class="colon">:</span></dt>
+<dd class="field-odd"><p>if Exception occurs</p>
+</dd>
+<dt class="field-even">raises DatabaseException<span class="colon">:</span></dt>
+<dd class="field-even"><p>if Exception related to the Database occurs</p>
+</dd>
+<dt class="field-odd">raises EnvFileException<span class="colon">:</span></dt>
+<dd class="field-odd"><p>if Exception related to the Env File occurs</p>
+</dd>
+<dt class="field-even">raises HttpException<span class="colon">:</span></dt>
+<dd class="field-even"><p>if request response code is not good</p>
+</dd>
+<dt class="field-odd">raises InputException<span class="colon">:</span></dt>
+<dd class="field-odd"><p>if input is invalid</p>
+</dd>
+<dt class="field-even">raises LimitException<span class="colon">:</span></dt>
+<dd class="field-even"><p>if limit is invalid</p>
+</dd>
+<dt class="field-odd">raises RequestException<span class="colon">:</span></dt>
+<dd class="field-odd"><p>if Exception occurs while using requests</p>
+</dd>
+<dt class="field-even">raises SpotifyApiException<span class="colon">:</span></dt>
+<dd class="field-even"><p>if Exception related to Spotify API occurs</p>
+</dd>
+<dt class="field-odd">raises SpotifyIdException<span class="colon">:</span></dt>
+<dd class="field-odd"><p>if spotify id is invalid</p>
+</dd>
+<dt class="field-even">raises SpotifyUriException<span class="colon">:</span></dt>
+<dd class="field-even"><p>if spotify uri is invalid</p>
+</dd>
+</dl>
 <dl class="py exception">
 <dt class="sig sig-object py" id="code_backend.exceptions.CustomException">
 <em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">code_backend.exceptions.</span></span><span class="sig-name descname"><span class="pre">CustomException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">error_message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Exception</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">more_infos</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_backend/exceptions.html#CustomException"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.exceptions.CustomException" title="Link to this definition"></a></dt>
@@ -597,6 +824,7 @@
 <dt class="sig sig-object py" id="code_backend.exceptions.EnvFileException">
 <em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">code_backend.exceptions.</span></span><span class="sig-name descname"><span class="pre">EnvFileException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">passed_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_backend/exceptions.html#EnvFileException"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.exceptions.EnvFileException" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Exception raised when invalid env file passed</p>
 </dd></dl>
 
 <dl class="py exception">
@@ -651,20 +879,6 @@
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="code_backend.exceptions.absolute_path">
-<span class="sig-prename descclassname"><span class="pre">code_backend.exceptions.</span></span><span class="sig-name descname"><span class="pre">absolute_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/code_backend/exceptions.html#absolute_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.exceptions.absolute_path" title="Link to this definition"></a></dt>
-<dd><p>Converts the given path to an absolute path. If the path is absolute nothing happens. If in doubt just call it</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>path</strong> – (relative) path to convert</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>absolute path</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="code_backend.exceptions.load_json">
 <span class="sig-prename descclassname"><span class="pre">code_backend.exceptions.</span></span><span class="sig-name descname"><span class="pre">load_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/code_backend/exceptions.html#load_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.exceptions.load_json" title="Link to this definition"></a></dt>
 <dd><p>Load JSON from .json file</p>
@@ -679,15 +893,15 @@
 </dd></dl>
 
 </section>
-<section id="module-code_backend.main_app">
-<span id="code-backend-main-app-module"></span><h2>code_backend.main_app module<a class="headerlink" href="#module-code_backend.main_app" title="Link to this heading"></a></h2>
+<section id="module-code_backend.main">
+<span id="code-backend-main-module"></span><h2>code_backend.main module<a class="headerlink" href="#module-code_backend.main" title="Link to this heading"></a></h2>
 <dl class="py class">
-<dt class="sig sig-object py" id="code_backend.main_app.Player">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">code_backend.main_app.</span></span><span class="sig-name descname"><span class="pre">Player</span></span><a class="reference internal" href="_modules/code_backend/main_app.html#Player"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.main_app.Player" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="code_backend.main.Player">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">code_backend.main.</span></span><span class="sig-name descname"><span class="pre">Player</span></span><a class="reference internal" href="_modules/code_backend/main.html#Player"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.main.Player" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
-<dt class="sig sig-object py" id="code_backend.main_app.Player.change_playing_state">
-<span class="sig-name descname"><span class="pre">change_playing_state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_backend/main_app.html#Player.change_playing_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.main_app.Player.change_playing_state" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="code_backend.main.Player.change_playing_state">
+<span class="sig-name descname"><span class="pre">change_playing_state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_backend/main.html#Player.change_playing_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.main.Player.change_playing_state" title="Link to this definition"></a></dt>
 <dd><p>Switch the current playing state of Spotify Player</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -700,8 +914,8 @@
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="code_backend.main_app.Player.change_repeat_state">
-<span class="sig-name descname"><span class="pre">change_repeat_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'context'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'track'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'off'</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_backend/main_app.html#Player.change_repeat_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.main_app.Player.change_repeat_state" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="code_backend.main.Player.change_repeat_state">
+<span class="sig-name descname"><span class="pre">change_repeat_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'context'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'track'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'off'</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_backend/main.html#Player.change_repeat_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.main.Player.change_repeat_state" title="Link to this definition"></a></dt>
 <dd><p>Change the current playing state of Spotify Player</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -714,13 +928,13 @@
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="code_backend.main_app.Player.change_shuffle_state">
-<span class="sig-name descname"><span class="pre">change_shuffle_state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_backend/main_app.html#Player.change_shuffle_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.main_app.Player.change_shuffle_state" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="code_backend.main.Player.change_shuffle_state">
+<span class="sig-name descname"><span class="pre">change_shuffle_state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_backend/main.html#Player.change_shuffle_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.main.Player.change_shuffle_state" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="code_backend.main_app.Player.initialize_player">
-<span class="sig-name descname"><span class="pre">initialize_player</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_backend/main_app.html#Player.initialize_player"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.main_app.Player.initialize_player" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="code_backend.main.Player.initialize_player">
+<span class="sig-name descname"><span class="pre">initialize_player</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_backend/main.html#Player.initialize_player"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.main.Player.initialize_player" title="Link to this definition"></a></dt>
 <dd><p>Get Information of the current Player state of Spotify (updates attributes)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
@@ -730,20 +944,20 @@
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="code_backend.main_app.Player.next_track">
-<span class="sig-name descname"><span class="pre">next_track</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_backend/main_app.html#Player.next_track"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.main_app.Player.next_track" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="code_backend.main.Player.next_track">
+<span class="sig-name descname"><span class="pre">next_track</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_backend/main.html#Player.next_track"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.main.Player.next_track" title="Link to this definition"></a></dt>
 <dd><p>Skips current track</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="code_backend.main_app.Player.prev_track">
-<span class="sig-name descname"><span class="pre">prev_track</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_backend/main_app.html#Player.prev_track"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.main_app.Player.prev_track" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="code_backend.main.Player.prev_track">
+<span class="sig-name descname"><span class="pre">prev_track</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_backend/main.html#Player.prev_track"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.main.Player.prev_track" title="Link to this definition"></a></dt>
 <dd><p>Go to previous track (progress=0) or track start (progress&gt;0)</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="code_backend.main_app.Player.progress">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">progress</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#code_backend.main_app.Player.progress" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="code_backend.main.Player.progress">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">progress</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#code_backend.main.Player.progress" title="Link to this definition"></a></dt>
 <dd><p>Get the current progress of the playing track or episode</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -753,8 +967,8 @@
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="code_backend.main_app.Player.set_volume">
-<span class="sig-name descname"><span class="pre">set_volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_volume</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_backend/main_app.html#Player.set_volume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.main_app.Player.set_volume" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="code_backend.main.Player.set_volume">
+<span class="sig-name descname"><span class="pre">set_volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_volume</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_backend/main.html#Player.set_volume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.main.Player.set_volume" title="Link to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>new_volume</strong></p>
@@ -769,20 +983,20 @@
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="code_backend.main_app.Player.skip_blacklisted_items">
-<span class="sig-name descname"><span class="pre">skip_blacklisted_items</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_backend/main_app.html#Player.skip_blacklisted_items"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.main_app.Player.skip_blacklisted_items" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="code_backend.main.Player.skip_blacklisted_items">
+<span class="sig-name descname"><span class="pre">skip_blacklisted_items</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_backend/main.html#Player.skip_blacklisted_items"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.main.Player.skip_blacklisted_items" title="Link to this definition"></a></dt>
 <dd><p>Skip Item if it is blacklisted in the Database</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="code_backend.main_app.SpotifyApp">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">code_backend.main_app.</span></span><span class="sig-name descname"><span class="pre">SpotifyApp</span></span><a class="reference internal" href="_modules/code_backend/main_app.html#SpotifyApp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.main_app.SpotifyApp" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="code_backend.main.SpotifyApp">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">code_backend.main.</span></span><span class="sig-name descname"><span class="pre">SpotifyApp</span></span><a class="reference internal" href="_modules/code_backend/main.html#SpotifyApp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.main.SpotifyApp" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
-<dt class="sig sig-object py" id="code_backend.main_app.SpotifyApp.find_object">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">find_object</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">search_query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'album'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'artist'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'playlist'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'track'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">select_correct</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/code_backend/main_app.html#SpotifyApp.find_object"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.main_app.SpotifyApp.find_object" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="code_backend.main.SpotifyApp.find_object">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">find_object</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">search_query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'album'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'artist'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'playlist'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'track'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">select_correct</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/code_backend/main.html#SpotifyApp.find_object"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.main.SpotifyApp.find_object" title="Link to this definition"></a></dt>
 <dd><p>Get Spotify catalog information about albums, artists, playlists, tracks, shows, episodes or audiobooks that match a keyword string.</p>
 <p><strong>Better Search queries:</strong>
 (1) You can narrow down your search using field filters. The available filters are album, artist, track, year, upc, <a class="reference external" href="tag:hipster">tag:hipster</a>, <a class="reference external" href="tag:new">tag:new</a>, isrc, and genre. Each field filter only applies to certain result types.
@@ -814,8 +1028,8 @@
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="code_backend.main_app.SpotifyApp.random_tracks_by_genre">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">random_tracks_by_genre</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">genre_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">track_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_playlist</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/code_backend/main_app.html#SpotifyApp.random_tracks_by_genre"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.main_app.SpotifyApp.random_tracks_by_genre" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="code_backend.main.SpotifyApp.random_tracks_by_genre">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">random_tracks_by_genre</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">genre_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">track_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_playlist</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/code_backend/main.html#SpotifyApp.random_tracks_by_genre"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.main.SpotifyApp.random_tracks_by_genre" title="Link to this definition"></a></dt>
 <dd><p>Get random tracks by genre and either return them as a dict or create a new playlist with them.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -837,6 +1051,24 @@
 </dl>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="code_backend.main.clear">
+<span class="sig-prename descclassname"><span class="pre">code_backend.main.</span></span><span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_backend/main.html#clear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.main.clear" title="Link to this definition"></a></dt>
+<dd><p>Clear the current terminal screen</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="code_backend.main.man">
+<span class="sig-prename descclassname"><span class="pre">code_backend.main.</span></span><span class="sig-name descname"><span class="pre">man</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'code_backend.main.man'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/code_backend/main.html#man"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.main.man" title="Link to this definition"></a></dt>
+<dd><p>print Manpage for the entered method</p>
+<p><strong>Example:</strong> <cite>&gt;&gt;&gt; man(‘code_backend.spotify_web_api.get_album’)</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>method</strong> – wanted method, in the form of ‘path.to.module.method_name’</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -1071,7 +1303,7 @@
 <p>File containing (helper) methods outsourced from other files</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="code_backend.secondary_methods.absolute_path">
-<span class="sig-prename descclassname"><span class="pre">code_backend.secondary_methods.</span></span><span class="sig-name descname"><span class="pre">absolute_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/code_backend/secondary_methods.html#absolute_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.secondary_methods.absolute_path" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">code_backend.secondary_methods.</span></span><span class="sig-name descname"><span class="pre">absolute_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AnyStr</span></span></span><a class="reference internal" href="_modules/code_backend/secondary_methods.html#absolute_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.secondary_methods.absolute_path" title="Link to this definition"></a></dt>
 <dd><p>Converts the given path to an absolute path. If the path is absolute nothing happens. If in doubt just call it</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1148,14 +1380,17 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="code_backend.secondary_methods.check_env_file">
-<span class="sig-prename descclassname"><span class="pre">code_backend.secondary_methods.</span></span><span class="sig-name descname"><span class="pre">check_env_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/code_backend/secondary_methods.html#check_env_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.secondary_methods.check_env_file" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">code_backend.secondary_methods.</span></span><span class="sig-name descname"><span class="pre">check_env_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/code_backend/secondary_methods.html#check_env_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#code_backend.secondary_methods.check_env_file" title="Link to this definition"></a></dt>
 <dd><p>Check if the .env file is valid and every key has a correct value.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>env_file_path</strong></p>
+<dd class="field-odd"><p><strong>env_file_path</strong> – path to .env file</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p></p>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#code_backend.exceptions.EnvFileException" title="code_backend.exceptions.EnvFileException"><strong>EnvFileException</strong></a> – if Exception related to the Env File occurs</p></li>
+<li><p><a class="reference internal" href="#code_backend.exceptions.InputException" title="code_backend.exceptions.InputException"><strong>InputException</strong></a> – if input is invalid</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
