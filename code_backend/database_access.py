@@ -600,9 +600,6 @@ class MyAppDatabase(DatabaseAccess):
         return super().update_item(table_name=table_name, item_id=item_id, table_column=table_column, new_value=new_value)
 
 
-
-
-
 APP_DATABASE = MyAppDatabase(MAIN_DATABASE_PATH)
 
 if __name__ == '__main__':

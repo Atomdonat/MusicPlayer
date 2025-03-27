@@ -6,7 +6,7 @@ readme_path = os.path.join(base_dir, "README.md")
 
 setup(
     name='MusicPlayer',
-    version='1.16.0',
+    version='1.16.1',
     url='https://github.com/Atomdonat/MusicPlayer.git',
     license='GPLv3',
     author='Atomdonat',

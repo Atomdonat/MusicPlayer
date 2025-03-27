@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.abspath('..'))
 project = 'MusicPlayer'
 copyright = '2025, Atomdonat'
 author = 'Atomdonat'
-release = '1.16.0'
+release = '1.16.1'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

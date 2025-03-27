@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.16.1] - 27.03.2025 - Documentation Fix
+
+### Changes in Backend Code
+
+#### secondary_methods.py
+- fixing Docs exception, if no .env exists (e.g. remote location)
+
+## Other
+- adding main_database.db
+
+
 ## [1.16.0] - 26.03.2025 - Basic CLI interaction from main.py
 
 ### Changes in Backend Code

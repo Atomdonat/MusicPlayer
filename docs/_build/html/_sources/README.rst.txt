@@ -174,7 +174,6 @@ ToDo List (prioritized)
 
 -  keep Docstrings up to date
 -  ☐ do ToDo’s in Code
--  ☐ Sphinx manpage (with ``sphinx.builders.manpage.ManualPageBuilder``)
 -  ☐ replace Flask in ``spotify_web_api.py``
 -  ☐ clean up imports
 -  ☐ clean up code

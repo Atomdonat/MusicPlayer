@@ -130,8 +130,12 @@ def recompile_documentation():
 
 if __name__ == "__main__":
     """"""
-    new_version = new_version(is_major=False, is_minor=True, is_patch=False)
+    new_version = new_version(is_patch=True)
+    # new_version = new_version(is_minor=True)
+    # new_version = new_version(is_major=True)
+    print(f"Updating required files to version {new_version} ...")
+
     update_files()
-    print("Updated files")
+    print("Updated files\nrecompiling documentation ...")
     recompile_documentation()
     print("recompiled Documentation")

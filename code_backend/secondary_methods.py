@@ -635,11 +635,23 @@ def check_env_file(env_file_path: str = None) -> None:
     :raises EnvFileException: if Exception related to the Env File occurs
     :raises InputException: if input is invalid
     """
+    try:
+        open(env_file_path, "r")
+        if find_dotenv() == "": raise FileNotFoundError
+
+    except FileNotFoundError:
+        # Only print because remote repo should not contain a .env file, but therefore, causing an exception with RTD
+        print(CustomException(
+            error_message="Could not find a .env file! Please create one from .env.sample",
+            # more_infos="()"
+        ))
+        return
 
     if env_file_path is None:
         env_file_path = find_dotenv()
     else:
         env_file_path = absolute_path(env_file_path)
+
 
     load_dotenv(env_file_path)
     valid_items = {
