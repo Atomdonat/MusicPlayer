@@ -67,6 +67,8 @@ Lessons Learned
 -  RTD submodules not rendering because other project relevant modules
    (e.g. numpy) wouldn’t be installed (requirements.txt missing in
    readthedocs.yaml)
+-  among other attributes ‘.env’ is also part of globals() (leaking API
+   keys is bad)
 
 Code/Comment Highlighting (in Pycharm)
 --------------------------------------

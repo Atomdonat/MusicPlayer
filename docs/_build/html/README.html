@@ -142,6 +142,8 @@ an error or not (Though, the documentations cURL request always says
 <li><p>RTD submodules not rendering because other project relevant modules
 (e.g. numpy) wouldn’t be installed (requirements.txt missing in
 readthedocs.yaml)</p></li>
+<li><p>among other attributes ‘.env’ is also part of globals() (leaking API
+keys is bad)</p></li>
 </ul>
 </section>
 <section id="code-comment-highlighting-in-pycharm">
